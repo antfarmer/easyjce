@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<project name="ejce" default="binary" basedir=".">
+    
+    <property name="build.dir" value="${basedir}/build"/>
+    <property name="src.dir" value="${basedir}/src"/>
+    <property name="jar.name" value="ejce.jar"/>
+    <property name="jar.name.src" value="ejce-src.zip"/>
+    
+	<target name="binary" description="Builds the binary release jar file">
+        <delete file="${build.dir}"/>
+		<delete file="${basedir}/${jar.name}"/>		
+		<mkdir dir="${build.dir}"/>
+		
+		<javac srcdir="${src.dir}" destdir="${build.dir}" classpath="lib/hibernate3.jar" debug="true" debuglevel="lines,vars,source" />
+		
+		<jar destfile="${basedir}/${jar.name}"
+			update="false"
+			basedir="${build.dir}"
+			includes="**/*.*"
+			excludes="**/*.htm*"
+		/>
+		<jar destfile="${basedir}/${jar.name}"
+			update="true"
+			basedir="${basedir}"
+			includes="META-INF/**.*"
+		/>
+	</target>
+	<target name="source" description="Builds the source release zip file">
+		<delete file="${basedir}/${jar.name.src}"/>
+		<zip destfile="${basedir}/${jar.name.src}"
+			basedir="${basedir}"
+			includes="doc/**/*.*,src/**/*.*,test/**/*.*,META-INF/**.*,build.xml"
+		/>
+	</target>
+	
+	<path id="test.classpath">
+		<pathelement location="${basedir}/bin" />
+		<fileset dir="${basedir}/lib">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+	
+	<target name="test" description="Runs all tests">
+		<junit printsummary="yes" haltonfailure="yes">
+			<classpath refid="test.classpath" />
+			<formatter type="plain" usefile="false"/>
+			<batchtest fork="no">
+				<fileset dir="${basedir}/test">
+					<include name="**/*Test.java"/>
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+	
+    <target name="javadoc" description="Generate JavaDocs">
+		<delete dir="doc"/>
+        <javadoc access="public" author="true" classpath="lib/hibernate3.jar" destdir="doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" overview="src/overview.html" source="1.5" sourcepath="src" splitindex="true" use="true" version="true">
+            <link href="http://www.hibernate.org/hib_docs/v3/api/"/>
+            <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+        </javadoc>
+    </target>
+</project>
