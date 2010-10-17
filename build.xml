@@ -1,31 +1,32 @@
 <?xml version="1.0"?>
 <project name="ejce" default="binary" basedir=".">
-    
+
+    <property name="compile.target" value="1.5"/>
     <property name="build.dir" value="${basedir}/build"/>
     <property name="src.dir" value="${basedir}/src"/>
     <property name="jar.name" value="ejce.jar"/>
     <property name="jar.name.src" value="ejce-src.zip"/>
-    
-	<target name="binary" description="Builds the binary release jar file">
-        <delete file="${build.dir}"/>
-		<delete file="${basedir}/${jar.name}"/>		
-		<mkdir dir="${build.dir}"/>
+    <property name="meta_inf.dir" value="${basedir}/META-INF"/>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <mkdir dir="${build.dir}"/>
+    </target>
+
+	<target name="binary" depends="clean" description="Builds the binary release jar file">
+		<delete file="${basedir}/${jar.name}"/>
 		
-		<javac srcdir="${src.dir}" destdir="${build.dir}" classpath="lib/hibernate3.jar" debug="true" debuglevel="lines,vars,source" />
+		<javac srcdir="${src.dir}" destdir="${build.dir}" classpath="lib/hibernate3.jar" debug="true" debuglevel="lines,vars,source" source="${compile.target}" target="${compile.target}" />
 		
 		<jar destfile="${basedir}/${jar.name}"
 			update="false"
 			basedir="${build.dir}"
-			includes="**/*.*"
-			excludes="**/*.htm*"
-		/>
-		<jar destfile="${basedir}/${jar.name}"
-			update="true"
-			basedir="${basedir}"
-			includes="META-INF/**.*"
-		/>
+			includes="**/*.*">
+            <metainf dir="${meta_inf.dir}" includes="*.txt" />
+        </jar>
 	</target>
-	<target name="source" description="Builds the source release zip file">
+	
+	<target name="source" depends="javadoc" description="Builds the source release zip file">
 		<delete file="${basedir}/${jar.name.src}"/>
 		<zip destfile="${basedir}/${jar.name.src}"
 			basedir="${basedir}"
@@ -53,10 +54,10 @@
 	</target>
 	
     <target name="javadoc" description="Generate JavaDocs">
-		<delete dir="doc"/>
-        <javadoc access="public" author="true" classpath="lib/hibernate3.jar" destdir="doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" overview="src/overview.html" source="1.5" sourcepath="src" splitindex="true" use="true" version="true">
-            <link href="http://www.hibernate.org/hib_docs/v3/api/"/>
-            <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+		<delete dir="${basedir}/doc"/>
+        <javadoc access="public" author="true" classpath="lib/hibernate3.jar" destdir="${basedir}/doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" overview="src/overview.html" source="1.5" sourcepath="src" splitindex="true" use="true" version="true">
+            <link href="http://docs.jboss.org/hibernate/stable/core/api/"/>
+            <link href="http://download.oracle.com/javase/1.5.0/docs/api/"/>
         </javadoc>
     </target>
 </project>
