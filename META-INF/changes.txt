@@ -1,3 +1,5 @@
+Since 0.981 ----------------------------------------------------------
+- modify return type of ReflectionUtil#getFieldValue
 Since 0.98 ----------------------------------------------------------
 - added support for pure streaming in blob/clob/text Hibernate types for JDBC4
 	environments
