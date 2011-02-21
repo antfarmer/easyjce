@@ -58,21 +58,22 @@ public final class ReflectionUtil {
 
 	/**
 	 * Gets the given object's field value.
-	 *
+	 * @param <T> the return type
 	 * @param object the object whose field value will be set
 	 * @param fieldName the field which will be retrieved
 	 * @return the given object's field value
 	 * @throws NoSuchFieldException NoSuchFieldException
 	 * @throws IllegalAccessException IllegalAccessException
 	 */
-	public static Object getFieldValue(final Object object, final String fieldName)
+	@SuppressWarnings("unchecked")
+	public static <T> T getFieldValue(final Object object, final String fieldName)
 			throws NoSuchFieldException, IllegalAccessException {
 		Class<?> clazz = object.getClass();
 		while (clazz != Object.class) {
 			try {
 				final Field field = clazz.getDeclaredField(fieldName);
 				field.setAccessible(true);
-				return field.get(object);
+				return (T) field.get(object);
 			}
 			catch (final NoSuchFieldException e) {
 				clazz = clazz.getSuperclass();
