@@ -10,6 +10,5 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/junit-4.4.jar"/>
 	<classpathentry kind="lib" path="lib/bcprov-jdk15-141.jar" sourcepath="lib/src/crypto-141-src.zip"/>
-	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
