@@ -105,14 +105,14 @@ public abstract class AbstractBase32Encoder implements TextEncoder {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String encode(final byte[] bytes) {
 		if (bytes == null)
 			return null;
-		final String ret = new String();
 
 		int originalSize = bytes.length;
 		if (originalSize < 1) {
-			return ret;
+			return "";
 		}
 
 		int i;
@@ -212,6 +212,7 @@ public abstract class AbstractBase32Encoder implements TextEncoder {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public byte[] decode(final String text) {
 		if (text == null)
 			return null;
