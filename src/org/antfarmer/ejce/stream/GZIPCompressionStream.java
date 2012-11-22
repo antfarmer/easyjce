@@ -117,7 +117,7 @@ public class GZIPCompressionStream extends FilterInputStream {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void reset() throws IOException {
+	public synchronized void reset() throws IOException {
 		accumulator.set(null);
 		super.reset();
 	}
