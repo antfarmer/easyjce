@@ -29,8 +29,6 @@ import java.util.Properties;
  */
 public class VolatileProperties {
 
-	private static final long serialVersionUID = -1271362966142011021L;
-
 	private final Properties properties;
 
 	private final List<Object> propKeys;
