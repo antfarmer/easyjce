@@ -1,12 +1,26 @@
 <?xml version="1.0"?>
 <project name="ejce" default="binary" basedir=".">
 
-    <property name="compile.target" value="1.5"/>
     <property name="build.dir" value="${basedir}/build"/>
     <property name="src.dir" value="${basedir}/src"/>
+	<property name="lib.dir" value="${basedir}/lib"/>
     <property name="jar.name" value="ejce.jar"/>
     <property name="jar.name.src" value="ejce-src.zip"/>
     <property name="meta_inf.dir" value="${basedir}/META-INF"/>
+
+	<path id="bin.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar"/>
+			<exclude name="test/*.jar"/>
+		</fileset>
+	</path>
+
+	<path id="test.classpath">
+		<pathelement location="${basedir}/bin" />
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
 
     <target name="clean">
         <delete dir="${build.dir}"/>
@@ -16,7 +30,7 @@
 	<target name="binary" depends="clean" description="Builds the binary release jar file">
 		<delete file="${basedir}/${jar.name}"/>
 		
-		<javac srcdir="${src.dir}" destdir="${build.dir}" classpath="lib/hibernate3.jar" debug="true" debuglevel="lines,vars,source" source="${compile.target}" target="${compile.target}" />
+		<javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="bin.classpath" debug="true" debuglevel="lines,vars,source" includeantruntime="false" />
 		
 		<jar destfile="${basedir}/${jar.name}"
 			update="false"
@@ -34,13 +48,6 @@
 		/>
 	</target>
 	
-	<path id="test.classpath">
-		<pathelement location="${basedir}/bin" />
-		<fileset dir="${basedir}/lib">
-			<include name="**/*.jar"/>
-		</fileset>
-	</path>
-	
 	<target name="test" description="Runs all tests">
 		<junit printsummary="yes" haltonfailure="yes">
 			<classpath refid="test.classpath" />
@@ -55,9 +62,9 @@
 	
     <target name="javadoc" description="Generate JavaDocs">
 		<delete dir="${basedir}/doc"/>
-        <javadoc access="public" author="true" classpath="lib/hibernate3.jar" destdir="${basedir}/doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" overview="src/overview.html" source="1.5" sourcepath="src" splitindex="true" use="true" version="true">
-            <link href="http://docs.jboss.org/hibernate/stable/core/api/"/>
-            <link href="http://download.oracle.com/javase/1.5.0/docs/api/"/>
+        <javadoc access="public" author="true" classpathref="bin.classpath" destdir="${basedir}/doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" overview="src/overview.html" sourcepath="src" splitindex="true" use="true" version="true">
+            <link href="http://docs.jboss.org/hibernate/orm/4.3/javadocs/"/>
+            <link href="https://docs.oracle.com/javase/7/docs/api/"/>
         </javadoc>
     </target>
 </project>

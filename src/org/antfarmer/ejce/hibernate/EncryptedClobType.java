@@ -17,12 +17,14 @@ package org.antfarmer.ejce.hibernate;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.SQLException;
 
-import org.antfarmer.ejce.util.StreamUtil;
 import org.hibernate.Hibernate;
+import org.hibernate.engine.spi.SessionImplementor;
 
 /**
  * Hibernate UserType class which encrypts and decrypts CLOB values transparently. This ensures
@@ -31,6 +33,8 @@ import org.hibernate.Hibernate;
  * @author Ameer Antar
  */
 public class EncryptedClobType extends AbstractLobType {
+
+	static final Charset CHARSET = Charset.forName("UTF-8");
 
 	/**
 	 * {@inheritDoc}
@@ -52,8 +56,16 @@ public class EncryptedClobType extends AbstractLobType {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected Object streamToLob(final InputStream is) throws IOException {
-		return Hibernate.createClob(new String(StreamUtil.streamToBytes(is)));
+	protected Object createLob(final InputStream is, final long length, final SessionImplementor session) throws IOException {
+ 		return Hibernate.getLobCreator(session).createClob(new InputStreamReader(is, CHARSET), length);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected Object createLob(final byte[] bytes, final SessionImplementor session) throws IOException {
+ 		return Hibernate.getLobCreator(session).createClob(new String(bytes, CHARSET));
 	}
 
 }

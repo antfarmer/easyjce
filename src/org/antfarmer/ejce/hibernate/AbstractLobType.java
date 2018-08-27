@@ -42,6 +42,7 @@ import org.antfarmer.ejce.stream.EncryptInputStream;
 import org.antfarmer.ejce.stream.GZIPCompressionStream;
 import org.antfarmer.ejce.util.ConfigurerUtil;
 import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SessionImplementor;
 
 /**
  * Abstract extension of <code>AbstractHibernateType</code> for LOB types that encrypts as well as compresses
@@ -58,7 +59,7 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 
 	private boolean useCompression;
 	private int streamBuffSize = 4 * 1024;
-	private int maxInMemoryBuffSize = 8 * 1024;
+	private int maxInMemoryBuffSize = 512 * 1024;
 	private Method jdbc4SetBinaryStreamMethod;
 	private AlgorithmParameters<?> parameters;
 
@@ -109,7 +110,7 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void nullSafeSet(final PreparedStatement st, final Object value, final int index)
+	public void nullSafeSet(final PreparedStatement st, final Object value, final int index, final SessionImplementor session)
 			throws HibernateException, SQLException {
 		if (value == null) {
 			st.setNull(index, sqlTypes()[0]);
@@ -131,14 +132,14 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object nullSafeGet(final ResultSet rs, final String[] names, final Object owner)
+	public Object nullSafeGet(final ResultSet rs, final String[] names, final SessionImplementor session, final Object owner)
 			throws HibernateException, SQLException {
 		final InputStream is = rs.getBinaryStream(names[0]);
 		try {
 			if (rs.wasNull()) {
 				return null;
 			}
-			return streamToLob(decryptStream(is));
+			return streamToLob(decryptStream(is), session);
 		}
 		catch (final GeneralSecurityException e) {
 			throw new HibernateException("Error decrypting object.", e);
@@ -249,6 +250,43 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 		}
 	}
 
+	protected Object streamToLob(final InputStream is, final SessionImplementor session) throws IOException {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream(streamBuffSize);
+		try {
+			int read;
+			int totalRead = 0;
+			final byte[] buff = new byte[streamBuffSize];
+			while ((read = is.read(buff)) > -1) {
+				baos.write(buff, 0, read);
+				totalRead += read;
+				if (totalRead >= maxInMemoryBuffSize) {
+					break;
+				}
+			}
+			if (totalRead < maxInMemoryBuffSize) {
+				return createLob(baos.toByteArray(), session);
+			}
+			else {
+				File file = createTempFile();
+				final FileOutputStream fos = new FileOutputStream(file);
+				try {
+					fos.write(baos.toByteArray());
+					while ((read = is.read(buff)) > -1) {
+						fos.write(buff, 0, read);
+					}
+				}
+				finally {
+					fos.close();
+				}
+				file = new File(file.getAbsolutePath());
+				return createLob(new BufferedInputStream(new FileInputStream(file)), file.length(), session);
+			}
+		}
+		finally {
+			is.close();
+		}
+	}
+
 	/**
 	 * Returns a newly created temp file. The file will be deleted on normal termination of the VM.
 	 * @return a newly created temp file
@@ -335,10 +373,21 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 	/**
 	 * Converts the <tt>InputStream</tt> to a LOB.
 	 * @param is the InputStream
+	 * @param length the stream length
+	 * @param session the {@link SessionImplementor}
 	 * @return the LOB
 	 * @throws IOException an error converting the stream to a LOB
 	 */
-	protected abstract Object streamToLob(InputStream is) throws IOException;
+	protected abstract Object createLob(InputStream is, long length, SessionImplementor session) throws IOException;
+
+	/**
+	 * Converts the <tt>InputStream</tt> to a LOB.
+	 * @param bytes the bytes
+	 * @param session the {@link SessionImplementor}
+	 * @return the LOB
+	 * @throws IOException an error converting the stream to a LOB
+	 */
+	protected abstract Object createLob(byte[] bytes, SessionImplementor session) throws IOException;
 
 	/**
 	 * {@inheritDoc}
@@ -361,6 +410,7 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public abstract Class<?> returnedClass();
 
 }

@@ -29,9 +29,10 @@ import org.antfarmer.ejce.ValueEncryptorInterface;
 import org.antfarmer.ejce.exception.EncryptorConfigurationException;
 import org.antfarmer.ejce.util.ConfigurerUtil;
 import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.internal.util.compare.EqualsHelper;
 import org.hibernate.usertype.ParameterizedType;
 import org.hibernate.usertype.UserType;
-import org.hibernate.util.EqualsHelper;
 
 /**
  * Abstract Hibernate UserType class which encrypts and decrypts values transparently. This ensures
@@ -70,6 +71,7 @@ public abstract class AbstractHibernateType implements UserType, ParameterizedTy
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object assemble(final Serializable cached, final Object owner) throws HibernateException {
 		if (cached == null) {
 			return null;
@@ -80,6 +82,7 @@ public abstract class AbstractHibernateType implements UserType, ParameterizedTy
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object deepCopy(final Object value) throws HibernateException {
 		return value;
 	}
@@ -87,6 +90,7 @@ public abstract class AbstractHibernateType implements UserType, ParameterizedTy
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Serializable disassemble(final Object value) throws HibernateException {
 		if (value == null) {
 			return null;
@@ -97,6 +101,7 @@ public abstract class AbstractHibernateType implements UserType, ParameterizedTy
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean equals(final Object x, final Object y) throws HibernateException {
 		return EqualsHelper.equals(x, y);
 	}
@@ -104,6 +109,7 @@ public abstract class AbstractHibernateType implements UserType, ParameterizedTy
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int hashCode(final Object x) throws HibernateException {
 		return x.hashCode();
 	}
@@ -111,6 +117,7 @@ public abstract class AbstractHibernateType implements UserType, ParameterizedTy
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isMutable() {
 		return false;
 	}
@@ -118,7 +125,7 @@ public abstract class AbstractHibernateType implements UserType, ParameterizedTy
 	/**
 	 * {@inheritDoc}
 	 */
-	public Object nullSafeGet(final ResultSet rs, final String[] names, final Object owner)
+	public Object nullSafeGet(final ResultSet rs, final String[] names, final SessionImplementor session, final Object owner)
 			throws HibernateException, SQLException {
 		final String text = rs.getString(names[0]);
 		try {
@@ -132,7 +139,7 @@ public abstract class AbstractHibernateType implements UserType, ParameterizedTy
 	/**
 	 * {@inheritDoc}
 	 */
-	public void nullSafeSet(final PreparedStatement st, final Object value, final int index)
+	public void nullSafeSet(final PreparedStatement st, final Object value, final int index, final SessionImplementor session)
 			throws HibernateException, SQLException {
 		if (value == null) {
 			st.setNull(index, Types.VARCHAR);
@@ -150,6 +157,7 @@ public abstract class AbstractHibernateType implements UserType, ParameterizedTy
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object replace(final Object original, final Object target, final Object owner) throws HibernateException {
 		return original;
 	}
@@ -157,6 +165,7 @@ public abstract class AbstractHibernateType implements UserType, ParameterizedTy
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int[] sqlTypes() {
 		return sqlTypes;
 	}
@@ -164,6 +173,7 @@ public abstract class AbstractHibernateType implements UserType, ParameterizedTy
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setParameterValues(final Properties parameters) {
 		lock.lock();
 		try {

@@ -21,6 +21,7 @@ import java.sql.Blob;
 import java.sql.SQLException;
 
 import org.hibernate.Hibernate;
+import org.hibernate.engine.spi.SessionImplementor;
 
 /**
  * Hibernate UserType class which encrypts and decrypts BLOB values transparently. This ensures
@@ -50,8 +51,16 @@ public class EncryptedBlobType extends AbstractLobType {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected Object streamToLob(final InputStream is) throws IOException {
-		return Hibernate.createBlob(is);
+	protected Object createLob(final InputStream is, final long length, final SessionImplementor session) throws IOException {
+ 		return Hibernate.getLobCreator(session).createBlob(is, length);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected Object createLob(final byte[] bytes, final SessionImplementor session) throws IOException {
+ 		return Hibernate.getLobCreator(session).createBlob(bytes);
 	}
 
 }

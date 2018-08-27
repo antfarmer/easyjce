@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.sql.SQLException;
 
 import org.antfarmer.ejce.util.StreamUtil;
+import org.hibernate.engine.spi.SessionImplementor;
 
 /**
  * Hibernate UserType class which encrypts and decrypts arbitrarily large text values transparently.
@@ -50,8 +51,16 @@ public class EncryptedTextType extends EncryptedClobType {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected Object streamToLob(final InputStream is) throws IOException {
-		return new String(StreamUtil.streamToBytes(is));
+	protected Object createLob(final InputStream is, final long length, final SessionImplementor session) throws IOException {
+ 		return new String(StreamUtil.streamToBytes(is), CHARSET);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected Object createLob(final byte[] bytes, final SessionImplementor session) throws IOException {
+ 		return new String(bytes, CHARSET);
 	}
 
 }
