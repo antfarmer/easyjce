@@ -15,6 +15,7 @@
  */
 package org.antfarmer.ejce.util;
 
+import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.Provider;
 import java.util.Properties;
@@ -56,6 +57,11 @@ public final class ConfigurerUtil {
 	 * Property key for the full class name of the {@link TextEncoder} to be used with the {@link Encryptor}.
 	 */
 	public static final String KEY_ENCODER_CLASS = "encoder";
+
+	/**
+	 * Property key for the full class name of the {@link TextEncoder} to be used with the {@link Encryptor}.
+	 */
+	public static final String KEY_CHARSET = "charset";
 
 	/**
 	 * Property key for the full class name of the algorithm parameter class to be used to configure the
@@ -239,8 +245,20 @@ public final class ConfigurerUtil {
 			throw new EncryptorConfigurationException("Error instantiating: " + property, e);
 		}
 
+		// load charset for encryptor
+		Charset charset = null;
+		property = properties.getProperty(getPropertyName(prefix, KEY_CHARSET));
+		if (property != null) {
+			try {
+				charset = Charset.forName(property.trim());
+			}
+			catch (final Exception e) {
+				throw new EncryptorConfigurationException("Error loading charset: " + property, e);
+			}
+		}
+
 		// prepare encryptor using mapping file parameters
-		encryptor = new Encryptor(encoder);
+		encryptor = new Encryptor(encoder, charset);
 		return encryptor.setAlgorithmParameters(loadAlgorithmParameters(properties, prefix));
 	}
 

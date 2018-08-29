@@ -1,5 +1,5 @@
 /*
- * Copyright 2006 Ameer Antar.
+ * Copyright 2018 Ameer Antar.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +17,37 @@ package org.antfarmer.ejce.test.hibernate;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
+import java.util.Random;
 
-import org.antfarmer.ejce.hibernate.EncryptedCharacterType;
+import org.antfarmer.ejce.hibernate.EncryptedClobType;
 import org.antfarmer.ejce.test.hibernate.util.TypeUtil;
+import org.antfarmer.ejce.util.StreamUtil;
 import org.junit.Before;
 import org.junit.Test;
-
 
 /**
  *
  * @author Ameer Antar
  * @version 1.0
  */
-public class EncryptedCharacterTypeTest extends EncryptedCharacterType {
+public class EncryptedClobTypeTest extends EncryptedClobType {
 
-	private static final Character TEST_VALUE = 'J';
+	private static final Charset CHARSET = Charset.forName("UTF-8");
+	private static String TEST_VALUE;
+	private static final Random random = new Random();
+
+	// TODO test lobToStream, createLob, functionally
+
+	static {
+		final byte[] content = new byte[1000];
+		random.nextBytes(content);
+		TEST_VALUE = new String(content, CHARSET);
+	}
 
 	/**
 	 * @throws GeneralSecurityException
@@ -41,35 +55,18 @@ public class EncryptedCharacterTypeTest extends EncryptedCharacterType {
 	 */
 	@Before
 	public void init() throws GeneralSecurityException {
-		setParameterValues(TypeUtil.prepareTestEncryptor());
+		setParameterValues(TypeUtil.prepareTestEncryptorParameters(CHARSET));
 	}
 
 	/**
 	 * @throws GeneralSecurityException
 	 */
 	@Test
-	public void test() throws GeneralSecurityException {
-		final Character o = '@';
-		final String enc = encrypt(o);
-		final Object dec = decrypt(enc);
-		assertEquals(o, dec);
-	}
+	public void test() throws GeneralSecurityException, IOException {
 
-	/**
-	 *
-	 */
-	@Test
-	public void testUnicode() throws GeneralSecurityException {
-		final Character o = "\u0645".charAt(0);
-
-		// can run with '-Dfile.encoding=ISO-8859-1'
-		System.out.println(Charset.defaultCharset());
-		System.out.println(o);
-
-		final String enc = encrypt(o);
-		final Object dec = decrypt(enc);
-		System.out.println(dec);
-		assertEquals(o, dec);
+		final InputStream enc = encryptStream(new ByteArrayInputStream(TEST_VALUE.getBytes(CHARSET)));
+		final InputStream dec = decryptStream(enc);
+		assertEquals(TEST_VALUE, new String(StreamUtil.streamToBytes(dec), CHARSET));
 	}
 
 	/**
@@ -103,8 +100,8 @@ public class EncryptedCharacterTypeTest extends EncryptedCharacterType {
 		public void run() {
 			try {
 				for (int i=0; i<50; i++) {
-					final String enc = encrypt(TEST_VALUE);
-					assertEquals(TEST_VALUE, decrypt(enc));
+					final InputStream enc = encryptStream(new ByteArrayInputStream(TEST_VALUE.getBytes(CHARSET)));
+					assertEquals(TEST_VALUE, new String(StreamUtil.streamToBytes(decryptStream(enc)), CHARSET));
 				}
 			}
 			catch (final Exception e) {

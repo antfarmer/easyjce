@@ -15,6 +15,8 @@
  */
 package org.antfarmer.ejce;
 
+import java.nio.charset.Charset;
+
 import org.antfarmer.ejce.encoder.TextEncoder;
 
 /**
@@ -62,7 +64,7 @@ public class Encryptor extends AbstractValueEncryptor<Encryptor> {
 
 	/**
 	 * Initializes the Encryptor with a {@link org.antfarmer.ejce.encoder.HexEncoder} used for
-	 * encoding/decoding byte arrays.
+	 * encoding/decoding byte arrays. Uses the default {@link Charset} for UTF-8.
 	 */
 	public Encryptor() {
 		super();
@@ -70,13 +72,25 @@ public class Encryptor extends AbstractValueEncryptor<Encryptor> {
 
 	/**
 	 * Initializes the Encryptor with the given {@link org.antfarmer.ejce.encoder.TextEncoder} used
-	 * for encoding/decoding byte arrays.
+	 * for encoding/decoding byte arrays. Uses the default {@link Charset} for UTF-8.
 	 *
 	 * @param textEncoder the {@link org.antfarmer.ejce.encoder.TextEncoder} used for
 	 *        encoding/decoding byte arrays
 	 */
 	public Encryptor(final TextEncoder textEncoder) {
 		super(textEncoder);
+	}
+
+	/**
+	 * Initializes the Encryptor with the given {@link org.antfarmer.ejce.encoder.TextEncoder} and
+	 * {@link Charset} used for encoding/decoding byte arrays.
+	 *
+	 * @param textEncoder the {@link org.antfarmer.ejce.encoder.TextEncoder} used for
+	 *        encoding/decoding byte arrays
+	 * @param charset the {@link Charset} used used for encoding/decoding byte arrays
+	 */
+	public Encryptor(final TextEncoder textEncoder, final Charset charset) {
+		super(textEncoder, charset);
 	}
 
 }

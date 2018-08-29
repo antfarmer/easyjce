@@ -18,6 +18,7 @@ package org.antfarmer.ejce.test.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
+import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.util.Properties;
 
@@ -94,6 +95,7 @@ public class ConfigurerUtilTest {
 
 		assertEquals(HexEncoder.class, ReflectionUtil.getFieldValue(encryptor, "textEncoder").getClass());
 		assertEquals(Base32Encoder.class, ReflectionUtil.getFieldValue(parameters, "textEncoder").getClass());
+		assertEquals(Charset.forName("UTF-8"), encryptor.getCharset());
 		assertEquals(key, Base32Encoder.getInstance().encode(parameters.getKey().getEncoded()));
 		assertEquals(PbeParameters.ALGORITHM_PBE_MD5_DES, parameters.getAlgorithm());
 		assertEquals(sun.security.provider.Sun.class, parameters.getProvider().getClass());
@@ -113,12 +115,14 @@ public class ConfigurerUtilTest {
 	@Test
 	public void testSetParameterValues2() throws Exception {
 
+		final Charset cs = Charset.forName("US-ASCII");
 		final String key = Base32Encoder.getInstance().encode("BINGBINGA".getBytes());
 		final String macKey = Base32Encoder.getInstance().encode("BEEOWANOWEEWEE".getBytes());
 		final String providerName = "SunJCE";
 		final String blockSize = "16";
 		final Properties properties = new Properties();
 		properties.put(ConfigurerUtil.KEY_ENCODER_CLASS, Base64UrlEncoder.class.getName());
+		properties.put(ConfigurerUtil.KEY_CHARSET, cs.name());
 		properties.put(ConfigurerUtil.KEY_PARAM_CLASS, BlowfishParameters.class.getName());
 		properties.put(ConfigurerUtil.KEY_PARAM_ENCODER_CLASS, Base32Encoder.class.getName());
 		properties.put(ConfigurerUtil.KEY_CIPHER_KEY, key);
@@ -134,6 +138,7 @@ public class ConfigurerUtilTest {
 
 		assertEquals(Base64UrlEncoder.class, ReflectionUtil.getFieldValue(encryptor, "textEncoder").getClass());
 		assertEquals(Base32Encoder.class, ReflectionUtil.getFieldValue(parameters, "textEncoder").getClass());
+		assertEquals(cs, encryptor.getCharset());
 		assertEquals(key, Base32Encoder.getInstance().encode(parameters.getKey().getEncoded()));
 		assertEquals(providerName, parameters.getProviderName());
 		assertEquals(BlowfishParameters.MAC_ALGORITHM_HMAC_SHA1, parameters.getMacAlgorithm());
@@ -171,6 +176,7 @@ public class ConfigurerUtilTest {
 	 */
 	@Test
 	public void testSetParameterValuesViaSysProps() throws Exception {
+		final Charset cs = Charset.forName("UTF-16");
 		final String key = Base32Encoder.getInstance().encode("SMOKESOMEOFMYTIE".getBytes());
 		final String macKey = Base32Encoder.getInstance().encode("SMOKEAJAYINTHEGOODOLUSA".getBytes());
 		final String saltSize = "6";
@@ -178,6 +184,7 @@ public class ConfigurerUtilTest {
 		final String propPrefix = "ejce.encryptor1";
 		final VolatileProperties properties = new VolatileProperties(System.getProperties());
 		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_ENCODER_CLASS), HexEncoder.class.getName());
+		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_CHARSET), cs.name());
 		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_PARAM_CLASS), PbeParameters.class.getName());
 		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_PARAM_ENCODER_CLASS), Base32Encoder.class.getName());
 		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_CIPHER_KEY), key);
@@ -195,6 +202,7 @@ public class ConfigurerUtilTest {
 
 		assertEquals(HexEncoder.class, ReflectionUtil.getFieldValue(encryptor, "textEncoder").getClass());
 		assertEquals(Base32Encoder.class, ReflectionUtil.getFieldValue(parameters, "textEncoder").getClass());
+		assertEquals(cs, encryptor.getCharset());
 		assertEquals(key, Base32Encoder.getInstance().encode(parameters.getKey().getEncoded()));
 		assertEquals(PbeParameters.ALGORITHM_PBE_MD5_DES, parameters.getAlgorithm());
 		assertEquals(sun.security.provider.Sun.class, parameters.getProvider().getClass());
@@ -214,6 +222,7 @@ public class ConfigurerUtilTest {
 	@Test
 	public void testSetParameterValues2ViaSysProps() throws Exception {
 
+		final Charset cs = Charset.forName("ISO-8859-1");
 		final String key = Base32Encoder.getInstance().encode("BINGBINGA".getBytes());
 		final String macKey = Base32Encoder.getInstance().encode("BEEOWANOWEEWEE".getBytes());
 		final String providerName = "SunJCE";
@@ -221,6 +230,7 @@ public class ConfigurerUtilTest {
 		final String propPrefix = "ejce.encryptor1";
 		final VolatileProperties properties = new VolatileProperties(System.getProperties());
 		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_ENCODER_CLASS), Base64UrlEncoder.class.getName());
+		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_CHARSET), cs.name());
 		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_PARAM_CLASS), BlowfishParameters.class.getName());
 		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_PARAM_ENCODER_CLASS), Base32Encoder.class.getName());
 		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_CIPHER_KEY), key);
@@ -236,6 +246,7 @@ public class ConfigurerUtilTest {
 
 		assertEquals(Base64UrlEncoder.class, ReflectionUtil.getFieldValue(encryptor, "textEncoder").getClass());
 		assertEquals(Base32Encoder.class, ReflectionUtil.getFieldValue(parameters, "textEncoder").getClass());
+		assertEquals(cs, encryptor.getCharset());
 		assertEquals(key, Base32Encoder.getInstance().encode(parameters.getKey().getEncoded()));
 		assertEquals(providerName, parameters.getProviderName());
 		assertEquals(BlowfishParameters.MAC_ALGORITHM_HMAC_SHA1, parameters.getMacAlgorithm());
@@ -267,6 +278,7 @@ public class ConfigurerUtilTest {
 		/**
 		 * {@inheritDoc}
 		 */
+		@Override
 		public void generateSalt(final byte[] saltData) {
 			// nothing
 		}
@@ -276,6 +288,7 @@ public class ConfigurerUtilTest {
 		/**
 		 * {@inheritDoc}
 		 */
+		@Override
 		public void verifySaltMatch(final byte[] cipherSalt) throws GeneralSecurityException {
 			// nothing
 		}

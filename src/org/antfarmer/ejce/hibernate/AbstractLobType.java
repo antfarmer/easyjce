@@ -76,6 +76,8 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 	protected void configure(final Properties parameters) {
 		String value;
 
+		setCharset(parameters);
+
 		// check if compression is enabled
 		value = parameters.getProperty(ConfigurerUtil.KEY_COMPRESS_LOB);
 		if (value != null) {
@@ -99,6 +101,8 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 		}
 
 		// check if JDBC4 is available
+		// TODO allow use of streaming w or w/o length using parameter
+		// java6+ has jdbc4
 		jdbc4SetBinaryStreamMethod = getJdbc4SetBinaryStreamMethod();
 
 		this.parameters = ConfigurerUtil.loadAlgorithmParameters(parameters, null);
@@ -155,6 +159,7 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 	 * @throws IOException
 	 */
 	protected InputStream encryptStream(final InputStream is) throws GeneralSecurityException, IOException {
+		// TODO need to cache cipher
 		final Cipher cipher = ConfigurerUtil.getCipherInstance(parameters);
 		final byte[] paramData = parameters.generateParameterSpecData();
 		final AlgorithmParameterSpec paramSpec = parameters.createParameterSpec(paramData);
@@ -171,6 +176,7 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 	 * @throws IOException
 	 */
 	protected InputStream decryptStream(final InputStream is) throws GeneralSecurityException, IOException {
+		// TODO need to cache cipher
 		final Cipher cipher = ConfigurerUtil.getCipherInstance(parameters);
 		final int paramSize = parameters.getParameterSpecSize();
 		AlgorithmParameterSpec algorithmSpec = null;
@@ -410,5 +416,29 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 	 */
 	@Override
 	public abstract Class<?> returnedClass();
+
+	/**
+	 * Returns the useCompression.
+	 * @return the useCompression
+	 */
+	protected boolean isUseCompression() {
+		return useCompression;
+	}
+
+	/**
+	 * Returns the streamBuffSize.
+	 * @return the streamBuffSize
+	 */
+	protected int getStreamBuffSize() {
+		return streamBuffSize;
+	}
+
+	/**
+	 * Returns the maxInMemoryBuffSize.
+	 * @return the maxInMemoryBuffSize
+	 */
+	protected int getMaxInMemoryBuffSize() {
+		return maxInMemoryBuffSize;
+	}
 
 }

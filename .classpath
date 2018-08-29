@@ -5,6 +5,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/hibernate-core-4.3.11.Final.jar" sourcepath="lib/src/hibernate-release-4.3.11-src.zip"/>
 	<classpathentry kind="lib" path="lib/test/junit-4.4.jar"/>
+	<classpathentry kind="lib" path="lib/test/easymock-3.6.jar"/>
 	<classpathentry kind="lib" path="lib/bcprov-jdk15on-160.jar" sourcepath="lib/src/bcprov-jdk15on-160.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

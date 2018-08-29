@@ -15,6 +15,7 @@
  */
 package org.antfarmer.ejce.parameter;
 
+import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.Provider;
@@ -79,6 +80,8 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	public static final String MAC_ALGORITHM_HMAC_SHA1 = "HmacSHA1";
 
 	static final SecureRandom random = new SecureRandom();
+
+	private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
 	private TextEncoder textEncoder;
 
@@ -219,7 +222,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	@SuppressWarnings("unchecked")
 	protected T setEncryptionKey(final String encryptionKey) {
 		if (textEncoder == null) {
-			this.encryptionRawKey = encryptionKey.getBytes();
+			this.encryptionRawKey = encryptionKey.getBytes(DEFAULT_CHARSET);
 			return (T) this;
 		}
 		this.encryptionRawKey = textEncoder.decode(encryptionKey);
@@ -296,7 +299,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	@SuppressWarnings("unchecked")
 	protected T setDecryptionKey(final String decryptionKey) {
 		if (textEncoder == null) {
-			this.decryptionRawKey = decryptionKey.getBytes();
+			this.decryptionRawKey = decryptionKey.getBytes(DEFAULT_CHARSET);
 			return (T) this;
 		}
 		this.decryptionRawKey = textEncoder.decode(decryptionKey);
@@ -434,7 +437,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	@SuppressWarnings("unchecked")
 	public T setMacKey(final String macKey) {
 		if (textEncoder == null) {
-			this.rawMacKey = macKey.getBytes();
+			this.rawMacKey = macKey.getBytes(DEFAULT_CHARSET);
 			return (T) this;
 		}
 		this.rawMacKey = textEncoder.decode(macKey);

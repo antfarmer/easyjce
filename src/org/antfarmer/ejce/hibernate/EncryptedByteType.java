@@ -30,6 +30,7 @@ public class EncryptedByteType extends AbstractHibernateType {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Class<?> returnedClass() {
 		return Byte.class;
 	}
@@ -39,7 +40,7 @@ public class EncryptedByteType extends AbstractHibernateType {
 	 */
 	@Override
 	protected Object decrypt(final String value) throws GeneralSecurityException {
-		return getEncryptor().decrypt(value).getBytes()[0];
+		return getEncryptor().decrypt(value).getBytes(getCharset())[0];
 	}
 
 	/**
@@ -47,7 +48,7 @@ public class EncryptedByteType extends AbstractHibernateType {
 	 */
 	@Override
 	protected String encrypt(final Object value) throws GeneralSecurityException {
-		return getEncryptor().encrypt(new String(new byte[] { (Byte) value }));
+		return getEncryptor().encrypt(new String(new byte[] { (Byte) value }, getCharset()));
 	}
 
 }

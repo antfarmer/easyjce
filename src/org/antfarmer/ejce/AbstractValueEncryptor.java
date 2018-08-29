@@ -21,6 +21,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 
@@ -38,29 +39,46 @@ import org.antfarmer.ejce.util.ByteUtil;
 public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>>
 		extends AbstractEncryptor<T> implements ValueEncryptorInterface<T> {
 
+	private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+
 	private final TextEncoder textEncoder;
+
+	private final Charset charset;
 
 	/**
 	 * Initializes the AbstractValueEncryptor with a {@link HexEncoder} used for encoding/decoding byte
-	 * arrays.
+	 * arrays, and a default charset of UTF-8.
 	 */
 	public AbstractValueEncryptor() {
-		this.textEncoder = HexEncoder.getInstance();
+		this(null, null);
 	}
 
 	/**
 	 * Initializes the AbstractValueEncryptor with the given {@link TextEncoder} used for
-	 * encoding/decoding byte arrays.
+	 * encoding/decoding byte arrays, and a default charset of UTF-8.
 	 *
 	 * @param textEncoder the {@link TextEncoder} used for encoding/decoding byte arrays
 	 */
 	public AbstractValueEncryptor(final TextEncoder textEncoder) {
-		this.textEncoder = textEncoder;
+		this(textEncoder, null);
+	}
+
+	/**
+	 * Initializes the AbstractValueEncryptor with the given {@link TextEncoder} and
+	 * {@link Charset} used for encoding/decoding byte arrays.
+	 *
+	 * @param textEncoder the {@link TextEncoder} used for encoding/decoding byte arrays
+	 * @param charset {@link Charset} to be used during encryption/decryption
+	 */
+	public AbstractValueEncryptor(final TextEncoder textEncoder, final Charset charset) {
+		this.textEncoder = textEncoder == null ? HexEncoder.getInstance() : textEncoder;
+		this.charset = charset == null ? DEFAULT_CHARSET : charset;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String encrypt(final String text) throws GeneralSecurityException {
 		return encrypt(text, null);
 	}
@@ -68,6 +86,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String decrypt(final String text) throws GeneralSecurityException {
 		return decrypt(text, null);
 	}
@@ -75,6 +94,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String encryptAndEncode(final byte[] bytes) throws GeneralSecurityException {
 		return encryptAndEncode(bytes, null);
 	}
@@ -82,6 +102,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public byte[] decryptAndDecode(final String text) throws GeneralSecurityException {
 		return decryptAndDecode(text, null);
 	}
@@ -89,6 +110,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String encryptCharacter(final Character number)
 			throws GeneralSecurityException {
 		return encryptCharacter(number, null);
@@ -97,6 +119,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Character decryptCharacter(final String text)
 			throws GeneralSecurityException {
 		return decryptCharacter(text, null);
@@ -105,6 +128,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String encryptLong(final Long number) throws GeneralSecurityException {
 		return encryptLong(number, null);
 	}
@@ -112,6 +136,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Long decryptLong(final String text) throws GeneralSecurityException {
 		return decryptLong(text, null);
 	}
@@ -119,6 +144,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String encryptInteger(final Integer number)
 			throws GeneralSecurityException {
 		return encryptInteger(number, null);
@@ -127,6 +153,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Integer decryptInteger(final String text) throws GeneralSecurityException {
 		return decryptInteger(text, null);
 	}
@@ -134,6 +161,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String encryptShort(final Short number) throws GeneralSecurityException {
 		return encryptShort(number, null);
 	}
@@ -141,6 +169,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Short decryptShort(final String text) throws GeneralSecurityException {
 		return decryptShort(text, null);
 	}
@@ -148,6 +177,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String encryptBoolean(final Boolean value)
 			throws GeneralSecurityException {
 		return encryptBoolean(value, null);
@@ -156,6 +186,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Boolean decryptBoolean(final String text) throws GeneralSecurityException {
 		return decryptBoolean(text, null);
 	}
@@ -163,6 +194,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String encryptDouble(final Double number) throws GeneralSecurityException {
 		return encryptDouble(number, null);
 	}
@@ -170,6 +202,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Double decryptDouble(final String text) throws GeneralSecurityException {
 		return decryptDouble(text, null);
 	}
@@ -177,6 +210,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String encryptFloat(final Float number) throws GeneralSecurityException {
 		return encryptFloat(number, null);
 	}
@@ -184,6 +218,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Float decryptFloat(final String text) throws GeneralSecurityException {
 		return decryptFloat(text, null);
 	}
@@ -191,6 +226,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String encryptObject(final Object object)
 			throws GeneralSecurityException, IOException {
 		return encryptObject(object, null);
@@ -199,6 +235,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object decryptObject(final String text)
 			throws GeneralSecurityException, IOException, ClassNotFoundException {
 		return decryptObject(text, null);
@@ -209,26 +246,29 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String encrypt(final String text, final Key key) throws GeneralSecurityException {
 		if (text == null) {
 			return null;
 		}
-		return textEncoder.encode(encrypt(text.getBytes(), key));
+		return textEncoder.encode(encrypt(text.getBytes(charset), key));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String decrypt(final String text, final Key key) throws GeneralSecurityException {
 		if (text == null) {
 			return null;
 		}
-		return new String(decrypt(textEncoder.decode(text), key));
+		return new String(decrypt(textEncoder.decode(text), key), charset);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String encryptAndEncode(final byte[] bytes, final Key key) throws GeneralSecurityException {
 		if (bytes == null) {
 			return null;
@@ -239,6 +279,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public byte[] decryptAndDecode(final String text, final Key key) throws GeneralSecurityException {
 		if (text == null) {
 			return null;
@@ -249,28 +290,31 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String encryptCharacter(final Character number, final Key key)
 			throws GeneralSecurityException {
 		if (number == null) {
 			return null;
 		}
-		return textEncoder.encode(encrypt(String.valueOf(number).getBytes(), key));
+		return textEncoder.encode(encrypt(String.valueOf(number).getBytes(charset), key));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Character decryptCharacter(final String text, final Key key)
 			throws GeneralSecurityException {
 		if (text == null) {
 			return null;
 		}
-		return new String(decrypt(textEncoder.decode(text), key)).charAt(0);
+		return new String(decrypt(textEncoder.decode(text), key), charset).charAt(0);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String encryptLong(final Long number, final Key key) throws GeneralSecurityException {
 		if (number == null) {
 			return null;
@@ -281,6 +325,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Long decryptLong(final String text, final Key key) throws GeneralSecurityException {
 		if (text == null) {
 			return null;
@@ -291,6 +336,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String encryptInteger(final Integer number, final Key key)
 			throws GeneralSecurityException {
 		if (number == null) {
@@ -302,6 +348,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Integer decryptInteger(final String text, final Key key) throws GeneralSecurityException {
 		if (text == null) {
 			return null;
@@ -312,6 +359,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String encryptShort(final Short number, final Key key) throws GeneralSecurityException {
 		if (number == null) {
 			return null;
@@ -322,6 +370,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Short decryptShort(final String text, final Key key) throws GeneralSecurityException {
 		if (text == null) {
 			return null;
@@ -332,6 +381,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String encryptBoolean(final Boolean value, final Key key)
 			throws GeneralSecurityException {
 		if (value == null) {
@@ -343,6 +393,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Boolean decryptBoolean(final String text, final Key key) throws GeneralSecurityException {
 		if (text == null) {
 			return null;
@@ -353,6 +404,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String encryptDouble(final Double number, final Key key) throws GeneralSecurityException {
 		if (number == null) {
 			return null;
@@ -363,6 +415,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Double decryptDouble(final String text, final Key key) throws GeneralSecurityException {
 		if (text == null) {
 			return null;
@@ -373,6 +426,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String encryptFloat(final Float number, final Key key) throws GeneralSecurityException {
 		if (number == null) {
 			return null;
@@ -383,6 +437,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Float decryptFloat(final String text, final Key key) throws GeneralSecurityException {
 		if (text == null) {
 			return null;
@@ -393,6 +448,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String encryptObject(final Object object, final Key key)
 			throws GeneralSecurityException, IOException {
 		if (object == null) {
@@ -416,6 +472,7 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object decryptObject(final String text, final Key key)
 			throws GeneralSecurityException, IOException, ClassNotFoundException {
 		if (text == null) {
@@ -448,6 +505,15 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 				// ignore
 			}
 		}
+	}
+
+	/**
+	 * Returns the charset.
+	 * @return the charset
+	 */
+	@Override
+	public Charset getCharset() {
+		return charset;
 	}
 
 }

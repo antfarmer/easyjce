@@ -17,6 +17,7 @@ package org.antfarmer.ejce.test.hibernate;
 
 import static org.junit.Assert.assertEquals;
 
+import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 
 import org.antfarmer.ejce.hibernate.EncryptedStringType;
@@ -34,13 +35,15 @@ public class EncryptedStringTypeTest extends EncryptedStringType {
 
 	private static final String TEST_VALUE = "BingGingGingGing";
 
+	private static final Charset CHARSET = Charset.forName("UTF-16");
+
 	/**
 	 * @throws GeneralSecurityException
 	 *
 	 */
 	@Before
 	public void init() throws GeneralSecurityException {
-		setParameterValues(TypeUtil.prepareTestEncryptor());
+		setParameterValues(TypeUtil.prepareTestEncryptor(CHARSET));
 	}
 
 	/**
@@ -51,6 +54,23 @@ public class EncryptedStringTypeTest extends EncryptedStringType {
 		final String o = "seCRet";
 		final String enc = encrypt(o);
 		final Object dec = decrypt(enc);
+		assertEquals(o, dec);
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testUnicode() throws GeneralSecurityException {
+		final String o = "\u0627\u0645\u064a\u0631";
+
+		// can run with '-Dfile.encoding=ISO-8859-1'
+		System.out.println(Charset.defaultCharset());
+		System.out.println(o);
+
+		final String enc = encrypt(o);
+		final Object dec = decrypt(enc);
+		System.out.println(dec);
 		assertEquals(o, dec);
 	}
 

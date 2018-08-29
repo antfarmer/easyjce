@@ -44,7 +44,7 @@ public class EncryptedTextType extends EncryptedClobType {
 	 */
 	@Override
 	protected InputStream lobToStream(final Object value) throws SQLException {
-		return value instanceof String ? new ByteArrayInputStream(((String) value).getBytes()) : super.lobToStream(value);
+		return value instanceof String ? new ByteArrayInputStream(((String) value).getBytes(getCharset())) : super.lobToStream(value);
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class EncryptedTextType extends EncryptedClobType {
 	 */
 	@Override
 	protected Object createLob(final InputStream is, final long length, final SessionImplementor session) throws IOException {
- 		return new String(StreamUtil.streamToBytes(is), CHARSET);
+ 		return new String(StreamUtil.streamToBytes(is), getCharset());
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class EncryptedTextType extends EncryptedClobType {
 	 */
 	@Override
 	protected Object createLob(final byte[] bytes, final SessionImplementor session) throws IOException {
- 		return new String(bytes, CHARSET);
+ 		return new String(bytes, getCharset());
 	}
 
 }

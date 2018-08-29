@@ -15,6 +15,7 @@
  */
 package org.antfarmer.ejce.util;
 
+import java.nio.charset.Charset;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -43,6 +44,8 @@ import org.antfarmer.ejce.encoder.TextEncoder;
  * @version 1.1
  */
 public final class CryptoUtil {
+
+	private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
 	private CryptoUtil() {
 		// static methods only
@@ -222,7 +225,7 @@ public final class CryptoUtil {
 	public static SecretKey getSecretKeyFromTextKey(final String textKey, final String algorithm,
 			final TextEncoder textEncoder) {
 		if (textEncoder == null) {
-			return getSecretKeyFromRawKey(textKey.getBytes(), algorithm);
+			return getSecretKeyFromRawKey(textKey.getBytes(DEFAULT_CHARSET), algorithm);
 		}
 		return getSecretKeyFromRawKey(textEncoder.decode(textKey), algorithm);
 	}
@@ -295,7 +298,7 @@ public final class CryptoUtil {
      * @throws NoSuchAlgorithmException NoSuchAlgorithmException
      */
     public static String hashString(final String text, final String algorithm, final TextEncoder encoder) throws NoSuchAlgorithmException {
-		return encoder.encode(hashBytes(text.getBytes(), algorithm));
+		return encoder.encode(hashBytes(text.getBytes(DEFAULT_CHARSET), algorithm));
     }
 
     /**

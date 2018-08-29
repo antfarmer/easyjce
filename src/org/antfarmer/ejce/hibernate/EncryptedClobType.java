@@ -18,7 +18,6 @@ package org.antfarmer.ejce.hibernate;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.SQLException;
@@ -33,8 +32,6 @@ import org.hibernate.engine.spi.SessionImplementor;
  * @author Ameer Antar
  */
 public class EncryptedClobType extends AbstractLobType {
-
-	static final Charset CHARSET = Charset.forName("UTF-8");
 
 	/**
 	 * {@inheritDoc}
@@ -57,7 +54,7 @@ public class EncryptedClobType extends AbstractLobType {
 	 */
 	@Override
 	protected Object createLob(final InputStream is, final long length, final SessionImplementor session) throws IOException {
- 		return Hibernate.getLobCreator(session).createClob(new InputStreamReader(is, CHARSET), length);
+ 		return Hibernate.getLobCreator(session).createClob(new InputStreamReader(is, getCharset()), length);
 	}
 
 	/**
@@ -65,7 +62,7 @@ public class EncryptedClobType extends AbstractLobType {
 	 */
 	@Override
 	protected Object createLob(final byte[] bytes, final SessionImplementor session) throws IOException {
- 		return Hibernate.getLobCreator(session).createClob(new String(bytes, CHARSET));
+ 		return Hibernate.getLobCreator(session).createClob(new String(bytes, getCharset()));
 	}
 
 }

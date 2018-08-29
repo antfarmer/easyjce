@@ -15,6 +15,7 @@
  */
 package org.antfarmer.ejce;
 
+import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 
@@ -96,4 +97,10 @@ public interface EncryptorInterface<T extends EncryptorInterface<T>> {
 	 * @return true if the encryptor has been initialized, false otherwise
 	 */
 	boolean isInitialized();
+
+	/**
+	 * Returns the charset used by the encryptor.
+	 * @return the charset used by the encryptor
+	 */
+	Charset getCharset();
 }

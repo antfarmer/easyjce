@@ -16,6 +16,7 @@
 package org.antfarmer.ejce.hibernate;
 
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.sql.PreparedStatement;
@@ -45,9 +46,13 @@ import org.hibernate.usertype.UserType;
  */
 public abstract class AbstractHibernateType implements UserType, ParameterizedType {
 
+	private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+
 	private static final int[] sqlTypes = new int[] {Types.VARCHAR};
 
 	private ValueEncryptorInterface<Encryptor> encryptor;
+
+	private Charset charset;
 
 	static final SecureRandom random = new SecureRandom();
 
@@ -196,6 +201,18 @@ public abstract class AbstractHibernateType implements UserType, ParameterizedTy
 	 */
 	protected void configure(final Properties parameters) {
 		encryptor = ConfigurerUtil.configureEncryptor(parameters);
+		setCharset(parameters);
+	}
+
+	protected void setCharset(final Properties parameters) {
+		// load charset
+		final String value = parameters.getProperty(ConfigurerUtil.KEY_CHARSET);
+		if (value != null) {
+			charset = Charset.forName(value.trim());
+		}
+		else {
+			charset = DEFAULT_CHARSET;
+		}
 	}
 
 	private void initializeIfNot() {
@@ -216,6 +233,14 @@ public abstract class AbstractHibernateType implements UserType, ParameterizedTy
 	 */
 	protected ValueEncryptorInterface<Encryptor> getEncryptor() {
 		return encryptor;
+	}
+
+	/**
+	 * Returns the charset.
+	 * @return the charset
+	 */
+	protected Charset getCharset() {
+		return charset;
 	}
 
 }

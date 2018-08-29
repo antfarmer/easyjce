@@ -15,6 +15,7 @@
  */
 package org.antfarmer.ejce.encoder;
 
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
@@ -29,6 +30,8 @@ import java.util.regex.Pattern;
 public abstract class AbstractBase32Encoder implements TextEncoder {
 
 	private static final Pattern WHITE_SPACE_PATTERN = Pattern.compile("\\s");
+
+	private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
 	/**
 	 * Array used for encoding text to Base32.
@@ -206,7 +209,7 @@ public abstract class AbstractBase32Encoder implements TextEncoder {
 			}
 		}
 
-		return new String(encodedBytes);
+		return new String(encodedBytes, DEFAULT_CHARSET);
 	}
 
 	/**
