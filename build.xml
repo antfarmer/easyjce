@@ -55,6 +55,7 @@
 			<batchtest fork="no">
 				<fileset dir="${basedir}/test">
 					<include name="**/*Test.java"/>
+					<exclude name="**/Abstract*.java"/>
 				</fileset>
 			</batchtest>
 		</junit>

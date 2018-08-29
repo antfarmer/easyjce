@@ -15,91 +15,29 @@
  */
 package org.antfarmer.ejce.test.encoder;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.security.SecureRandom;
-import java.util.regex.Pattern;
-
 import org.antfarmer.ejce.encoder.Base32NonNumericEncoder;
-import org.junit.Test;
-
+import org.antfarmer.ejce.encoder.TextEncoder;
 
 /**
  * @author Ameer Antar
  * @version 1.1
  */
-public class Base32NonNumericEncoderTest {
-	
-	private static final String TEST_TEXT = "abcdefghijklmnopqrstuvwxyz";
-
-	private static final Pattern ENCODED_CHAR_SET = Pattern.compile("[A-Za-f]+");
+public class Base32NonNumericEncoderTest extends AbstractEncoderTest {
 
 	/**
-	 * 
+	 * {@inheritDoc}
 	 */
-	@Test
-	public void test() {
-		String encoded = Base32NonNumericEncoder.getInstance().encode(TEST_TEXT.getBytes());
-		assertTrue(ENCODED_CHAR_SET.matcher(encoded).matches());
-		assertArrayEquals(TEST_TEXT.getBytes(), Base32NonNumericEncoder.getInstance().decode(encoded));
-	}	
-
-	/**
-	 * 
-	 */
-	@Test
-	public void testRandomData() {
-		SecureRandom rand = new SecureRandom();
-		for (int i=0; i<100; i++) {
-			byte[] bytes = new byte[rand.nextInt(100) + 1];
-			rand.nextBytes(bytes);
-			String encoded = Base32NonNumericEncoder.getInstance().encode(bytes);
-			assertTrue(ENCODED_CHAR_SET.matcher(encoded).matches());
-			assertArrayEquals(bytes, Base32NonNumericEncoder.getInstance().decode(encoded));
-		}
-	}
-	
-	/**
-	 * 
-	 */
-	@Test
-	public void threadSafetyTest() {
-		int num = 25;
-		EncodeThread[] threads = new EncodeThread[num];
-		for (int i=0; i<num; i++) {
-			threads[i] = new EncodeThread();
-			threads[i].start();
-		}
-		for (int i=0; i<num; i++) {
-			try {
-				threads[i].join();
-			}
-			catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+	@Override
+	protected TextEncoder getEncoder() {
+		return Base32NonNumericEncoder.getInstance();
 	}
 
-	private static class EncodeThread extends Thread {
-
-		/**
-		 * {@inheritDoc}
-		 * @see java.lang.Thread#run()
-		 */
-		@Override
-		public void run() {
-			try {
-				for (int i=0; i<50; i++) {
-					String enc = Base32NonNumericEncoder.getInstance().encode(TEST_TEXT.getBytes());
-					assertArrayEquals(TEST_TEXT.getBytes(), Base32NonNumericEncoder.getInstance().decode(enc));
-				}
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getEncodedCharsetPattern() {
+		return "[A-Za-f]+";
 	}
 
 }
