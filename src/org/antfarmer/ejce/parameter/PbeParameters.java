@@ -16,7 +16,6 @@
 package org.antfarmer.ejce.parameter;
 
 import java.security.GeneralSecurityException;
-import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 
 import javax.crypto.spec.PBEParameterSpec;
@@ -137,7 +136,7 @@ public class PbeParameters extends AbstractBlockCipherParameters<PbeParameters> 
 	@Override
 	protected byte[] generateKeyData(final String algorithm) throws GeneralSecurityException {
 		final byte[] data = new byte[DEFAULT_PASSWORD_SIZE];
-		new SecureRandom().nextBytes(data);
+		random.nextBytes(data);
 		return data;
 	}
 

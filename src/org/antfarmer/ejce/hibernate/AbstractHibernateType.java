@@ -17,6 +17,7 @@ package org.antfarmer.ejce.hibernate;
 
 import java.io.Serializable;
 import java.security.GeneralSecurityException;
+import java.security.SecureRandom;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -47,6 +48,8 @@ public abstract class AbstractHibernateType implements UserType, ParameterizedTy
 	private static final int[] sqlTypes = new int[] {Types.VARCHAR};
 
 	private ValueEncryptorInterface<Encryptor> encryptor;
+
+	static final SecureRandom random = new SecureRandom();
 
 	private final ReentrantLock lock = new ReentrantLock();
 
@@ -125,6 +128,7 @@ public abstract class AbstractHibernateType implements UserType, ParameterizedTy
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object nullSafeGet(final ResultSet rs, final String[] names, final SessionImplementor session, final Object owner)
 			throws HibernateException, SQLException {
 		final String text = rs.getString(names[0]);
@@ -139,6 +143,7 @@ public abstract class AbstractHibernateType implements UserType, ParameterizedTy
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void nullSafeSet(final PreparedStatement st, final Object value, final int index, final SessionImplementor session)
 			throws HibernateException, SQLException {
 		if (value == null) {

@@ -78,6 +78,8 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	 */
 	public static final String MAC_ALGORITHM_HMAC_SHA1 = "HmacSHA1";
 
+	static final SecureRandom random = new SecureRandom();
+
 	private TextEncoder textEncoder;
 
 	private byte[] encryptionRawKey;
@@ -146,6 +148,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int getKeySize() {
 		return keySize;
 	}
@@ -153,6 +156,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public T setKeySize(final int keySize) {
 		this.keySize = keySize;
@@ -173,6 +177,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Key getEncryptionKey() throws GeneralSecurityException {
 		if (encryptionKey != null) {
 			return encryptionKey;
@@ -249,6 +254,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Key getDecryptionKey() throws GeneralSecurityException {
 		if (decryptionKey != null) {
 			return decryptionKey;
@@ -325,6 +331,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getAlgorithm() {
 		return algorithm;
 	}
@@ -344,6 +351,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public byte[] generateParameterSpecData() {
 		final int paramSize = getParameterSpecSize();
 		if (paramSize > 0) {
@@ -352,7 +360,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 				saltGenerator.generateSalt(parameterData);
 			}
 			else {
-				new SecureRandom().nextBytes(parameterData);
+				random.nextBytes(parameterData);
 			}
 			return parameterData;
 		}
@@ -362,6 +370,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public AlgorithmParameterSpec createParameterSpec(final byte[] parameterData) {
 		if (parameterData == null) {
 			return null;
@@ -372,6 +381,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int getMacKeySize() {
 		return macKeySize;
 	}
@@ -379,6 +389,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public T setMacKeySize(final int macKeySize) {
 		this.macKeySize = macKeySize;
@@ -388,6 +399,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Key getMacKey() throws GeneralSecurityException {
 		if (macKey != null) {
 			return macKey;
@@ -408,6 +420,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public T setMacKey(final byte[] macKey) {
 		this.rawMacKey = macKey;
@@ -417,6 +430,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public T setMacKey(final String macKey) {
 		if (textEncoder == null) {
@@ -430,6 +444,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public T setMacKey(final Key macKey) {
 		this.macKey = macKey;
@@ -439,6 +454,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getMacAlgorithm() {
 		return macAlgorithm;
 	}
@@ -446,6 +462,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public T setMacAlgorithm(final String macAlgorithm) {
 		this.macAlgorithm = macAlgorithm;
@@ -455,6 +472,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getProviderName() {
 		return providerName;
 	}
@@ -462,6 +480,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public T setProviderName(final String providerName) {
 		this.providerName = providerName;
@@ -471,6 +490,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Provider getProvider() {
 		return provider;
 	}
@@ -478,6 +498,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public T setProvider(final Provider provider) {
 		this.provider = provider;
@@ -487,6 +508,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public T setMacKeyLoader(final Object macKeyLoader) {
 		this.macKeyLoader = loadKeyLoader(macKeyLoader);
@@ -496,6 +518,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public T setSaltGenerator(final SaltGenerator saltGenerator) {
 		this.saltGenerator = saltGenerator;
@@ -505,6 +528,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public T setSaltMatcher(final SaltMatcher saltMatcher) {
 		this.saltMatcher = saltMatcher;

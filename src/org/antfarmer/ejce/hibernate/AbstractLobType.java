@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.GeneralSecurityException;
-import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -55,7 +54,6 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 	private static final int[] sqlTypes = {Types.BLOB};
 	private static final File TEMP_DIR = new File(System.getProperty("java.io.tmpdir"));
 	private static final String TEMP_FILE_PREFIX = "ejce_";
-	private final SecureRandom random = new SecureRandom();
 
 	private boolean useCompression;
 	private int streamBuffSize = 4 * 1024;
