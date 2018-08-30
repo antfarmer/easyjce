@@ -16,14 +16,13 @@
 package org.antfarmer.ejce.hibernate;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.security.GeneralSecurityException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.sql.PreparedStatement;
@@ -31,11 +30,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Properties;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.zip.GZIPInputStream;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 
+import org.antfarmer.ejce.exception.EncryptorConfigurationException;
 import org.antfarmer.ejce.parameter.AlgorithmParameters;
 import org.antfarmer.ejce.stream.EncryptInputStream;
 import org.antfarmer.ejce.stream.GZIPCompressionStream;
@@ -56,10 +57,15 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 	private static final String TEMP_FILE_PREFIX = "ejce_";
 
 	private boolean useCompression;
+	private boolean useStreams;
 	private int streamBuffSize = 4 * 1024;
 	private int maxInMemoryBuffSize = 512 * 1024;
-	private Method jdbc4SetBinaryStreamMethod;
 	private AlgorithmParameters<?> parameters;
+
+	private Cipher encCipher;
+	private Cipher decCipher;
+	private final ReentrantLock encLock = new ReentrantLock();
+	private final ReentrantLock decLock = new ReentrantLock();
 
 	/**
 	 * {@inheritDoc}
@@ -100,12 +106,24 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 			maxInMemoryBuffSize = intVal;
 		}
 
-		// check if JDBC4 is available
-		// TODO allow use of streaming w or w/o length using parameter
-		// java6+ has jdbc4
-		jdbc4SetBinaryStreamMethod = getJdbc4SetBinaryStreamMethod();
+		// check if compression is enabled
+		value = parameters.getProperty(ConfigurerUtil.KEY_STREAM_LOBS);
+		if (value != null) {
+			useStreams = value.trim().toLowerCase().equals("true");
+		}
 
 		this.parameters = ConfigurerUtil.loadAlgorithmParameters(parameters, null);
+	}
+
+	@Override
+	protected void initializeIfNot() {
+		try {
+			encCipher = ConfigurerUtil.getCipherInstance(parameters);
+			decCipher = ConfigurerUtil.getCipherInstance(parameters);
+		}
+		catch (final GeneralSecurityException e) {
+			throw new EncryptorConfigurationException("Error initializing cipher for Hibernate Usertype.", e);
+		}
 	}
 
 	/**
@@ -118,14 +136,19 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 			st.setNull(index, sqlTypes()[0]);
 		}
 		else {
+			final InputStream is = lobToStream(value);
+			encLock.lock();
 			try {
-				setStream(st, index, encryptStream(lobToStream(value)));
+				setStream(st, index, encryptStream(is));
 			}
 			catch (final GeneralSecurityException e) {
 				throw new HibernateException("Error encrypting object.", e);
 			}
 			catch (final IOException e) {
 				throw new HibernateException("Error encrypting object.", e);
+			}
+			finally {
+				encLock.unlock();
 			}
 		}
 	}
@@ -141,7 +164,13 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 			if (rs.wasNull()) {
 				return null;
 			}
-			return streamToLob(decryptStream(is), session);
+			decLock.lock();
+			try {
+				return streamToLob(decryptStream(is), session);
+			}
+			finally {
+				decLock.unlock();
+			}
 		}
 		catch (final GeneralSecurityException e) {
 			throw new HibernateException("Error decrypting object.", e);
@@ -159,13 +188,11 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 	 * @throws IOException
 	 */
 	protected InputStream encryptStream(final InputStream is) throws GeneralSecurityException, IOException {
-		// TODO need to cache cipher
-		final Cipher cipher = ConfigurerUtil.getCipherInstance(parameters);
 		final byte[] paramData = parameters.generateParameterSpecData();
 		final AlgorithmParameterSpec paramSpec = parameters.createParameterSpec(paramData);
-		cipher.init(Cipher.ENCRYPT_MODE, parameters.getEncryptionKey(), paramSpec);
-		return useCompression ? new EncryptInputStream(new GZIPCompressionStream(is), cipher)
-			: new EncryptInputStream(is, cipher);
+		encCipher.init(Cipher.ENCRYPT_MODE, parameters.getEncryptionKey(), paramSpec);
+		return useCompression ? new EncryptInputStream(new GZIPCompressionStream(is), encCipher)
+			: new EncryptInputStream(is, encCipher);
 	}
 
 	/**
@@ -176,8 +203,6 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 	 * @throws IOException
 	 */
 	protected InputStream decryptStream(final InputStream is) throws GeneralSecurityException, IOException {
-		// TODO need to cache cipher
-		final Cipher cipher = ConfigurerUtil.getCipherInstance(parameters);
 		final int paramSize = parameters.getParameterSpecSize();
 		AlgorithmParameterSpec algorithmSpec = null;
 		if (paramSize > 0) {
@@ -187,12 +212,15 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 			}
 			algorithmSpec = parameters.getParameterSpec(buff);
 		}
-		cipher.init(Cipher.DECRYPT_MODE, parameters.getEncryptionKey(), algorithmSpec);
-		return useCompression ? new GZIPInputStream(new CipherInputStream(is, cipher)) : new CipherInputStream(is, cipher);
+		decCipher.init(Cipher.DECRYPT_MODE, parameters.getEncryptionKey(), algorithmSpec);
+		return useCompression ? new GZIPInputStream(new CipherInputStream(is, decCipher)) : new CipherInputStream(is, decCipher);
 	}
 
 	/**
-	 * Sets the given <tt>InputStream</tt> on the <tt>PreparedStatement</tt>.
+	 * Sets the <tt>InputStream</tt> on the given <tt>PreparedStatement</tt>. If the given <tt>InputStream</tt> contains
+	 * less data than the <tt>maxInMemoryBuffSize</tt> setting, the data will be set on the <tt>PreparedStatement</tt>
+	 * using an in-memory byte array, unless the stream LOB's option is enabled. If maximum buffer size is exceeded,
+	 * the stream will be set via a temporary file to determine its true length and limit memory usage.
 	 * @param st the PreparedStatement
 	 * @param index the parameter index
 	 * @param is the InputStream
@@ -200,24 +228,6 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 	 * @throws SQLException
 	 */
 	protected void setStream(final PreparedStatement st, final int index, final InputStream is) throws IOException, SQLException {
-		if (setStreamJdbc4(st, index, is)) {
-			return;
-		}
-		setStreamBuffered(st, index, is);
-	}
-
-	/**
-	 * Sets the <tt>InputStream</tt> on the given <tt>PreparedStatement</tt>. If the given <tt>InputStream</tt> contains
-	 * less data than the <tt>maxInMemoryBuffSize</tt> setting, the data will be set on the <tt>PreparedStatement</tt>
-	 * using an in-memory byte array. Otherwise, the stream will be set via a temporary file to determine its true
-	 * length and limit memory usage.
-	 * @param st the PreparedStatement
-	 * @param index the parameter index
-	 * @param is the InputStream
-	 * @throws IOException
-	 * @throws SQLException
-	 */
-	protected void setStreamBuffered(final PreparedStatement st, final int index, final InputStream is) throws IOException, SQLException {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream(streamBuffSize);
 		try {
 			int read;
@@ -231,7 +241,12 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 				}
 			}
 			if (totalRead < maxInMemoryBuffSize) {
-				st.setBytes(index, baos.toByteArray());
+				if (useStreams) {
+					st.setBinaryStream(index, new ByteArrayInputStream(baos.toByteArray()), baos.size());
+				}
+				else {
+					st.setBytes(index, baos.toByteArray());
+				}
 			}
 			else {
 				File file = createTempFile();
@@ -246,7 +261,7 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 					fos.close();
 				}
 				file = new File(file.getAbsolutePath());
-				st.setBinaryStream(index, new BufferedInputStream(new FileInputStream(file)), (int) file.length());
+				st.setBinaryStream(index, new BufferedInputStream(new FileInputStream(file)), file.length());
 			}
 		}
 		finally {
@@ -311,59 +326,6 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 	 */
 	protected String generateTempFileName() {
 		return TEMP_FILE_PREFIX + System.currentTimeMillis() + "-" + random.nextInt(100);
-	}
-
-	/**
-	 * Sets the given <tt>InputStream</tt> on the JDBC4 <tt>PreparedStatement</tt> using reflective invocation.
-	 * @param st the PreparedStatement
-	 * @param index the parameter index
-	 * @param is the InputStream
-	 * @return true if the stream was successfully set; false otherwise
-	 */
-	protected boolean setStreamJdbc4(final PreparedStatement st, final int index, final InputStream is) {
-		if (jdbc4SetBinaryStreamMethod == null) {
-			return false;
-		}
-
-		try {
-			jdbc4SetBinaryStreamMethod.invoke(st, index, is);
-			return true;
-		}
-		catch (final IllegalAccessException e) {
-			jdbc4SetBinaryStreamMethod = null;
-			e.printStackTrace();
-			return false;
-		}
-		catch (final InvocationTargetException e) {
-			jdbc4SetBinaryStreamMethod = null;
-			e.printStackTrace();
-			return false;
-		}
-		catch (final IllegalArgumentException e) {
-			jdbc4SetBinaryStreamMethod = null;
-			e.printStackTrace();
-			return false;
-		}
-		catch (final RuntimeException e) {
-			jdbc4SetBinaryStreamMethod = null;
-			e.printStackTrace();
-			return false;
-		}
-	}
-
-	private Method getJdbc4SetBinaryStreamMethod() {
-		try {
-			return PreparedStatement.class.getMethod("setBinaryStream", int.class, InputStream.class);
-		}
-		catch (final SecurityException e) {
-			return null;
-		}
-		catch (final RuntimeException e) {
-			return null;
-		}
-		catch (final NoSuchMethodException e) {
-			return null;
-		}
 	}
 
 	/**

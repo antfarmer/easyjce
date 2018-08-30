@@ -1,0 +1,2 @@
+-functional db tests
+-add more algorithms, padding, and modes

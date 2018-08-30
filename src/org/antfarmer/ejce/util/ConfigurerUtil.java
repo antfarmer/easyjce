@@ -165,6 +165,11 @@ public final class ConfigurerUtil {
 	public static final String KEY_COMPRESS_LOB = "compress";
 
 	/**
+	 * Property key for enabling streaming of LOB data. Used only by types extending <code>AbstractLobType</code>.
+	 */
+	public static final String KEY_STREAM_LOBS = "streamLobs";
+
+	/**
 	 * Property key that controls in-memory buffer size used in LOB-type streaming in pre-JDBC4 environments. Used only
 	 * by types extending <code>AbstractLobType</code>.
 	 */

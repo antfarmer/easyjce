@@ -78,7 +78,7 @@ public class EncryptorTest {
 	 * @throws GeneralSecurityException
 	 */
 	@Test
-	public void threadSafetyTest() throws GeneralSecurityException {
+	public void threadSafetyTest() throws Throwable {
 
 		final AesParameters parameters = new AesParameters(Base64Encoder.getInstance())
 				.setKeySize(AesParameters.KEY_SIZE_128)
@@ -96,11 +96,9 @@ public class EncryptorTest {
 			threads[i].start();
 		}
 		for (int i=0; i<num; i++) {
-			try {
-				threads[i].join();
-			}
-			catch (final InterruptedException e) {
-				e.printStackTrace();
+			threads[i].join();
+			if (threads[i].exception != null) {
+				throw threads[i].exception;
 			}
 		}
 	}
@@ -582,11 +580,13 @@ public class EncryptorTest {
 				.setMacAlgorithm(AesParameters.MAC_ALGORITHM_HMAC_SHA1)
 				.setMacKeySize(AesParameters.MAC_KEY_SIZE_128)
 				.setSaltGenerator(new SaltGenerator() {
+					@Override
 					public void generateSalt(final byte[] saltData) {
 						System.arraycopy(salt, 0, saltData, 0, salt.length);
 					}
 				})
 				.setSaltMatcher(new SaltMatcher() {
+					@Override
 					public void verifySaltMatch(final byte[] cipherSalt) throws GeneralSecurityException {
 						if (!Arrays.equals(cipherSalt, salt)) {
 							throw new GeneralSecurityException("Salt did not match");
@@ -828,6 +828,7 @@ public class EncryptorTest {
 //	}
 
 	private static class EncryptThread extends Thread {
+		private Throwable exception;
 
 		/**
 		 * {@inheritDoc}
@@ -842,6 +843,7 @@ public class EncryptorTest {
 				}
 			}
 			catch (final Exception e) {
+				exception = e;
 				e.printStackTrace();
 			}
 		}

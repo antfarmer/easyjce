@@ -215,7 +215,7 @@ public abstract class AbstractHibernateType implements UserType, ParameterizedTy
 		}
 	}
 
-	private void initializeIfNot() {
+	protected void initializeIfNot() {
 		try {
 			if (encryptor != null) {
 				encryptor.initialize();

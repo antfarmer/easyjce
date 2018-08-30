@@ -81,7 +81,7 @@ public abstract class AbstractEncoderTest {
 	 *
 	 */
 	@Test
-	public void threadSafetyTest() {
+	public void threadSafetyTest() throws Throwable {
 		final int num = THREAD_COUNT;
 		final EncodeThread[] threads = new EncodeThread[num];
 		for (int i=0; i<num; i++) {
@@ -89,11 +89,9 @@ public abstract class AbstractEncoderTest {
 			threads[i].start();
 		}
 		for (int i=0; i<num; i++) {
-			try {
-				threads[i].join();
-			}
-			catch (final InterruptedException e) {
-				e.printStackTrace();
+			threads[i].join();
+			if (threads[i].exception != null) {
+				throw threads[i].exception;
 			}
 		}
 	}
@@ -103,6 +101,7 @@ public abstract class AbstractEncoderTest {
 	 * @author Ameer Antar
 	 */
 	protected class EncodeThread extends Thread {
+		private Throwable exception;
 
 		/**
 		 * {@inheritDoc}
@@ -117,6 +116,7 @@ public abstract class AbstractEncoderTest {
 				}
 			}
 			catch (final Exception e) {
+				exception = e;
 				e.printStackTrace();
 			}
 		}

@@ -58,7 +58,7 @@ public class EncryptedFloatTypeTest extends EncryptedFloatType {
 	 *
 	 */
 	@Test
-	public void testThreadSafety() {
+	public void testThreadSafety() throws Throwable {
 		final int num = 25;
 		final EncryptThread[] threads = new EncryptThread[num];
 		for (int i=0; i<num; i++) {
@@ -66,16 +66,15 @@ public class EncryptedFloatTypeTest extends EncryptedFloatType {
 			threads[i].start();
 		}
 		for (int i=0; i<num; i++) {
-			try {
-				threads[i].join();
-			}
-			catch (final InterruptedException e) {
-				e.printStackTrace();
+			threads[i].join();
+			if (threads[i].exception != null) {
+				throw threads[i].exception;
 			}
 		}
 	}
 
 	private class EncryptThread extends Thread {
+		private Throwable exception;
 
 		/**
 		 * {@inheritDoc}
@@ -89,7 +88,8 @@ public class EncryptedFloatTypeTest extends EncryptedFloatType {
 					assertEquals(TEST_VALUE, decrypt(enc));
 				}
 			}
-			catch (final Exception e) {
+			catch (final Throwable e) {
+				exception = e;
 				e.printStackTrace();
 			}
 		}
