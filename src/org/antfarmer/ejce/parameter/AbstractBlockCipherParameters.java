@@ -18,6 +18,7 @@ package org.antfarmer.ejce.parameter;
 import java.security.GeneralSecurityException;
 import java.security.spec.AlgorithmParameterSpec;
 
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 
 import org.antfarmer.ejce.encoder.TextEncoder;
@@ -39,6 +40,11 @@ public abstract class AbstractBlockCipherParameters<T extends AbstractBlockCiphe
 	public static final int DEFAULT_BLOCK_SIZE = 8;
 
 	/**
+	 * Default IV (parameter specification) size in bytes for GCM block mode. The default value is 12.
+	 */
+	public static final int DEFAULT_PARAM_SPEC_SIZE_GCM = 12;
+
+	/**
 	 * Cipher Block Chaining Block Mode, as defined in FIPS PUB 81.
 	 */
 	public static final String BLOCK_MODE_CBC = "CBC";
@@ -56,6 +62,11 @@ public abstract class AbstractBlockCipherParameters<T extends AbstractBlockCiphe
 	public static final String BLOCK_MODE_ECB = "ECB";
 
 	/**
+	 * Galois/Counter Mode, as defined in NIST Special Publication SP 800-38D.
+	 */
+	public static final String BLOCK_MODE_GCM = "GCM";
+
+	/**
 	 * Output Feedback Block Mode, as defined in FIPS PUB 81.
 	 */
 	public static final String BLOCK_MODE_OFB = "OFB";
@@ -64,6 +75,33 @@ public abstract class AbstractBlockCipherParameters<T extends AbstractBlockCiphe
 	 * Propagating Cipher Block Chaining Block Mode, as defined by Kerberos V4.
 	 */
 	public static final String BLOCK_MODE_PCBC = "PCBC";
+
+
+	/**
+	 * 96-bit Authentication Tag length for GCM block mode ciphers, as defined in NIST Special Publication SP 800-38D.
+	 */
+	public static final int GCM_AUTH_TAG_LEN_96 = 96;
+
+	/**
+	 * 104-bit Authentication Tag length for GCM block mode ciphers, as defined in NIST Special Publication SP 800-38D.
+	 */
+	public static final int GCM_AUTH_TAG_LEN_104 = 104;
+
+	/**
+	 * 112-bit Authentication Tag length for GCM block mode ciphers, as defined in NIST Special Publication SP 800-38D.
+	 */
+	public static final int GCM_AUTH_TAG_LEN_112 = 112;
+
+	/**
+	 * 120-bit Authentication Tag length for GCM block mode ciphers, as defined in NIST Special Publication SP 800-38D.
+	 */
+	public static final int GCM_AUTH_TAG_LEN_120 = 120;
+
+	/**
+	 * 128-bit Authentication Tag length for GCM block mode ciphers, as defined in NIST Special Publication SP 800-38D.
+	 */
+	public static final int GCM_AUTH_TAG_LEN_128 = 128;
+
 
 	/**
 	 * No padding.
@@ -82,9 +120,12 @@ public abstract class AbstractBlockCipherParameters<T extends AbstractBlockCiphe
 	 */
 	public static final String PADDING_PKCS7 = "PKCS7Padding";
 
+
 	private String blockMode = BLOCK_MODE_CBC;
 
 	private int blockSize = getDefaultBlockSize();
+
+	private int gcmTagLen = GCM_AUTH_TAG_LEN_128;
 
 	private String padding = PADDING_PKCS5;
 
@@ -116,6 +157,7 @@ public abstract class AbstractBlockCipherParameters<T extends AbstractBlockCiphe
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getTransformation() {
 		final int blockSize = getBlockSize();
 		final StringBuilder buff = new StringBuilder(getAlgorithm());
@@ -151,9 +193,13 @@ public abstract class AbstractBlockCipherParameters<T extends AbstractBlockCiphe
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int getParameterSpecSize() {
 		if (BLOCK_MODE_ECB.equalsIgnoreCase(blockMode)) {
 			return 0;
+		}
+		if (BLOCK_MODE_GCM.equalsIgnoreCase(blockMode)) {
+			return DEFAULT_PARAM_SPEC_SIZE_GCM;
 		}
 		return getDefaultBlockSize();
 	}
@@ -161,11 +207,30 @@ public abstract class AbstractBlockCipherParameters<T extends AbstractBlockCiphe
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
+	public AlgorithmParameterSpec createParameterSpec(final byte[] parameterData) {
+		if (parameterData == null) {
+			return null;
+		}
+		if (BLOCK_MODE_GCM.equalsIgnoreCase(blockMode)) {
+			return new GCMParameterSpec(gcmTagLen, parameterData);
+		}
+		return new IvParameterSpec(parameterData);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public AlgorithmParameterSpec getParameterSpec(final byte[] messageData) throws GeneralSecurityException {
 		if (messageData.length < getParameterSpecSize()) {
 			throw new GeneralSecurityException("Incorrect encrypted data size.");
 		}
-		return new IvParameterSpec(parseAndVerifySalt(messageData));
+		final byte[] iv = parseAndVerifySalt(messageData);
+		if (BLOCK_MODE_GCM.equalsIgnoreCase(blockMode)) {
+			return new GCMParameterSpec(gcmTagLen, iv);
+		}
+		return new IvParameterSpec(iv);
 	}
 
 	/**
@@ -193,6 +258,27 @@ public abstract class AbstractBlockCipherParameters<T extends AbstractBlockCiphe
 	@SuppressWarnings("unchecked")
 	public T setBlockSize(final int blockSize) {
 		this.blockSize = blockSize;
+		return (T) this;
+	}
+
+	/**
+	 * Returns the GCM block mode Authentication Tag length in bits.
+	 *
+	 * @return the gcmTagLen
+	 */
+	public int getGcmTagLen() {
+		return gcmTagLen;
+	}
+
+	/**
+	 * Sets the GCM block mode Authentication Tag length in bits.
+	 *
+	 * @param gcmTagLen the gcmTagLen to set
+	 * @return the concrete class
+	 */
+	@SuppressWarnings("unchecked")
+	public T setGcmTagLen(final int gcmTagLen) {
+		this.gcmTagLen = gcmTagLen;
 		return (T) this;
 	}
 

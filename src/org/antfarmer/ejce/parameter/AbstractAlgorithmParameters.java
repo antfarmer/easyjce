@@ -79,6 +79,67 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	 */
 	public static final String MAC_ALGORITHM_HMAC_SHA1 = "HmacSHA1";
 
+	/**
+	 * The HMAC-SHA224 keyed-hashing algorithm as defined in RFC 2104: "HMAC: Keyed-Hashing for
+	 * Message Authentication" (February 1997).
+	 */
+	public static final String MAC_ALGORITHM_HMAC_SHA224 = "HmacSHA224";
+
+	/**
+	 * The HMAC-SHA256 keyed-hashing algorithm as defined in RFC 2104: "HMAC: Keyed-Hashing for
+	 * Message Authentication" (February 1997).
+	 */
+	public static final String MAC_ALGORITHM_HMAC_SHA256 = "HmacSHA256";
+
+	/**
+	 * The HMAC-SHA384 keyed-hashing algorithm as defined in RFC 2104: "HMAC: Keyed-Hashing for
+	 * Message Authentication" (February 1997).
+	 */
+	public static final String MAC_ALGORITHM_HMAC_SHA384 = "HmacSHA384";
+
+	/**
+	 * The HMAC-SHA512 keyed-hashing algorithm as defined in RFC 2104: "HMAC: Keyed-Hashing for
+	 * Message Authentication" (February 1997).
+	 */
+	public static final String MAC_ALGORITHM_HMAC_SHA512 = "HmacSHA512";
+
+	/**
+	 * The HMAC-SHA512/224 keyed-hashing algorithm as defined in RFC 2104: "HMAC: Keyed-Hashing for
+	 * Message Authentication" (February 1997).
+	 */
+	public static final String MAC_ALGORITHM_HMAC_SHA512_224 = "HmacSHA512/224";
+
+	/**
+	 * The HMAC-SHA512/256 keyed-hashing algorithm as defined in RFC 2104: "HMAC: Keyed-Hashing for
+	 * Message Authentication" (February 1997).
+	 */
+	public static final String MAC_ALGORITHM_HMAC_SHA512_256 = "HmacSHA512/256";
+
+	/**
+	 * The HMAC-SHA3-224 keyed-hashing algorithm as defined in RFC 2104: "HMAC: Keyed-Hashing for
+	 * Message Authentication" (February 1997).
+	 */
+	public static final String MAC_ALGORITHM_HMAC_SHA3_224 = "HmacSHA3-224";
+
+	/**
+	 * The HMAC-SHA3-256 keyed-hashing algorithm as defined in RFC 2104: "HMAC: Keyed-Hashing for
+	 * Message Authentication" (February 1997).
+	 */
+	public static final String MAC_ALGORITHM_HMAC_SHA3_256 = "HmacSHA3-256";
+
+	/**
+	 * The HMAC-SHA3-384 keyed-hashing algorithm as defined in RFC 2104: "HMAC: Keyed-Hashing for
+	 * Message Authentication" (February 1997).
+	 */
+	public static final String MAC_ALGORITHM_HMAC_SHA3_384 = "HmacSHA3-384";
+
+	/**
+	 * The HMAC-SHA3-512 keyed-hashing algorithm as defined in RFC 2104: "HMAC: Keyed-Hashing for
+	 * Message Authentication" (February 1997).
+	 */
+	public static final String MAC_ALGORITHM_HMAC_SHA3_512 = "HmacSHA3-512";
+
+
 	static final SecureRandom random = new SecureRandom();
 
 	private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");

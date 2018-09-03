@@ -145,6 +145,11 @@ public final class ConfigurerUtil {
 	public static final String KEY_BLOCK_SIZE = "blockSize";
 
 	/**
+	 * Property key for the Authentication Tag length in bits to be used with the encryption algorithm in GCM block mode.
+	 */
+	public static final String KEY_GCM_TAG_LEN = "gcmTagLen";
+
+	/**
 	 * Property key for the padding to be used with the encryption algorithm.
 	 */
 	public static final String KEY_PADDING = "padding";
@@ -416,6 +421,13 @@ public final class ConfigurerUtil {
 		intVal = parseInt(property);
 		if (intVal != null) {
 			blockCipherParameters.setBlockSize(intVal);
+		}
+
+		// set GCM authentication tag length
+		property = parameters.getProperty(getPropertyName(prefix, KEY_GCM_TAG_LEN));
+		intVal = parseInt(property);
+		if (intVal != null) {
+			blockCipherParameters.setGcmTagLen(intVal);
 		}
 
 		// set block padding

@@ -23,6 +23,7 @@ import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.Key;
 import java.security.KeyPair;
+import java.security.Provider;
 import java.util.Arrays;
 import java.util.TimeZone;
 
@@ -34,6 +35,7 @@ import org.antfarmer.ejce.parameter.AesParameters;
 import org.antfarmer.ejce.parameter.BlowfishParameters;
 import org.antfarmer.ejce.parameter.DesEdeParameters;
 import org.antfarmer.ejce.parameter.DesParameters;
+import org.antfarmer.ejce.parameter.ElGamalParameters;
 import org.antfarmer.ejce.parameter.PbeParameters;
 import org.antfarmer.ejce.parameter.Rc2Parameters;
 import org.antfarmer.ejce.parameter.Rc4Parameters;
@@ -42,6 +44,7 @@ import org.antfarmer.ejce.parameter.salt.SaltGenerator;
 import org.antfarmer.ejce.parameter.salt.SaltMatcher;
 import org.antfarmer.ejce.util.ByteUtil;
 import org.antfarmer.ejce.util.CryptoUtil;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -570,6 +573,93 @@ public class EncryptorTest {
 	 * @throws GeneralSecurityException
 	 */
 	@Test
+	public void testAesGcm() throws GeneralSecurityException {
+		final AesParameters parameters = new AesParameters()
+				.setKeySize(AesParameters.KEY_SIZE_256)
+				.setBlockMode(AesParameters.BLOCK_MODE_GCM)
+				.setPadding(AesParameters.PADDING_PKCS5)
+				;
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
+	/**
+	 * @throws GeneralSecurityException
+	 */
+	@Test
+	public void testAesGcmTagLengths() throws GeneralSecurityException {
+		final int[] lengths = {
+				AesParameters.GCM_AUTH_TAG_LEN_96,
+				AesParameters.GCM_AUTH_TAG_LEN_104,
+				AesParameters.GCM_AUTH_TAG_LEN_112,
+				AesParameters.GCM_AUTH_TAG_LEN_120,
+				AesParameters.GCM_AUTH_TAG_LEN_128
+		};
+
+		for (final int len : lengths) {
+			final AesParameters parameters = new AesParameters()
+					.setKeySize(AesParameters.KEY_SIZE_256)
+					.setBlockMode(AesParameters.BLOCK_MODE_GCM)
+					.setGcmTagLen(len)
+					.setPadding(AesParameters.PADDING_PKCS5)
+					;
+			encryptor = new Encryptor(Base64Encoder.getInstance())
+					.setAlgorithmParameters(parameters);
+			encryptor.initialize();
+
+			final String enc = encryptor.encrypt(TEST_TEXT);
+			assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+		}
+	}
+
+	/**
+	 * @throws GeneralSecurityException
+	 */
+	@Test
+	public void testAesMacs() throws GeneralSecurityException {
+		final String[] macs = {
+				AesParameters.MAC_ALGORITHM_HMAC_MD5,
+				AesParameters.MAC_ALGORITHM_HMAC_SHA1,
+				AesParameters.MAC_ALGORITHM_HMAC_SHA224,
+				AesParameters.MAC_ALGORITHM_HMAC_SHA256,
+				AesParameters.MAC_ALGORITHM_HMAC_SHA384,
+				AesParameters.MAC_ALGORITHM_HMAC_SHA512,
+				AesParameters.MAC_ALGORITHM_HMAC_SHA512_224,
+				AesParameters.MAC_ALGORITHM_HMAC_SHA512_256,
+				AesParameters.MAC_ALGORITHM_HMAC_SHA3_224,
+				AesParameters.MAC_ALGORITHM_HMAC_SHA3_256,
+				AesParameters.MAC_ALGORITHM_HMAC_SHA3_384,
+				AesParameters.MAC_ALGORITHM_HMAC_SHA3_512
+		};
+
+
+		final Provider provider = new BouncyCastleProvider();
+		for (final String mac : macs) {
+			final AesParameters parameters = new AesParameters()
+					.setKeySize(AesParameters.KEY_SIZE_128)
+					.setBlockMode(AesParameters.BLOCK_MODE_CFB)
+					.setBlockSize(32)
+					.setMacAlgorithm(mac)
+					.setMacKeySize(AesParameters.MAC_KEY_SIZE_128)
+					.setProvider(provider)
+					;
+			encryptor = new Encryptor(Base64Encoder.getInstance())
+					.setAlgorithmParameters(parameters);
+			encryptor.initialize();
+
+			final String enc = encryptor.encrypt(TEST_TEXT);
+			assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+		}
+	}
+
+	/**
+	 * @throws GeneralSecurityException
+	 */
+	@Test
 	public void testAesWithCustomSalts() throws GeneralSecurityException {
 		final byte[] salt = new byte[AesParameters.DEFAULT_BLOCK_SIZE];
 		Arrays.fill(salt, (byte)99);
@@ -802,29 +892,46 @@ public class EncryptorTest {
 		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
 	}
 
-//	/**
-//	 * @throws GeneralSecurityException
-//	 */
+	/**
+	 * @throws GeneralSecurityException
+	 */
+	@Test
+	public void testElGamal() throws GeneralSecurityException {
+		final Provider provider = new BouncyCastleProvider();
+		final KeyPair keyPair = CryptoUtil.generateAsymmetricKeyPair(ElGamalParameters.KEY_SIZE_256,
+			ElGamalParameters.ALGORITHM_ELGAMAL, null, provider);
+		final ElGamalParameters parameters = new ElGamalParameters()
+			.setEncryptionKey(keyPair.getPublic())
+			.setDecryptionKey(keyPair.getPrivate())
+			.setMacAlgorithm(Rc2Parameters.MAC_ALGORITHM_HMAC_SHA1)
+			.setMacKeySize(Rc2Parameters.MAC_KEY_SIZE_128)
+			.setProvider(provider)
+			;
+
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String txt = "abcd";
+		final String enc = encryptor.encrypt(txt);
+		assertEquals(txt, encryptor.decrypt(enc));
+	}
+
 //	@Test
-//	public void testElGamal() throws GeneralSecurityException {
-//		final Provider provider = new BouncyCastleProvider();
-//		final KeyPair keyPair = CryptoUtil.generateAsymmetricKeyPair(ElGamalParameters.KEY_SIZE_256,
-//			ElGamalParameters.ALGORITHM_ELGAMAL, null, provider);
-//		final ElGamalParameters parameters = new ElGamalParameters()
-//			.setEncryptionKey(keyPair.getPublic())
-//			.setDecryptionKey(keyPair.getPrivate())
-//			.setMacAlgorithm(Rc2Parameters.MAC_ALGORITHM_HMAC_SHA1)
-//			.setMacKeySize(Rc2Parameters.MAC_KEY_SIZE_128)
-//			.setProvider(provider)
-//			;
+//	public void testAlgos() {
+//		final Set<String> ciphers = new TreeSet<String>();
+//		for (final Provider provider : Security.getProviders()) {
+//			System.out.println(provider.getName());
+//			for (final String key : provider.stringPropertyNames()) {
+//				final String cipherName = provider.getProperty(key);
+//				ciphers.add(cipherName);
+////				System.out.println("\t"/* + key */ + "\t" + cipherName);
+//			}
+//		}
 //
-//		encryptor = new Encryptor(Base64Encoder.getInstance())
-//				.setAlgorithmParameters(parameters);
-//		encryptor.initialize();
-//
-//		final String txt = "abcd";
-//		final String enc = encryptor.encrypt(txt);
-//		assertEquals(txt, encryptor.decrypt(enc));
+//		for (final String name : ciphers) {
+//			System.out.println("------- " + name);
+//		}
 //	}
 
 	private static class EncryptThread extends Thread {
@@ -842,7 +949,7 @@ public class EncryptorTest {
 					assertEquals(TEST_TEXT, encryptor.decrypt(enc));
 				}
 			}
-			catch (final Exception e) {
+			catch (final Throwable e) {
 				exception = e;
 				e.printStackTrace();
 			}

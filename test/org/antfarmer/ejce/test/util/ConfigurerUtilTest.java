@@ -102,7 +102,9 @@ public class ConfigurerUtilTest {
 		assertEquals(PbeParameters.MAC_ALGORITHM_HMAC_MD5, parameters.getMacAlgorithm());
 		assertEquals(macKey, Base32Encoder.getInstance().encode(parameters.getMacKey().getEncoded()));
 		assertEquals(PbeParameters.BLOCK_MODE_OFB, parameters.getBlockMode());
+		assertEquals(PbeParameters.GCM_AUTH_TAG_LEN_128, parameters.getGcmTagLen());
 		assertEquals(PbeParameters.PADDING_PKCS5, parameters.getPadding());
+		assertEquals(Integer.valueOf(8), (Integer)parameters.getBlockSize());
 		assertEquals(Integer.valueOf(saltSize), (Integer)parameters.getSaltSize());
 		assertEquals(Integer.valueOf(iterations), (Integer)parameters.getIterationCount());
 		assertEquals(DefaultSaltGenerator.class, ReflectionUtil.getFieldValue(parameters, "saltGenerator").getClass());
@@ -129,7 +131,7 @@ public class ConfigurerUtilTest {
 		properties.put(ConfigurerUtil.KEY_PROVIDER_NAME, providerName);
 		properties.put(ConfigurerUtil.KEY_MAC_ALGORITHM, BlowfishParameters.MAC_ALGORITHM_HMAC_SHA1);
 		properties.put(ConfigurerUtil.KEY_MAC_KEY, macKey);
-		properties.put(ConfigurerUtil.KEY_BLOCK_MODE, BlowfishParameters.BLOCK_MODE_OFB);
+		properties.put(ConfigurerUtil.KEY_BLOCK_MODE, BlowfishParameters.BLOCK_MODE_CFB);
 		properties.put(ConfigurerUtil.KEY_BLOCK_SIZE, blockSize);
 		properties.put(ConfigurerUtil.KEY_PADDING, BlowfishParameters.PADDING_NONE);
 
@@ -143,8 +145,49 @@ public class ConfigurerUtilTest {
 		assertEquals(providerName, parameters.getProviderName());
 		assertEquals(BlowfishParameters.MAC_ALGORITHM_HMAC_SHA1, parameters.getMacAlgorithm());
 		assertEquals(macKey, Base32Encoder.getInstance().encode(parameters.getMacKey().getEncoded()));
-		assertEquals(BlowfishParameters.BLOCK_MODE_OFB, parameters.getBlockMode());
+		assertEquals(BlowfishParameters.BLOCK_MODE_CFB, parameters.getBlockMode());
 		assertEquals(Integer.valueOf(blockSize), (Integer)parameters.getBlockSize());
+		assertEquals(BlowfishParameters.PADDING_NONE, parameters.getPadding());
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	@Test
+	public void testSetParameterValues3() throws Exception {
+
+		final Charset cs = Charset.forName("US-ASCII");
+		final String key = Base32Encoder.getInstance().encode("BINGBINGA".getBytes());
+		final String macKey = Base32Encoder.getInstance().encode("BEEOWANOWEEWEE".getBytes());
+		final String providerName = "SunJCE";
+		final String blockSize = "16";
+		final Properties properties = new Properties();
+		properties.put(ConfigurerUtil.KEY_ENCODER_CLASS, Base64UrlEncoder.class.getName());
+		properties.put(ConfigurerUtil.KEY_CHARSET, cs.name());
+		properties.put(ConfigurerUtil.KEY_PARAM_CLASS, BlowfishParameters.class.getName());
+		properties.put(ConfigurerUtil.KEY_PARAM_ENCODER_CLASS, Base32Encoder.class.getName());
+		properties.put(ConfigurerUtil.KEY_CIPHER_KEY, key);
+		properties.put(ConfigurerUtil.KEY_PROVIDER_NAME, providerName);
+		properties.put(ConfigurerUtil.KEY_MAC_ALGORITHM, BlowfishParameters.MAC_ALGORITHM_HMAC_SHA1);
+		properties.put(ConfigurerUtil.KEY_MAC_KEY, macKey);
+		properties.put(ConfigurerUtil.KEY_BLOCK_MODE, BlowfishParameters.BLOCK_MODE_GCM);
+		properties.put(ConfigurerUtil.KEY_BLOCK_SIZE, blockSize);
+		properties.put(ConfigurerUtil.KEY_GCM_TAG_LEN, String.valueOf(BlowfishParameters.GCM_AUTH_TAG_LEN_96));
+		properties.put(ConfigurerUtil.KEY_PADDING, BlowfishParameters.PADDING_NONE);
+
+		final Encryptor encryptor = ConfigurerUtil.configureEncryptor(properties);
+		final BlowfishParameters parameters = (BlowfishParameters) ReflectionUtil.getFieldValue(encryptor, "parameters");
+
+		assertEquals(Base64UrlEncoder.class, ReflectionUtil.getFieldValue(encryptor, "textEncoder").getClass());
+		assertEquals(Base32Encoder.class, ReflectionUtil.getFieldValue(parameters, "textEncoder").getClass());
+		assertEquals(cs, encryptor.getCharset());
+		assertEquals(key, Base32Encoder.getInstance().encode(parameters.getKey().getEncoded()));
+		assertEquals(providerName, parameters.getProviderName());
+		assertEquals(BlowfishParameters.MAC_ALGORITHM_HMAC_SHA1, parameters.getMacAlgorithm());
+		assertEquals(macKey, Base32Encoder.getInstance().encode(parameters.getMacKey().getEncoded()));
+		assertEquals(BlowfishParameters.BLOCK_MODE_GCM, parameters.getBlockMode());
+		assertEquals(BlowfishParameters.GCM_AUTH_TAG_LEN_96, parameters.getGcmTagLen());
+		assertEquals(Integer.valueOf(8), (Integer)parameters.getBlockSize());
 		assertEquals(BlowfishParameters.PADDING_NONE, parameters.getPadding());
 	}
 
@@ -209,6 +252,7 @@ public class ConfigurerUtilTest {
 		assertEquals(PbeParameters.MAC_ALGORITHM_HMAC_MD5, parameters.getMacAlgorithm());
 		assertEquals(macKey, Base32Encoder.getInstance().encode(parameters.getMacKey().getEncoded()));
 		assertEquals(PbeParameters.BLOCK_MODE_OFB, parameters.getBlockMode());
+		assertEquals(PbeParameters.GCM_AUTH_TAG_LEN_128, parameters.getGcmTagLen());
 		assertEquals(PbeParameters.PADDING_PKCS5, parameters.getPadding());
 		assertEquals(Integer.valueOf(saltSize), (Integer)parameters.getSaltSize());
 		assertEquals(Integer.valueOf(iterations), (Integer)parameters.getIterationCount());
@@ -253,6 +297,50 @@ public class ConfigurerUtilTest {
 		assertEquals(macKey, Base32Encoder.getInstance().encode(parameters.getMacKey().getEncoded()));
 		assertEquals(BlowfishParameters.BLOCK_MODE_OFB, parameters.getBlockMode());
 		assertEquals(Integer.valueOf(blockSize), (Integer)parameters.getBlockSize());
+		assertEquals(BlowfishParameters.PADDING_NONE, parameters.getPadding());
+
+		properties.rollback();
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	@Test
+	public void testSetParameterValues3ViaSysProps() throws Exception {
+
+		final Charset cs = Charset.forName("ISO-8859-1");
+		final String key = Base32Encoder.getInstance().encode("BINGBINGA".getBytes());
+		final String macKey = Base32Encoder.getInstance().encode("BEEOWANOWEEWEE".getBytes());
+		final String providerName = "SunJCE";
+		final String blockSize = "16";
+		final String propPrefix = "ejce.encryptor1";
+		final VolatileProperties properties = new VolatileProperties(System.getProperties());
+		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_ENCODER_CLASS), Base64UrlEncoder.class.getName());
+		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_CHARSET), cs.name());
+		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_PARAM_CLASS), BlowfishParameters.class.getName());
+		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_PARAM_ENCODER_CLASS), Base32Encoder.class.getName());
+		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_CIPHER_KEY), key);
+		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_PROVIDER_NAME), providerName);
+		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_MAC_ALGORITHM), BlowfishParameters.MAC_ALGORITHM_HMAC_SHA1);
+		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_MAC_KEY), macKey);
+		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_BLOCK_MODE), BlowfishParameters.BLOCK_MODE_GCM);
+		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_GCM_TAG_LEN), String.valueOf(BlowfishParameters.GCM_AUTH_TAG_LEN_112));
+		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_BLOCK_SIZE), blockSize);
+		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_PADDING), BlowfishParameters.PADDING_NONE);
+
+		final Encryptor encryptor = ConfigurerUtil.configureEncryptor(properties.getProperties(), propPrefix);
+		final BlowfishParameters parameters = (BlowfishParameters) ReflectionUtil.getFieldValue(encryptor, "parameters");
+
+		assertEquals(Base64UrlEncoder.class, ReflectionUtil.getFieldValue(encryptor, "textEncoder").getClass());
+		assertEquals(Base32Encoder.class, ReflectionUtil.getFieldValue(parameters, "textEncoder").getClass());
+		assertEquals(cs, encryptor.getCharset());
+		assertEquals(key, Base32Encoder.getInstance().encode(parameters.getKey().getEncoded()));
+		assertEquals(providerName, parameters.getProviderName());
+		assertEquals(BlowfishParameters.MAC_ALGORITHM_HMAC_SHA1, parameters.getMacAlgorithm());
+		assertEquals(macKey, Base32Encoder.getInstance().encode(parameters.getMacKey().getEncoded()));
+		assertEquals(BlowfishParameters.BLOCK_MODE_GCM, parameters.getBlockMode());
+		assertEquals(BlowfishParameters.GCM_AUTH_TAG_LEN_112, parameters.getGcmTagLen());
+		assertEquals(Integer.valueOf(8), (Integer)parameters.getBlockSize());
 		assertEquals(BlowfishParameters.PADDING_NONE, parameters.getPadding());
 
 		properties.rollback();
