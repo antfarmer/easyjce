@@ -115,7 +115,7 @@ public abstract class AbstractEncoderTest {
 					assertArrayEquals(TEST_TEXT.getBytes(), encoder.decode(enc));
 				}
 			}
-			catch (final Exception e) {
+			catch (final Throwable e) {
 				exception = e;
 				e.printStackTrace();
 			}
