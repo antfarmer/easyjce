@@ -20,7 +20,6 @@ import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
@@ -33,7 +32,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.antfarmer.ejce.encoder.Base64Encoder;
 import org.antfarmer.ejce.encoder.TextEncoder;
 
 
@@ -114,7 +112,7 @@ public final class CryptoUtil {
 		if (provider != null) {
 			kgen = KeyGenerator.getInstance(algorithm, provider);
 		}
-		else if (providerName != null) {
+		else if (providerName != null && providerName.length() > 0) {
 			kgen = KeyGenerator.getInstance(algorithm, providerName);
 		}
 		else {
@@ -189,7 +187,7 @@ public final class CryptoUtil {
 		if (provider != null) {
 			kgen = KeyPairGenerator.getInstance(algorithm, provider);
 		}
-		else if (providerName != null) {
+		else if (providerName != null && providerName.length() > 0) {
 			kgen = KeyPairGenerator.getInstance(algorithm, providerName);
 		}
 		else {
@@ -276,41 +274,6 @@ public final class CryptoUtil {
      */
     public static <T extends KeySpec> T getKeySpec(final Key key, final Class<T> keySpec) throws InvalidKeySpecException, NoSuchAlgorithmException {
     	return KeyFactory.getInstance(key.getAlgorithm()).getKeySpec(key, keySpec);
-    }
-
-    /**
-     * Hashes the given text using the given MessageDigest algorithm and encodes the result using a Base64Encoder.
-     * @param text the text
-     * @param algorithm the MessageDigest algorithm
-     * @return a hash of the given text
-     * @throws NoSuchAlgorithmException NoSuchAlgorithmException
-     */
-    public static String hashString(final String text, final String algorithm) throws NoSuchAlgorithmException {
-		return hashString(text, algorithm, Base64Encoder.getInstance());
-    }
-
-    /**
-     * Hashes the given text using the given MessageDigest algorithm and encodes the result using the given TextEncoder.
-     * @param text the text
-     * @param algorithm the MessageDigest algorithm
-     * @param encoder the TextEncoder
-     * @return a hash of the given text
-     * @throws NoSuchAlgorithmException NoSuchAlgorithmException
-     */
-    public static String hashString(final String text, final String algorithm, final TextEncoder encoder) throws NoSuchAlgorithmException {
-		return encoder.encode(hashBytes(text.getBytes(DEFAULT_CHARSET), algorithm));
-    }
-
-    /**
-     * Hashes the given bytes using the given MessageDigest algorithm.
-     * @param bytes the bytes
-     * @param algorithm the MessageDigest algorithm
-     * @return a hash of the given bytes
-     * @throws NoSuchAlgorithmException NoSuchAlgorithmException
-     */
-    public static byte[] hashBytes(final byte[] bytes, final String algorithm) throws NoSuchAlgorithmException {
-		final MessageDigest md = MessageDigest.getInstance(algorithm);
-		return md.digest(bytes);
     }
 
 }
