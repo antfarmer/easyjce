@@ -553,6 +553,29 @@ public class EncryptorTest {
 	 * @throws GeneralSecurityException
 	 */
 	@Test
+	public void testAesBlank() throws GeneralSecurityException {
+		final AesParameters parameters = new AesParameters()
+				.setKeySize(AesParameters.KEY_SIZE_128)
+				.setBlockMode(AesParameters.BLOCK_MODE_CFB)
+				.setBlockSize(32)
+				.setMacAlgorithm(AesParameters.MAC_ALGORITHM_HMAC_SHA1)
+				.setMacKeySize(AesParameters.MAC_KEY_SIZE_128)
+				;
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		String enc = encryptor.encrypt("");
+		assertEquals("", encryptor.decrypt(enc));
+
+		enc = encryptor.encrypt((String) null);
+		assertEquals(null, encryptor.decrypt(enc));
+	}
+
+	/**
+	 * @throws GeneralSecurityException
+	 */
+	@Test
 	public void testAesEcb() throws GeneralSecurityException {
 		final AesParameters parameters = new AesParameters()
 				.setKeySize(AesParameters.KEY_SIZE_128)
@@ -880,6 +903,29 @@ public class EncryptorTest {
 		final RsaParameters parameters = new RsaParameters()
 			.setEncryptionKey(keyPair.getPublic())
 			.setDecryptionKey(keyPair.getPrivate())
+			.setMacAlgorithm(Rc2Parameters.MAC_ALGORITHM_HMAC_SHA1)
+			.setMacKeySize(Rc2Parameters.MAC_KEY_SIZE_128)
+			;
+
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
+	/**
+	 * @throws GeneralSecurityException
+	 */
+	@Test
+	public void testRsaWithPadding() throws GeneralSecurityException {
+		final KeyPair keyPair = CryptoUtil.generateAsymmetricKeyPair(RsaParameters.KEY_SIZE_1024,
+			RsaParameters.ALGORITHM_RSA);
+		final RsaParameters parameters = new RsaParameters()
+			.setEncryptionKey(keyPair.getPublic())
+			.setDecryptionKey(keyPair.getPrivate())
+			.setPadding(RsaParameters.PADDING_PKCS1)
 			.setMacAlgorithm(Rc2Parameters.MAC_ALGORITHM_HMAC_SHA1)
 			.setMacKeySize(Rc2Parameters.MAC_KEY_SIZE_128)
 			;
