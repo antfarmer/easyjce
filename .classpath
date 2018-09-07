@@ -11,5 +11,7 @@
 	<classpathentry kind="lib" path="lib/optional/jboss-logging-3.1.3.GA.jar"/>
 	<classpathentry kind="lib" path="lib/optional/commons-logging-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/optional/spring-security-crypto-5.0.7.RELEASE.jar" sourcepath="lib/src/spring-security-crypto-5.0.7.RELEASE-sources.jar"/>
+	<classpathentry kind="lib" path="lib/optional/argon2-jvm-2.4.jar" sourcepath="lib/src/argon2-jvm-2.4-sources.jar"/>
+	<classpathentry kind="lib" path="lib/optional/jna-4.4.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
