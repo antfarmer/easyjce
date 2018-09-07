@@ -22,6 +22,12 @@
 		</fileset>
 	</path>
 
+	<path id="doc.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+
     <target name="clean">
         <delete dir="${build.dir}"/>
         <mkdir dir="${build.dir}"/>
@@ -63,7 +69,7 @@
 	
     <target name="javadoc" description="Generate JavaDocs">
 		<delete dir="${basedir}/doc"/>
-        <javadoc access="public" author="true" classpathref="bin.classpath" destdir="${basedir}/doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" overview="src/overview.html" sourcepath="src" splitindex="true" use="true" version="true">
+        <javadoc access="public" author="true" classpathref="doc.classpath" destdir="${basedir}/doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" overview="src/overview.html" sourcepath="src" splitindex="true" use="true" version="true">
             <link href="http://docs.jboss.org/hibernate/orm/4.3/javadocs/"/>
             <link href="https://docs.oracle.com/javase/7/docs/api/"/>
         </javadoc>

@@ -34,6 +34,8 @@ import org.antfarmer.ejce.parameter.PbeParameters;
 import org.antfarmer.ejce.parameter.SymmetricAlgorithmParameters;
 import org.antfarmer.ejce.parameter.salt.SaltGenerator;
 import org.antfarmer.ejce.parameter.salt.SaltMatcher;
+import org.antfarmer.ejce.password.ConfigurablePasswordEncoder;
+import org.antfarmer.ejce.password.PasswordEncoderStore;
 
 /**
  * Configuration utility for instantiating an <code>Encryptor</code> using a <code>Properties</code> object for
@@ -185,6 +187,18 @@ public final class ConfigurerUtil {
 	 * environments. Used only by types extending <code>AbstractLobType</code>.
 	 */
 	public static final String KEY_MAX_IN_MEM_BUFF_SIZE = "maxInMemBuffSize";
+
+	/**
+	 * Property key for the full class name of the {@link ConfigurablePasswordEncoder} to
+	 * be used with the {@link org.antfarmer.ejce.password.EncodedPasswordType}.
+	 */
+	public static final String KEY_PSWD_ENCODER_ADAPTER_CLASS = "encoderAdapter";
+
+	/**
+	 * Property key for the key to be used to export the {@link ConfigurablePasswordEncoder} into the
+	 * {@link PasswordEncoderStore}. This allows the application to easily reference the password encoder.
+	 */
+	public static final String KEY_PSWD_ENCODER_STORE_EXPORT_KEY = "storeExportKey";
 
 	private static final String METHOD_ENCODER_GET_INSTANCE = "getInstance";
 
@@ -457,6 +471,79 @@ public final class ConfigurerUtil {
 		}
 
 		return algorithmParameters;
+	}
+
+
+	/**
+	 * Loads and configures a {@link ConfigurablePasswordEncoder} based on settings within the given properties.
+	 *
+	 * @param properties the properties with password encoder settings
+	 * @return a {@link ConfigurablePasswordEncoder} based on settings within the given properties
+	 * @throws EncryptorConfigurationException an error was found with the given configuration
+	 */
+	public static ConfigurablePasswordEncoder configurePswdEncoder(final Properties properties)
+			throws EncryptorConfigurationException {
+		return configurePswdEncoder(properties, null);
+	}
+
+	/**
+	 * Loads and configures a {@link ConfigurablePasswordEncoder} based on settings within the given properties.
+	 * The prefix is prepended on each of the property keys.
+	 *
+	 * @param properties the properties with password encoder settings
+	 * @param prefix prefix to be used with the property keys
+	 * @return a {@link ConfigurablePasswordEncoder} based on settings within the given properties
+	 * @throws EncryptorConfigurationException an error was found with the given configuration
+	 */
+	public static ConfigurablePasswordEncoder configurePswdEncoder(final Properties properties, final String prefix)
+			throws EncryptorConfigurationException {
+		ConfigurablePasswordEncoder pswdEncoder;
+
+		// get password encoder settings from system properties
+		String property = properties.getProperty(getPropertyName(prefix, KEY_PROPERTY_PREFIX));
+		if (property != null) {
+			if (properties == System.getProperties()) {
+				throw new EncryptorConfigurationException("Cannot set " + KEY_PROPERTY_PREFIX + " within system properties.");
+			}
+			return configurePswdEncoder(System.getProperties(), property);
+		}
+
+		// get password encoder from store if password encoder name is set
+		property = properties.getProperty(getPropertyName(prefix, KEY_ENCRYPTOR_STORE_KEY));
+		if (property != null) {
+			pswdEncoder = PasswordEncoderStore.get(property);
+			if (pswdEncoder == null) {
+				throw new EncryptorConfigurationException("Could not find password encoder in store with name: " + property);
+			}
+			return pswdEncoder;
+		}
+
+		// load adapter class
+		property = properties.getProperty(getPropertyName(prefix, KEY_PSWD_ENCODER_ADAPTER_CLASS));
+		if (property == null || property.length() < 1) {
+			throw new EncryptorConfigurationException("Missing '" + KEY_PSWD_ENCODER_ADAPTER_CLASS + "' property in Hibernate mapping");
+		}
+		try {
+			final Class<?> adapterClass = Class.forName(property);
+			if (!ConfigurablePasswordEncoder.class.isAssignableFrom(adapterClass)) {
+				throw new EncryptorConfigurationException(property + " must implement " + ConfigurablePasswordEncoder.class.getName());
+			}
+			pswdEncoder = (ConfigurablePasswordEncoder) adapterClass.newInstance();
+		}
+		catch (final Exception e) {
+			throw new EncryptorConfigurationException("Error instantiating: " + property, e);
+		}
+
+		// configure
+		pswdEncoder.configure(properties, prefix);
+
+		// export password encoder to store if export key is set
+		property = properties.getProperty(getPropertyName(prefix, KEY_PSWD_ENCODER_STORE_EXPORT_KEY));
+		if (property != null) {
+			PasswordEncoderStore.add(property, pswdEncoder);
+		}
+
+		return pswdEncoder;
 	}
 
 	/**
