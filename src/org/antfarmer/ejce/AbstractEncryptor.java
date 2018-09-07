@@ -26,6 +26,7 @@ import javax.crypto.Mac;
 
 import org.antfarmer.ejce.exception.MacDisagreementException;
 import org.antfarmer.ejce.parameter.AlgorithmParameters;
+import org.antfarmer.ejce.util.TextUtil;
 
 
 /**
@@ -66,6 +67,7 @@ public abstract class AbstractEncryptor<T extends AbstractEncryptor<T>> implemen
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void initialize() throws GeneralSecurityException {
 		initLock.lock();
 		try {
@@ -84,7 +86,7 @@ public abstract class AbstractEncryptor<T extends AbstractEncryptor<T>> implemen
 			decryptor = getCipherInstance(transformation);
 
 			// setup MAC if required
-			if (parameters.getMacAlgorithm() != null && parameters.getMacKey() != null) {
+			if (TextUtil.hasLength(parameters.getMacAlgorithm()) && parameters.getMacKey() != null) {
 				encMac = getMacInstance(parameters.getMacAlgorithm());
 				decMac = getMacInstance(parameters.getMacAlgorithm());
 				macKey = parameters.getMacKey();
@@ -103,7 +105,7 @@ public abstract class AbstractEncryptor<T extends AbstractEncryptor<T>> implemen
 		if (parameters.getProvider() != null) {
 			return Cipher.getInstance(transformation, parameters.getProvider());
 		}
-		if (parameters.getProviderName() != null) {
+		if (TextUtil.hasLength(parameters.getProviderName())) {
 			return Cipher.getInstance(transformation, parameters.getProviderName());
 		}
 		return Cipher.getInstance(transformation);
@@ -114,7 +116,7 @@ public abstract class AbstractEncryptor<T extends AbstractEncryptor<T>> implemen
 		if (parameters.getProvider() != null) {
 			return Mac.getInstance(transformation, parameters.getProvider());
 		}
-		if (parameters.getProviderName() != null) {
+		if (TextUtil.hasLength(parameters.getProviderName())) {
 			return Mac.getInstance(transformation, parameters.getProviderName());
 		}
 		return Mac.getInstance(transformation);
@@ -123,6 +125,7 @@ public abstract class AbstractEncryptor<T extends AbstractEncryptor<T>> implemen
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public byte[] encrypt(final byte[] bytes) throws GeneralSecurityException {
 		return encrypt(bytes, null);
 	}
@@ -130,6 +133,7 @@ public abstract class AbstractEncryptor<T extends AbstractEncryptor<T>> implemen
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public byte[] encrypt(final byte[] bytes, final Key encKey) throws GeneralSecurityException {
 		if (bytes == null) {
 			return null;
@@ -175,6 +179,7 @@ public abstract class AbstractEncryptor<T extends AbstractEncryptor<T>> implemen
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public byte[] decrypt(final byte[] bytes) throws GeneralSecurityException {
 		return decrypt(bytes, null);
 	}
@@ -182,6 +187,7 @@ public abstract class AbstractEncryptor<T extends AbstractEncryptor<T>> implemen
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public byte[] decrypt(final byte[] bytes, final Key decKey) throws GeneralSecurityException {
 		if (bytes == null) {
 			return null;
@@ -230,6 +236,7 @@ public abstract class AbstractEncryptor<T extends AbstractEncryptor<T>> implemen
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isInitialized() {
 		initLock.lock();
 		try {
@@ -243,6 +250,7 @@ public abstract class AbstractEncryptor<T extends AbstractEncryptor<T>> implemen
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public T setAlgorithmParameters(final AlgorithmParameters<?> parameters) {
 		this.parameters = parameters;
@@ -252,6 +260,7 @@ public abstract class AbstractEncryptor<T extends AbstractEncryptor<T>> implemen
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public AlgorithmParameters<?> getAlgorithmParameters() {
 		return parameters;
 	}

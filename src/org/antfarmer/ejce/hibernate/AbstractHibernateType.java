@@ -30,6 +30,7 @@ import org.antfarmer.ejce.Encryptor;
 import org.antfarmer.ejce.ValueEncryptorInterface;
 import org.antfarmer.ejce.exception.EncryptorConfigurationException;
 import org.antfarmer.ejce.util.ConfigurerUtil;
+import org.antfarmer.ejce.util.TextUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.internal.util.compare.EqualsHelper;
@@ -207,7 +208,7 @@ public abstract class AbstractHibernateType implements UserType, ParameterizedTy
 	protected void setCharset(final Properties parameters) {
 		// load charset
 		final String value = parameters.getProperty(ConfigurerUtil.KEY_CHARSET);
-		if (value != null) {
+		if (TextUtil.hasLength(value)) {
 			charset = Charset.forName(value.trim());
 		}
 		else {

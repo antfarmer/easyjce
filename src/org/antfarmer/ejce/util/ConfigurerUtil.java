@@ -237,7 +237,7 @@ public final class ConfigurerUtil {
 
 		// get encryptor settings from system properties
 		String property = properties.getProperty(getPropertyName(prefix, KEY_PROPERTY_PREFIX));
-		if (property != null) {
+		if (TextUtil.hasLength(property)) {
 			if (properties == System.getProperties()) {
 				throw new EncryptorConfigurationException("Cannot set " + KEY_PROPERTY_PREFIX
 						+ " within system properties.");
@@ -247,7 +247,7 @@ public final class ConfigurerUtil {
 
 		// get encryptor from store if encryptor name is set
 		property = properties.getProperty(getPropertyName(prefix, KEY_ENCRYPTOR_STORE_KEY));
-		if (property != null) {
+		if (TextUtil.hasLength(property)) {
 			encryptor = EncryptorStore.get(property);
 			if (encryptor == null) {
 				throw new EncryptorConfigurationException("Could not find encryptor in store with name: "
@@ -259,7 +259,7 @@ public final class ConfigurerUtil {
 		// instantiate text encoder for encryptor
 		TextEncoder encoder = null;
 		property = properties.getProperty(getPropertyName(prefix, KEY_ENCODER_CLASS));
-		if (property == null) {
+		if (!TextUtil.hasLength(property)) {
 			property = Base64Encoder.class.getName();
 		}
 		try {
@@ -272,7 +272,7 @@ public final class ConfigurerUtil {
 		// load charset for encryptor
 		Charset charset = null;
 		property = properties.getProperty(getPropertyName(prefix, KEY_CHARSET));
-		if (property != null) {
+		if (TextUtil.hasLength(property)) {
 			try {
 				charset = Charset.forName(property.trim());
 			}
@@ -300,7 +300,7 @@ public final class ConfigurerUtil {
 
 		// instantiate algorithmParameters
 		property = parameters.getProperty(getPropertyName(prefix, KEY_PARAM_CLASS));
-		if (property == null) {
+		if (!TextUtil.hasLength(property)) {
 			throw new EncryptorConfigurationException("Missing '" + KEY_PARAM_CLASS
 					+ "' property in Hibernate mapping.");
 		}
@@ -324,7 +324,7 @@ public final class ConfigurerUtil {
 
 		// instantiate text encoder if necessary
 		property = parameters.getProperty(getPropertyName(prefix, KEY_PARAM_ENCODER_CLASS));
-		if (property != null) {
+		if (TextUtil.hasLength(property)) {
 			try {
 				final TextEncoder encoder = (TextEncoder) Class.forName(property).getMethod(METHOD_ENCODER_GET_INSTANCE).invoke(null);
 				ReflectionUtil.setFieldValue(algorithmParameters, encoder, FIELD_TEXT_ENCODER);
@@ -336,7 +336,7 @@ public final class ConfigurerUtil {
 
 		// set algorithm
 		property = parameters.getProperty(getPropertyName(prefix, KEY_ALGORITHM));
-		if (property != null) {
+		if (TextUtil.hasLength(property)) {
 			try {
 				ReflectionUtil.setFieldValue(algorithmParameters, property, FIELD_ALGORITHM);
 			}
@@ -349,11 +349,11 @@ public final class ConfigurerUtil {
 		// set key
 		property = parameters.getProperty(getPropertyName(prefix, KEY_CIPHER_KEY));
 		final String loaderProperty = parameters.getProperty(getPropertyName(prefix, KEY_KEY_LOADER));
-		if (property == null && loaderProperty == null) {
+		if (!(TextUtil.hasLength(property) || TextUtil.hasLength(loaderProperty))) {
 			throw new EncryptorConfigurationException("Missing '" + KEY_CIPHER_KEY
 				+ "' or '" + KEY_KEY_LOADER + "' property in Hibernate mapping.");
 		}
-		if (property != null) {
+		if (TextUtil.hasLength(property)) {
 			((SymmetricAlgorithmParameters<?>) algorithmParameters).setKey(property);
 		}
 		else {
@@ -362,13 +362,13 @@ public final class ConfigurerUtil {
 
 		// set providerName
 		property = parameters.getProperty(getPropertyName(prefix, KEY_PROVIDER_NAME));
-		if (property != null) {
+		if (TextUtil.hasLength(property)) {
 			algorithmParameters.setProviderName(property);
 		}
 
 		// set provider
 		property = parameters.getProperty(getPropertyName(prefix, KEY_PROVIDER_CLASS));
-		if (property != null) {
+		if (TextUtil.hasLength(property)) {
 			try {
 				algorithmParameters.setProvider((Provider) Class.forName(property).newInstance());
 			}
@@ -379,25 +379,25 @@ public final class ConfigurerUtil {
 
 		// set mac key
 		property = parameters.getProperty(getPropertyName(prefix, KEY_MAC_KEY));
-		if (property != null) {
+		if (TextUtil.hasLength(property)) {
 			algorithmParameters.setMacKey(property);
 		}
 		else {
 			property = parameters.getProperty(getPropertyName(prefix, KEY_MAC_KEY_LOADER));
-			if (property != null) {
+			if (TextUtil.hasLength(property)) {
 				algorithmParameters.setMacKeyLoader(property);
 			}
 		}
 
 		// set mac algorithm
 		property = parameters.getProperty(getPropertyName(prefix, KEY_MAC_ALGORITHM));
-		if (property != null) {
+		if (TextUtil.hasLength(property)) {
 			algorithmParameters.setMacAlgorithm(property);
 		}
 
 		// set salt generator
 		property = parameters.getProperty(getPropertyName(prefix, KEY_SALT_GENERATOR));
-		if (property != null) {
+		if (TextUtil.hasLength(property)) {
 			try {
 				algorithmParameters.setSaltGenerator((SaltGenerator) Class.forName(property).newInstance());
 			}
@@ -408,7 +408,7 @@ public final class ConfigurerUtil {
 
 		// set salt matcher
 		property = parameters.getProperty(getPropertyName(prefix, KEY_SALT_MATCHER));
-		if (property != null) {
+		if (TextUtil.hasLength(property)) {
 			try {
 				algorithmParameters.setSaltMatcher((SaltMatcher) Class.forName(property).newInstance());
 			}
@@ -425,7 +425,7 @@ public final class ConfigurerUtil {
 
 		// set block mode
 		property = parameters.getProperty(getPropertyName(prefix, KEY_BLOCK_MODE));
-		if (property != null) {
+		if (TextUtil.hasLength(property)) {
 			blockCipherParameters.setBlockMode(property);
 		}
 
@@ -446,7 +446,7 @@ public final class ConfigurerUtil {
 
 		// set block padding
 		property = parameters.getProperty(getPropertyName(prefix, KEY_PADDING));
-		if (property != null) {
+		if (TextUtil.hasLength(property)) {
 			blockCipherParameters.setPadding(property);
 		}
 
@@ -501,7 +501,7 @@ public final class ConfigurerUtil {
 
 		// get password encoder settings from system properties
 		String property = properties.getProperty(getPropertyName(prefix, KEY_PROPERTY_PREFIX));
-		if (property != null) {
+		if (TextUtil.hasLength(property)) {
 			if (properties == System.getProperties()) {
 				throw new EncryptorConfigurationException("Cannot set " + KEY_PROPERTY_PREFIX + " within system properties.");
 			}
@@ -510,7 +510,7 @@ public final class ConfigurerUtil {
 
 		// get password encoder from store if password encoder name is set
 		property = properties.getProperty(getPropertyName(prefix, KEY_ENCRYPTOR_STORE_KEY));
-		if (property != null) {
+		if (TextUtil.hasLength(property)) {
 			pswdEncoder = PasswordEncoderStore.get(property);
 			if (pswdEncoder == null) {
 				throw new EncryptorConfigurationException("Could not find password encoder in store with name: " + property);
@@ -520,7 +520,7 @@ public final class ConfigurerUtil {
 
 		// load adapter class
 		property = properties.getProperty(getPropertyName(prefix, KEY_PSWD_ENCODER_ADAPTER_CLASS));
-		if (property == null || property.length() < 1) {
+		if (!TextUtil.hasLength(property)) {
 			throw new EncryptorConfigurationException("Missing '" + KEY_PSWD_ENCODER_ADAPTER_CLASS + "' property in Hibernate mapping");
 		}
 		try {
@@ -539,7 +539,7 @@ public final class ConfigurerUtil {
 
 		// export password encoder to store if export key is set
 		property = properties.getProperty(getPropertyName(prefix, KEY_PSWD_ENCODER_STORE_EXPORT_KEY));
-		if (property != null) {
+		if (TextUtil.hasLength(property)) {
 			PasswordEncoderStore.add(property, pswdEncoder);
 		}
 

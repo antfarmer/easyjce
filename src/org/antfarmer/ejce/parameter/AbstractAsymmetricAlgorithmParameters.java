@@ -23,6 +23,7 @@ import java.security.spec.AlgorithmParameterSpec;
 import org.antfarmer.ejce.encoder.TextEncoder;
 import org.antfarmer.ejce.parameter.key_loader.KeyLoader;
 import org.antfarmer.ejce.util.CryptoUtil;
+import org.antfarmer.ejce.util.TextUtil;
 
 /**
  * Abstract AsymmetricAlgorithmParameters class.
@@ -111,6 +112,7 @@ public abstract class AbstractAsymmetricAlgorithmParameters<T extends AbstractAs
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public AlgorithmParameterSpec getParameterSpec(final byte[] messageData) throws GeneralSecurityException {
 		return null;
 	}
@@ -118,6 +120,7 @@ public abstract class AbstractAsymmetricAlgorithmParameters<T extends AbstractAs
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int getParameterSpecSize() {
 		return 0;
 	}
@@ -125,9 +128,10 @@ public abstract class AbstractAsymmetricAlgorithmParameters<T extends AbstractAs
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getTransformation() {
 		final StringBuilder buff = new StringBuilder(getAlgorithm());
-		if (padding != null) {
+		if (TextUtil.hasLength(padding)) {
 			buff.append('/').append(blockType).append('/').append(padding);
 		}
 		return buff.toString();

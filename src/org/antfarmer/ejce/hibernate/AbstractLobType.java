@@ -41,6 +41,7 @@ import org.antfarmer.ejce.parameter.AlgorithmParameters;
 import org.antfarmer.ejce.stream.EncryptInputStream;
 import org.antfarmer.ejce.stream.GZIPCompressionStream;
 import org.antfarmer.ejce.util.ConfigurerUtil;
+import org.antfarmer.ejce.util.TextUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 
@@ -86,7 +87,7 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 
 		// check if compression is enabled
 		value = parameters.getProperty(ConfigurerUtil.KEY_COMPRESS_LOB);
-		if (value != null) {
+		if (TextUtil.hasLength(value)) {
 			useCompression = value.trim().toLowerCase().equals("true");
 		}
 
@@ -108,7 +109,7 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 
 		// check if compression is enabled
 		value = parameters.getProperty(ConfigurerUtil.KEY_STREAM_LOBS);
-		if (value != null) {
+		if (TextUtil.hasLength(value)) {
 			useStreams = value.trim().toLowerCase().equals("true");
 		}
 

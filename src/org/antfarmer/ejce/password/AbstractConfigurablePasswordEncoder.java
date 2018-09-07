@@ -24,6 +24,7 @@ import java.util.Properties;
 import org.antfarmer.ejce.encoder.Base64PaddedEncoder;
 import org.antfarmer.ejce.encoder.TextEncoder;
 import org.antfarmer.ejce.exception.EncryptorConfigurationException;
+import org.antfarmer.ejce.util.TextUtil;
 
 /**
  * Abstract {@link ConfigurablePasswordEncoder} containing configuration parsing methods.
@@ -50,7 +51,7 @@ public abstract class AbstractConfigurablePasswordEncoder implements Configurabl
 	 */
 	protected SecureRandom getRandom(final Properties parameters, final String prefix) {
 		String className = parameters.getProperty(getPropertyName(prefix, KEY_RANDOM));
-		if (className == null || className.length() < 1) {
+		if (!TextUtil.hasLength(className)) {
 			className = SecureRandom.class.getName();
 		}
 		synchronized (randoms) {
@@ -84,7 +85,7 @@ public abstract class AbstractConfigurablePasswordEncoder implements Configurabl
 	 * @return the integer value of the given string, or null if the string is empty
 	 */
 	protected Integer parseInt(final String value) {
-		if (value == null || value.length() < 1) {
+		if (!TextUtil.hasLength(value)) {
 			return null;
 		}
 		try {
@@ -102,7 +103,7 @@ public abstract class AbstractConfigurablePasswordEncoder implements Configurabl
 	 */
 	@SuppressWarnings("unchecked")
 	protected <T> T parseInstance(final String value) {
-		if (value == null || value.length() < 1) {
+		if (!TextUtil.hasLength(value)) {
 			return null;
 		}
 		try {
@@ -124,7 +125,7 @@ public abstract class AbstractConfigurablePasswordEncoder implements Configurabl
 	 */
 	protected boolean parseBoolean(final Properties parameters, final String prefix, final String key, final boolean defaultValue) {
 		String value = parameters.getProperty(getPropertyName(prefix, key));
-		if (value == null || value.length() < 1) {
+		if (!TextUtil.hasLength(value)) {
 			return defaultValue;
 		}
 		value = value.trim();
@@ -141,7 +142,7 @@ public abstract class AbstractConfigurablePasswordEncoder implements Configurabl
 	 */
 	protected String parseString(final Properties parameters, final String prefix, final String key, final String defaultValue) {
 		final String value = parameters.getProperty(getPropertyName(prefix, key));
-		return value == null || value.length() < 1 ? defaultValue : value.trim();
+		return !TextUtil.hasLength(value) ? defaultValue : value.trim();
 	}
 
 	/**

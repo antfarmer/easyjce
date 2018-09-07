@@ -241,7 +241,7 @@ public class MessageDigestUtil {
 		if (provider != null) {
 			md = MessageDigest.getInstance(algorithm, provider);
 		}
-		else if (providerName != null && providerName.length() > 0) {
+		else if (TextUtil.hasLength(providerName)) {
 			md = MessageDigest.getInstance(algorithm, providerName);
 		}
 		else {

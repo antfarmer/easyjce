@@ -21,6 +21,7 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.antfarmer.ejce.password.encoder.AbstractScryptPasswordEncoder;
+import org.antfarmer.ejce.util.TextUtil;
 import org.bouncycastle.crypto.generators.SCrypt;
 
 /**
@@ -110,7 +111,7 @@ public class BcScryptEncoder extends AbstractScryptPasswordEncoder {
 	 */
 	@Override
 	public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
-		if (encodedPassword == null || encodedPassword.length() < 1) {
+		if (!TextUtil.hasLength(encodedPassword)) {
 			return false;
 		}
 		if (encodedPassword.length() < minimumEncLength) {

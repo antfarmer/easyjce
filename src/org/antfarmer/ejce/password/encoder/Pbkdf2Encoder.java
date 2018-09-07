@@ -26,6 +26,7 @@ import javax.crypto.spec.PBEKeySpec;
 
 import org.antfarmer.ejce.exception.EncryptorConfigurationException;
 import org.antfarmer.ejce.util.EnvironmentUtil;
+import org.antfarmer.ejce.util.TextUtil;
 
 /**
  * A highly configurable password encoder using PBKDF2 algorithms.
@@ -152,7 +153,7 @@ public class Pbkdf2Encoder extends AbstractPbkdf2PasswordEncoder {
 		// load provider instance if needed
 		Provider provider = null;
 		final String providerClass = parseString(parameters, prefix, KEY_PROVIDER_CLASS, null);
-		if (providerClass != null && providerClass.length() > 0) {
+		if (TextUtil.hasLength(providerClass)) {
 			try {
 				provider = (Provider) Class.forName(providerClass).newInstance();
 			}
@@ -166,7 +167,7 @@ public class Pbkdf2Encoder extends AbstractPbkdf2PasswordEncoder {
 			if (provider != null) {
 				skf = SecretKeyFactory.getInstance(algorithm, provider);
 			}
-			else if (providerName != null && providerName.length() > 0) {
+			else if (TextUtil.hasLength(providerName)) {
 				skf = SecretKeyFactory.getInstance(algorithm, providerName);
 			}
 			else {

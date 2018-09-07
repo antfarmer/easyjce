@@ -112,7 +112,7 @@ public final class CryptoUtil {
 		if (provider != null) {
 			kgen = KeyGenerator.getInstance(algorithm, provider);
 		}
-		else if (providerName != null && providerName.length() > 0) {
+		else if (TextUtil.hasLength(providerName)) {
 			kgen = KeyGenerator.getInstance(algorithm, providerName);
 		}
 		else {
@@ -187,7 +187,7 @@ public final class CryptoUtil {
 		if (provider != null) {
 			kgen = KeyPairGenerator.getInstance(algorithm, provider);
 		}
-		else if (providerName != null && providerName.length() > 0) {
+		else if (TextUtil.hasLength(providerName)) {
 			kgen = KeyPairGenerator.getInstance(algorithm, providerName);
 		}
 		else {
