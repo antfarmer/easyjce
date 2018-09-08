@@ -20,6 +20,7 @@ import java.util.Properties;
 
 import org.antfarmer.ejce.exception.EncryptorConfigurationException;
 import org.antfarmer.ejce.password.encoder.AbstractBcryptPasswordEncoder;
+import org.antfarmer.ejce.util.ByteUtil;
 import org.bouncycastle.crypto.generators.OpenBSDBCrypt;
 
 /**
@@ -86,7 +87,13 @@ public class BcBcryptEncoder extends AbstractBcryptPasswordEncoder {
 	public String encode(final CharSequence rawPassword) {
 		final byte[] salt = new byte[SALT_LENGTH];
 		random.nextBytes(salt);
-		return OpenBSDBCrypt.generate(version, rawPassword.toString().toCharArray(), salt, strength);
+		final char[] pass = rawPassword.toString().toCharArray();
+		try {
+			return OpenBSDBCrypt.generate(version, pass, salt, strength);
+		}
+		finally {
+			ByteUtil.clear(pass);
+		}
 	}
 
 	/**
@@ -94,7 +101,13 @@ public class BcBcryptEncoder extends AbstractBcryptPasswordEncoder {
 	 */
 	@Override
 	public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
-		return OpenBSDBCrypt.checkPassword(encodedPassword, rawPassword.toString().toCharArray());
+		final char[] pass = rawPassword.toString().toCharArray();
+		try {
+			return OpenBSDBCrypt.checkPassword(encodedPassword, pass);
+		}
+		finally {
+			ByteUtil.clear(pass);
+		}
 	}
 
 }

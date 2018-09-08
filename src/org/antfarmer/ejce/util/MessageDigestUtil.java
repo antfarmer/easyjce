@@ -137,7 +137,13 @@ public class MessageDigestUtil {
 	 */
 	public static String hashString(final String text, final String algorithm, final TextEncoder encoder)
 			throws NoSuchAlgorithmException {
-		return encoder.encode(hashBytes(text.getBytes(DEFAULT_CHARSET), algorithm));
+		final byte[] textBytes = text.getBytes(DEFAULT_CHARSET);
+		try {
+			return encoder.encode(hashBytes(textBytes, algorithm));
+		}
+		finally {
+			ByteUtil.clear(textBytes);
+		}
 	}
 
 	/**
@@ -151,7 +157,13 @@ public class MessageDigestUtil {
 	 */
 	public static String hashString(final String text, final Charset charset, final String algorithm, final TextEncoder encoder)
 			throws NoSuchAlgorithmException {
-		return encoder.encode(hashBytes(text.getBytes(charset), algorithm));
+		final byte[] textBytes = text.getBytes(charset);
+		try {
+			return encoder.encode(hashBytes(textBytes, algorithm));
+		}
+		finally {
+			ByteUtil.clear(textBytes);
+		}
 	}
 
 	/**
@@ -195,7 +207,13 @@ public class MessageDigestUtil {
 	 */
 	public static String hashString(final String text, final String algorithm, final Provider provider, final String providerName, final TextEncoder encoder)
 			throws NoSuchAlgorithmException, NoSuchProviderException {
-		return encoder.encode(hashBytes(text.getBytes(DEFAULT_CHARSET), algorithm, provider, providerName));
+		final byte[] textBytes = text.getBytes(DEFAULT_CHARSET);
+		try {
+			return encoder.encode(hashBytes(textBytes, algorithm, provider, providerName));
+		}
+		finally {
+			ByteUtil.clear(textBytes);
+		}
 	}
 
 	/**
@@ -211,7 +229,13 @@ public class MessageDigestUtil {
 	 */
 	public static String hashString(final String text, final Charset charset, final String algorithm, final Provider provider, final String providerName, final TextEncoder encoder)
 			throws NoSuchAlgorithmException, NoSuchProviderException {
-		return encoder.encode(hashBytes(text.getBytes(charset), algorithm, provider, providerName));
+		final byte[] textBytes = text.getBytes(charset);
+		try {
+			return encoder.encode(hashBytes(textBytes, algorithm, provider, providerName));
+		}
+		finally {
+			ByteUtil.clear(textBytes);
+		}
 	}
 
 	/**

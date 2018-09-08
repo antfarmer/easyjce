@@ -15,6 +15,8 @@
  */
 package org.antfarmer.ejce.util;
 
+import org.bouncycastle.util.Arrays;
+
 /**
  * Utility useful for converting numbers to and from bytes.
  * @author Ameer Antar
@@ -180,4 +182,23 @@ public final class ByteUtil {
 		return copy;
 	}
 
+	/**
+	 * Clears the values in the given byte array.
+	 * @param b the byte array
+	 */
+	public static void clear(final byte[] b) {
+		if (b != null) {
+			Arrays.fill(b, (byte) 0);
+		}
+	}
+
+	/**
+	 * Clears the values in the given char array.
+	 * @param c the char array
+	 */
+	public static void clear(final char[] c) {
+		if (c != null) {
+			Arrays.fill(c, (char) 0);
+		}
+	}
 }

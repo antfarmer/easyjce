@@ -17,6 +17,7 @@ package org.antfarmer.ejce.parameter.key_loader;
 
 import java.security.Key;
 
+import org.antfarmer.ejce.util.ByteUtil;
 import org.antfarmer.ejce.util.CryptoUtil;
 
 /**
@@ -28,8 +29,15 @@ public abstract class AbstractSymmetricKeyLoader implements KeyLoader {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Key loadKey(final String algorithm) {
-		return CryptoUtil.getSecretKeyFromRawKey(loadRawKey(), algorithm);
+		final byte[] rawKey = loadRawKey();
+		try {
+			return CryptoUtil.getSecretKeyFromRawKey(rawKey, algorithm);
+		}
+		finally {
+			ByteUtil.clear(rawKey);
+		}
 	}
 
 	/**

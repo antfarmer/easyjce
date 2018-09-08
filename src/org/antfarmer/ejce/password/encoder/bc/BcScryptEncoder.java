@@ -21,6 +21,7 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.antfarmer.ejce.password.encoder.AbstractScryptPasswordEncoder;
+import org.antfarmer.ejce.util.ByteUtil;
 import org.antfarmer.ejce.util.TextUtil;
 import org.bouncycastle.crypto.generators.SCrypt;
 
@@ -96,14 +97,21 @@ public class BcScryptEncoder extends AbstractScryptPasswordEncoder {
 	public String encode(final CharSequence rawPassword) {
 		final byte[] salt = new byte[saltLength];
 		random.nextBytes(salt);
-		final byte[] derived = SCrypt.generate(toBytes(rawPassword), salt, cpuCost, memoryCost, parallelization, keyLength);
 
-		final String params = Long.toString(((int) (Math.log(cpuCost) / Math.log(2)) << 16) | memoryCost << 8 | parallelization, 16);
+		final byte[] pass = toBytes(rawPassword);
+		try {
+			final byte[] derived = SCrypt.generate(pass, salt, cpuCost, memoryCost, parallelization, keyLength);
 
-		final StringBuilder sb = new StringBuilder(maximumEncLength);
-		sb.append("$").append(params).append('$').append(encodeBytes(salt)).append('$').append(encodeBytes(derived));
+			final String params = Long.toString(((int) (Math.log(cpuCost) / Math.log(2)) << 16) | memoryCost << 8 | parallelization, 16);
 
-		return sb.toString();
+			final StringBuilder sb = new StringBuilder(maximumEncLength);
+			sb.append("$").append(params).append('$').append(encodeBytes(salt)).append('$').append(encodeBytes(derived));
+
+			return sb.toString();
+		}
+		finally {
+			ByteUtil.clear(pass);
+		}
 	}
 
 	/**
@@ -136,7 +144,15 @@ public class BcScryptEncoder extends AbstractScryptPasswordEncoder {
 		final int memoryCost = (int) params >> 8 & 0xff;
 		final int parallelization = (int) params & 0xff;
 
-		final byte[] generated = SCrypt.generate(toBytes(rawPassword), salt, cpuCost, memoryCost, parallelization, keyLength);
+		final byte[] generated;
+		final byte[] pass = toBytes(rawPassword);
+
+		try {
+			generated = SCrypt.generate(pass, salt, cpuCost, memoryCost, parallelization, keyLength);
+		}
+		finally {
+			ByteUtil.clear(pass);
+		}
 
 		return Arrays.equals(derived, generated);
 	}

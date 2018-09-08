@@ -251,7 +251,13 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 		if (text == null) {
 			return null;
 		}
-		return textEncoder.encode(encrypt(text.getBytes(charset), key));
+		final byte[] bytes = text.getBytes(charset);
+		try {
+			return textEncoder.encode(encrypt(bytes, key));
+		}
+		finally {
+			ByteUtil.clear(bytes);
+		}
 	}
 
 	/**
@@ -262,7 +268,13 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 		if (text == null) {
 			return null;
 		}
-		return new String(decrypt(textEncoder.decode(text), key), charset);
+		final byte[] bytes = decrypt(textEncoder.decode(text), key);
+		try {
+			return new String(bytes, charset);
+		}
+		finally {
+			ByteUtil.clear(bytes);
+		}
 	}
 
 	/**
@@ -296,7 +308,13 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 		if (number == null) {
 			return null;
 		}
-		return textEncoder.encode(encrypt(String.valueOf(number).getBytes(charset), key));
+		final byte[] bytes = String.valueOf(number).getBytes(charset);
+		try {
+			return textEncoder.encode(encrypt(bytes, key));
+		}
+		finally {
+			ByteUtil.clear(bytes);
+		}
 	}
 
 	/**
@@ -308,7 +326,13 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 		if (text == null) {
 			return null;
 		}
-		return new String(decrypt(textEncoder.decode(text), key), charset).charAt(0);
+		final byte[] bytes = decrypt(textEncoder.decode(text), key);
+		try {
+			return new String(bytes, charset).charAt(0);
+		}
+		finally {
+			ByteUtil.clear(bytes);
+		}
 	}
 
 	/**
@@ -319,7 +343,13 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 		if (number == null) {
 			return null;
 		}
-		return textEncoder.encode(encrypt(ByteUtil.toBytes(number), key));
+		final byte[] bytes = ByteUtil.toBytes(number);
+		try {
+			return textEncoder.encode(encrypt(bytes, key));
+		}
+		finally {
+			ByteUtil.clear(bytes);
+		}
 	}
 
 	/**
@@ -330,7 +360,13 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 		if (text == null) {
 			return null;
 		}
-		return ByteUtil.toLong(decrypt(textEncoder.decode(text), key));
+		final byte[] bytes = decrypt(textEncoder.decode(text), key);
+		try {
+			return ByteUtil.toLong(bytes);
+		}
+		finally {
+			ByteUtil.clear(bytes);
+		}
 	}
 
 	/**
@@ -342,7 +378,13 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 		if (number == null) {
 			return null;
 		}
-		return textEncoder.encode(encrypt(ByteUtil.toBytes(number), key));
+		final byte[] bytes = ByteUtil.toBytes(number);
+		try {
+			return textEncoder.encode(encrypt(bytes, key));
+		}
+		finally {
+			ByteUtil.clear(bytes);
+		}
 	}
 
 	/**
@@ -353,7 +395,13 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 		if (text == null) {
 			return null;
 		}
-		return ByteUtil.toInt(decrypt(textEncoder.decode(text), key));
+		final byte[] bytes = decrypt(textEncoder.decode(text), key);
+		try {
+			return ByteUtil.toInt(bytes);
+		}
+		finally {
+			ByteUtil.clear(bytes);
+		}
 	}
 
 	/**
@@ -364,7 +412,13 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 		if (number == null) {
 			return null;
 		}
-		return textEncoder.encode(encrypt(ByteUtil.toBytes(number), key));
+		final byte[] bytes = ByteUtil.toBytes(number);
+		try {
+			return textEncoder.encode(encrypt(bytes, key));
+		}
+		finally {
+			ByteUtil.clear(bytes);
+		}
 	}
 
 	/**
@@ -375,7 +429,13 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 		if (text == null) {
 			return null;
 		}
-		return ByteUtil.toShort(decrypt(textEncoder.decode(text), key));
+		final byte[] bytes = decrypt(textEncoder.decode(text), key);
+		try {
+			return ByteUtil.toShort(bytes);
+		}
+		finally {
+			ByteUtil.clear(bytes);
+		}
 	}
 
 	/**
@@ -387,7 +447,13 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 		if (value == null) {
 			return null;
 		}
-		return textEncoder.encode(encrypt(new byte[] {(byte) (value ? 1 : 0)}, key));
+		final byte[] bytes = new byte[] {(byte) (value ? 1 : 0)};
+		try {
+			return textEncoder.encode(encrypt(bytes, key));
+		}
+		finally {
+			ByteUtil.clear(bytes);
+		}
 	}
 
 	/**
@@ -398,7 +464,13 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 		if (text == null) {
 			return null;
 		}
-		return decrypt(textEncoder.decode(text), key)[0] == 1 ? true : false;
+		final byte[] bytes = decrypt(textEncoder.decode(text), key);
+		try {
+			return bytes[0] == 1 ? true : false;
+		}
+		finally {
+			ByteUtil.clear(bytes);
+		}
 	}
 
 	/**
@@ -409,7 +481,13 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 		if (number == null) {
 			return null;
 		}
-		return textEncoder.encode(encrypt(ByteUtil.toBytes(number), key));
+		final byte[] bytes = ByteUtil.toBytes(number);
+		try {
+			return textEncoder.encode(encrypt(bytes, key));
+		}
+		finally {
+			ByteUtil.clear(bytes);
+		}
 	}
 
 	/**
@@ -420,7 +498,13 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 		if (text == null) {
 			return null;
 		}
-		return ByteUtil.toDouble(decrypt(textEncoder.decode(text), key));
+		final byte[] bytes = decrypt(textEncoder.decode(text), key);
+		try {
+			return ByteUtil.toDouble(bytes);
+		}
+		finally {
+			ByteUtil.clear(bytes);
+		}
 	}
 
 	/**
@@ -431,7 +515,13 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 		if (number == null) {
 			return null;
 		}
-		return textEncoder.encode(encrypt(ByteUtil.toBytes(number), key));
+		final byte[] bytes = ByteUtil.toBytes(number);
+		try {
+			return textEncoder.encode(encrypt(bytes, key));
+		}
+		finally {
+			ByteUtil.clear(bytes);
+		}
 	}
 
 	/**
@@ -442,7 +532,13 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 		if (text == null) {
 			return null;
 		}
-		return ByteUtil.toFloat(decrypt(textEncoder.decode(text), key));
+		final byte[] bytes = decrypt(textEncoder.decode(text), key);
+		try {
+			return ByteUtil.toFloat(bytes);
+		}
+		finally {
+			ByteUtil.clear(bytes);
+		}
 	}
 
 	/**
@@ -466,7 +562,13 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 		finally {
 			closeStream(oos);
 		}
-		return textEncoder.encode(encrypt(baos.toByteArray(), key));
+		final byte[] bytes = baos.toByteArray();
+		try {
+			return textEncoder.encode(encrypt(bytes, key));
+		}
+		finally {
+			ByteUtil.clear(bytes);
+		}
 	}
 
 	/**
@@ -479,19 +581,25 @@ public abstract class AbstractValueEncryptor<T extends AbstractValueEncryptor<T>
 			return null;
 		}
 		Object object;
-		final ByteArrayInputStream bais = new ByteArrayInputStream(decrypt(textEncoder.decode(text), key));
-		ObjectInputStream ois = null;
+		final byte[] bytes = decrypt(textEncoder.decode(text), key);
 		try {
-			ois = new ObjectInputStream(bais);
-			object = ois.readObject();
-		}
-		catch (final IOException e) {
-			throw e;
+			final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+			ObjectInputStream ois = null;
+			try {
+				ois = new ObjectInputStream(bais);
+				object = ois.readObject();
+			}
+			catch (final IOException e) {
+				throw e;
+			}
+			finally {
+				closeStream(ois);
+			}
+			return object;
 		}
 		finally {
-			closeStream(ois);
+			ByteUtil.clear(bytes);
 		}
-		return object;
 	}
 
 

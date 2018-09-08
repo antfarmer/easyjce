@@ -20,6 +20,7 @@ import java.security.Key;
 
 import org.antfarmer.ejce.encoder.TextEncoder;
 import org.antfarmer.ejce.parameter.key_loader.KeyLoader;
+import org.antfarmer.ejce.util.ByteUtil;
 import org.antfarmer.ejce.util.CryptoUtil;
 
 /**
@@ -50,6 +51,7 @@ public abstract class AbstractSymmetricAlgorithmParameters<T extends AbstractSym
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Key getKey() throws GeneralSecurityException {
 		return getEncryptionKey();
 	}
@@ -57,6 +59,7 @@ public abstract class AbstractSymmetricAlgorithmParameters<T extends AbstractSym
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public T setKey(final byte[] key) {
 		return super.setEncryptionKey(key);
 	}
@@ -64,6 +67,7 @@ public abstract class AbstractSymmetricAlgorithmParameters<T extends AbstractSym
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public T setKey(final String key) {
 		return super.setEncryptionKey(key);
 	}
@@ -71,6 +75,7 @@ public abstract class AbstractSymmetricAlgorithmParameters<T extends AbstractSym
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public T setKey(final Key key) {
 		return super.setEncryptionKey(key);
 	}
@@ -78,6 +83,7 @@ public abstract class AbstractSymmetricAlgorithmParameters<T extends AbstractSym
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public T setKeyLoader(final Object keyLoader) {
 		return super.setEncryptionKeyLoader(keyLoader);
 	}
@@ -106,18 +112,23 @@ public abstract class AbstractSymmetricAlgorithmParameters<T extends AbstractSym
 	@Override
 	protected Key loadKey(final byte[] rawKey, final KeyLoader keyLoader, final String algorithm)
 			throws GeneralSecurityException {
-		if (keyLoader != null) {
-			return keyLoader.loadKey(algorithm);
-		}
+		try {
+			if (keyLoader != null) {
+				return keyLoader.loadKey(algorithm);
+			}
 
-		byte[] keyBytes;
-		if (rawKey == null) {
-			keyBytes = generateKeyData(algorithm);
+			byte[] keyBytes;
+			if (rawKey == null) {
+				keyBytes = generateKeyData(algorithm);
+			}
+			else {
+				keyBytes = rawKey;
+			}
+			return CryptoUtil.getSecretKeyFromRawKey(keyBytes, algorithm);
 		}
-		else {
-			keyBytes = rawKey;
+		finally {
+			ByteUtil.clear(rawKey);
 		}
-		return CryptoUtil.getSecretKeyFromRawKey(keyBytes, algorithm);
 	}
 
 }

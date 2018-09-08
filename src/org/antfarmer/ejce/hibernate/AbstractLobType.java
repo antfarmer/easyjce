@@ -40,6 +40,7 @@ import org.antfarmer.ejce.exception.EncryptorConfigurationException;
 import org.antfarmer.ejce.parameter.AlgorithmParameters;
 import org.antfarmer.ejce.stream.EncryptInputStream;
 import org.antfarmer.ejce.stream.GZIPCompressionStream;
+import org.antfarmer.ejce.util.ByteUtil;
 import org.antfarmer.ejce.util.ConfigurerUtil;
 import org.antfarmer.ejce.util.TextUtil;
 import org.hibernate.HibernateException;
@@ -234,35 +235,47 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 			int read;
 			int totalRead = 0;
 			final byte[] buff = new byte[streamBuffSize];
-			while ((read = is.read(buff)) > -1) {
-				baos.write(buff, 0, read);
-				totalRead += read;
-				if (totalRead >= maxInMemoryBuffSize) {
-					break;
-				}
-			}
-			if (totalRead < maxInMemoryBuffSize) {
-				if (useStreams) {
-					st.setBinaryStream(index, new ByteArrayInputStream(baos.toByteArray()), baos.size());
-				}
-				else {
-					st.setBytes(index, baos.toByteArray());
-				}
-			}
-			else {
-				File file = createTempFile();
-				final FileOutputStream fos = new FileOutputStream(file);
-				try {
-					fos.write(baos.toByteArray());
-					while ((read = is.read(buff)) > -1) {
-						fos.write(buff, 0, read);
+			try {
+				while ((read = is.read(buff)) > -1) {
+					baos.write(buff, 0, read);
+					totalRead += read;
+					if (totalRead >= maxInMemoryBuffSize) {
+						break;
 					}
 				}
-				finally {
-					fos.close();
+				final byte[] bytes = baos.toByteArray();
+				if (totalRead < maxInMemoryBuffSize) {
+					if (useStreams) {
+						st.setBinaryStream(index, new ByteArrayInputStream(bytes), baos.size());
+					}
+					else {
+						st.setBytes(index, bytes);
+					}
 				}
-				file = new File(file.getAbsolutePath());
-				st.setBinaryStream(index, new BufferedInputStream(new FileInputStream(file)), file.length());
+				else {
+					File file = createTempFile();
+					try {
+						final FileOutputStream fos = new FileOutputStream(file);
+						try {
+							fos.write(bytes);
+							while ((read = is.read(buff)) > -1) {
+								fos.write(buff, 0, read);
+							}
+							fos.flush();
+						}
+						finally {
+							fos.close();
+						}
+						file = new File(file.getAbsolutePath());
+						st.setBinaryStream(index, new BufferedInputStream(new FileInputStream(file)), file.length());
+					}
+					finally {
+						file.delete();
+					}
+				}
+			}
+			finally {
+				ByteUtil.clear(buff);
 			}
 		}
 		finally {
@@ -276,30 +289,42 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 			int read;
 			int totalRead = 0;
 			final byte[] buff = new byte[streamBuffSize];
-			while ((read = is.read(buff)) > -1) {
-				baos.write(buff, 0, read);
-				totalRead += read;
-				if (totalRead >= maxInMemoryBuffSize) {
-					break;
-				}
-			}
-			if (totalRead < maxInMemoryBuffSize) {
-				return createLob(baos.toByteArray(), session);
-			}
-			else {
-				File file = createTempFile();
-				final FileOutputStream fos = new FileOutputStream(file);
-				try {
-					fos.write(baos.toByteArray());
-					while ((read = is.read(buff)) > -1) {
-						fos.write(buff, 0, read);
+			try {
+				while ((read = is.read(buff)) > -1) {
+					baos.write(buff, 0, read);
+					totalRead += read;
+					if (totalRead >= maxInMemoryBuffSize) {
+						break;
 					}
 				}
-				finally {
-					fos.close();
+				final byte[] bytes = baos.toByteArray();
+				if (totalRead < maxInMemoryBuffSize) {
+					return createLob(bytes, session);
 				}
-				file = new File(file.getAbsolutePath());
-				return createLob(new BufferedInputStream(new FileInputStream(file)), file.length(), session);
+				else {
+					File file = createTempFile();
+					try {
+						final FileOutputStream fos = new FileOutputStream(file);
+						try {
+							fos.write(bytes);
+							while ((read = is.read(buff)) > -1) {
+								fos.write(buff, 0, read);
+							}
+							fos.flush();
+						}
+						finally {
+							fos.close();
+						}
+						file = new File(file.getAbsolutePath());
+						return createLob(new BufferedInputStream(new FileInputStream(file)), file.length(), session);
+					}
+					finally {
+						file.delete();
+					}
+				}
+			}
+			finally {
+				ByteUtil.clear(buff);
 			}
 		}
 		finally {

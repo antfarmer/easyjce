@@ -25,6 +25,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 import org.antfarmer.ejce.exception.EncryptorConfigurationException;
+import org.antfarmer.ejce.util.ByteUtil;
 import org.antfarmer.ejce.util.EnvironmentUtil;
 import org.antfarmer.ejce.util.TextUtil;
 
@@ -193,13 +194,18 @@ public class Pbkdf2Encoder extends AbstractPbkdf2PasswordEncoder {
 
 	private byte[] encode(final CharSequence rawPassword, final byte[] salt) {
 		final char[] rawPsd = rawPassword.toString().toCharArray();
-		final byte[] saltySecret = concatenate(salt, secret);
-		final PBEKeySpec spec = new PBEKeySpec(rawPsd, saltySecret, iterations, hashLengthBits);
 		try {
-			return concatenate(salt, skf.generateSecret(spec).getEncoded());
+			final byte[] saltySecret = concatenate(salt, secret);
+			final PBEKeySpec spec = new PBEKeySpec(rawPsd, saltySecret, iterations, hashLengthBits);
+			try {
+				return concatenate(salt, skf.generateSecret(spec).getEncoded());
+			}
+			catch (final GeneralSecurityException e) {
+				throw new IllegalStateException("Could not create hash", e);
+			}
 		}
-		catch (final GeneralSecurityException e) {
-			throw new IllegalStateException("Could not create hash", e);
+		finally {
+			ByteUtil.clear(rawPsd);
 		}
 	}
 
