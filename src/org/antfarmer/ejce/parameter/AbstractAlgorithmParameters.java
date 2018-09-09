@@ -29,6 +29,7 @@ import org.antfarmer.ejce.exception.EncryptorConfigurationException;
 import org.antfarmer.ejce.parameter.key_loader.KeyLoader;
 import org.antfarmer.ejce.parameter.salt.SaltGenerator;
 import org.antfarmer.ejce.parameter.salt.SaltMatcher;
+import org.antfarmer.ejce.util.ByteUtil;
 import org.antfarmer.ejce.util.CryptoUtil;
 
 
@@ -246,11 +247,18 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 		if (encryptionKey != null) {
 			return encryptionKey;
 		}
-		final Key key = loadKey(encryptionRawKey, encryptionKeyLoader, algorithm);
-		if (key != null) {
-			encryptionKey = key;
+		try {
+			final Key key = loadKey(encryptionRawKey, encryptionKeyLoader, algorithm);
+			if (key != null) {
+				encryptionKey = key;
+			}
+			return encryptionKey;
 		}
-		return encryptionKey;
+		finally {
+			ByteUtil.clear(encryptionRawKey);
+			encryptionRawKey = null;
+			encryptionKeyLoader = null;
+		}
 	}
 
 	/**
@@ -323,11 +331,18 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 		if (decryptionKey != null) {
 			return decryptionKey;
 		}
-		final Key key = loadKey(decryptionRawKey, decryptionKeyLoader, algorithm);
-		if (key != null) {
-			decryptionKey = key;
+		try {
+			final Key key = loadKey(decryptionRawKey, decryptionKeyLoader, algorithm);
+			if (key != null) {
+				decryptionKey = key;
+			}
+			return decryptionKey;
 		}
-		return decryptionKey;
+		finally {
+			ByteUtil.clear(decryptionRawKey);
+			decryptionRawKey = null;
+			decryptionKeyLoader = null;
+		}
 	}
 
 	/**
@@ -468,17 +483,24 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 		if (macKey != null) {
 			return macKey;
 		}
-		if (macKeyLoader != null) {
-			return macKeyLoader.loadKey(macAlgorithm);
-		}
-		if (rawMacKey == null) {
-			if (macKeySize < 1) {
-				return null;
+		try {
+			if (macKeyLoader != null) {
+				return macKeyLoader.loadKey(macAlgorithm);
 			}
-			rawMacKey = CryptoUtil.generateSecretKey(macKeySize, macAlgorithm, getProviderName(), getProvider()).getEncoded();
+			if (rawMacKey == null) {
+				if (macKeySize < 1) {
+					return null;
+				}
+				rawMacKey = CryptoUtil.generateSecretKey(macKeySize, macAlgorithm, getProviderName(), getProvider()).getEncoded();
+			}
+			macKey = CryptoUtil.getSecretKeyFromRawKey(rawMacKey, macAlgorithm);
+			return macKey;
 		}
-		macKey = CryptoUtil.getSecretKeyFromRawKey(rawMacKey, macAlgorithm);
-		return macKey;
+		finally {
+			ByteUtil.clear(rawMacKey);
+			rawMacKey = null;
+			macKeyLoader = null;
+		}
 	}
 
 	/**
