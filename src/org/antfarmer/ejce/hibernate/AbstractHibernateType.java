@@ -30,10 +30,10 @@ import org.antfarmer.ejce.Encryptor;
 import org.antfarmer.ejce.ValueEncryptorInterface;
 import org.antfarmer.ejce.exception.EncryptorConfigurationException;
 import org.antfarmer.ejce.util.ConfigurerUtil;
+import org.antfarmer.ejce.util.ObjectUtil;
 import org.antfarmer.ejce.util.TextUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.internal.util.compare.EqualsHelper;
 import org.hibernate.usertype.ParameterizedType;
 import org.hibernate.usertype.UserType;
 
@@ -112,7 +112,7 @@ public abstract class AbstractHibernateType implements UserType, ParameterizedTy
 	 */
 	@Override
 	public boolean equals(final Object x, final Object y) throws HibernateException {
-		return EqualsHelper.equals(x, y);
+		return ObjectUtil.equals(x, y);
 	}
 
 	/**

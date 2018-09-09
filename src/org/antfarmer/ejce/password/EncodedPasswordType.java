@@ -24,9 +24,9 @@ import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.antfarmer.ejce.util.ConfigurerUtil;
+import org.antfarmer.ejce.util.ObjectUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.internal.util.compare.EqualsHelper;
 import org.hibernate.usertype.ParameterizedType;
 import org.hibernate.usertype.UserType;
 
@@ -81,7 +81,7 @@ public class EncodedPasswordType implements UserType, ParameterizedType {
 	 */
 	@Override
 	public boolean equals(final Object x, final Object y) throws HibernateException {
-		return EqualsHelper.equals(x, y);
+		return ObjectUtil.equals(x, y);
 	}
 
 	/**
