@@ -46,7 +46,7 @@ public class SpringPbkdf2Encoder extends AbstractPbkdf2PasswordEncoder {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void configure(final Properties parameters, final String prefix) {
+	public void doConfigure(final Properties parameters, final String prefix) {
 
 		final int hashLengthBits = parseInt(parameters, prefix, KEY_HASH_LENGTH, DEFAULT_HASH_LENGTH);
 		if (hashLengthBits < 1) {
@@ -74,7 +74,7 @@ public class SpringPbkdf2Encoder extends AbstractPbkdf2PasswordEncoder {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String encode(final CharSequence rawPassword) {
+	public String doEncode(final CharSequence rawPassword) {
 		return pswdEncoder.encode(rawPassword);
 	}
 
@@ -82,7 +82,7 @@ public class SpringPbkdf2Encoder extends AbstractPbkdf2PasswordEncoder {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
+	public boolean isMatch(final CharSequence rawPassword, final String encodedPassword) {
 		return pswdEncoder.matches(rawPassword, encodedPassword);
 	}
 

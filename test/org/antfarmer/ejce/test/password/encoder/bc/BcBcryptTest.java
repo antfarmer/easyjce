@@ -42,6 +42,7 @@ public class BcBcryptTest extends AbstractPasswordTest<BcBcryptEncoder> {
 		props.setProperty(BcBcryptEncoder.KEY_VERSION, String.valueOf(version));
 		props.setProperty(BcBcryptEncoder.KEY_STRENGTH, String.valueOf(strength));
 		props.setProperty(BcBcryptEncoder.KEY_RANDOM, rc.getName());
+		props.setProperty(BcBcryptEncoder.KEY_PREFIX, "{bcrypt}");
 		final BcBcryptEncoder encoder = createEncoder(props);
 
 		assertEquals(version, ReflectionUtil.getFieldValue(encoder, "version"));
@@ -50,6 +51,7 @@ public class BcBcryptTest extends AbstractPasswordTest<BcBcryptEncoder> {
 
 		final String encoded = encoder.encode(PASSWORD);
 		assertFalse(PASSWORD.equals(encoded));
+		assertTrue(encoded.startsWith("{bcrypt}"));
 		assertTrue(encoder.matches(PASSWORD, encoded));
 	}
 

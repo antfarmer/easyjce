@@ -69,6 +69,7 @@ public class Pbkdf2Test extends AbstractPasswordTest<Pbkdf2Encoder> {
 			props.setProperty(Pbkdf2Encoder.KEY_ALGORITHM, algo);
 			props.setProperty(Pbkdf2Encoder.KEY_PROVIDER_CLASS, provider.getClass().getName());
 			props.setProperty(Pbkdf2Encoder.KEY_RANDOM, rc.getName());
+			props.setProperty(Pbkdf2Encoder.KEY_PREFIX, "{pbkdf2}");
 			final Pbkdf2Encoder encoder = createEncoder(props);
 
 			assertArrayEquals(toBytes(secret), (byte[]) ReflectionUtil.getFieldValue(encoder, "secret"));
@@ -81,6 +82,7 @@ public class Pbkdf2Test extends AbstractPasswordTest<Pbkdf2Encoder> {
 
 			final String encoded = encoder.encode(PASSWORD);
 			assertFalse(PASSWORD.equals(encoded));
+			assertTrue(encoded.startsWith("{pbkdf2}"));
 			assertTrue(encoder.matches(PASSWORD, encoded));
 		}
 	}

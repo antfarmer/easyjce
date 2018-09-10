@@ -65,6 +65,7 @@ public class BcScryptTest extends AbstractPasswordTest<BcScryptEncoder> {
 		props.setProperty(BcScryptEncoder.KEY_KEY_LENGTH, String.valueOf(keyLen));
 		props.setProperty(BcScryptEncoder.KEY_SALT_LENGTH, String.valueOf(saltLen));
 		props.setProperty(BcBcryptEncoder.KEY_RANDOM, rc.getName());
+		props.setProperty(BcBcryptEncoder.KEY_PREFIX, "{scrypt}");
 		final BcScryptEncoder encoder = createEncoder(props);
 
 		assertEquals(Integer.valueOf(cpuCost), ReflectionUtil.getFieldValue(encoder, "cpuCost"));
@@ -76,6 +77,7 @@ public class BcScryptTest extends AbstractPasswordTest<BcScryptEncoder> {
 
 		final String encoded = encoder.encode(PASSWORD);
 		assertFalse(PASSWORD.equals(encoded));
+		assertTrue(encoded.startsWith("{scrypt}"));
 		assertTrue(encoder.matches(PASSWORD, encoded));
 	}
 

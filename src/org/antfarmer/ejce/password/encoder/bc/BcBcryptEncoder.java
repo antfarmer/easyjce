@@ -66,7 +66,7 @@ public class BcBcryptEncoder extends AbstractBcryptPasswordEncoder {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void configure(final Properties parameters, final String prefix) {
+	public void doConfigure(final Properties parameters, final String prefix) {
 		version = parseString(parameters, prefix, KEY_VERSION, DEFAULT_VERSION);
 		if (!("." + VERSION_2A + "." + VERSION_2Y + "." + VERSION_2B + ".").contains("." + version + ".")) {
         	throw new EncryptorConfigurationException("Invalid version: " + version);
@@ -84,7 +84,7 @@ public class BcBcryptEncoder extends AbstractBcryptPasswordEncoder {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String encode(final CharSequence rawPassword) {
+	public String doEncode(final CharSequence rawPassword) {
 		final byte[] salt = new byte[SALT_LENGTH];
 		random.nextBytes(salt);
 		final char[] pass = rawPassword.toString().toCharArray();
@@ -100,7 +100,7 @@ public class BcBcryptEncoder extends AbstractBcryptPasswordEncoder {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
+	public boolean isMatch(final CharSequence rawPassword, final String encodedPassword) {
 		final char[] pass = rawPassword.toString().toCharArray();
 		try {
 			return OpenBSDBCrypt.checkPassword(encodedPassword, pass);

@@ -32,7 +32,7 @@ public class SpringScryptEncoder extends AbstractScryptPasswordEncoder {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void configure(final Properties parameters, final String prefix) {
+	public void doConfigure(final Properties parameters, final String prefix) {
 		pswdEncoder = new SCryptPasswordEncoder(
 				parseInt(parameters, prefix, KEY_CPU_COST, DEFAULT_CPU_COST),
 				parseInt(parameters, prefix, KEY_MEM_COST, DEFAULT_MEM_COST),
@@ -46,7 +46,7 @@ public class SpringScryptEncoder extends AbstractScryptPasswordEncoder {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String encode(final CharSequence rawPassword) {
+	public String doEncode(final CharSequence rawPassword) {
 		return pswdEncoder.encode(rawPassword);
 	}
 
@@ -54,7 +54,7 @@ public class SpringScryptEncoder extends AbstractScryptPasswordEncoder {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
+	public boolean isMatch(final CharSequence rawPassword, final String encodedPassword) {
 		return pswdEncoder.matches(rawPassword, encodedPassword);
 	}
 

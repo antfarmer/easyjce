@@ -37,11 +37,18 @@ public abstract class AbstractConfigurablePasswordEncoder implements Configurabl
 	 */
 	public static final String KEY_RANDOM = "random";
 
+	/**
+	 * Property key for a prefix to used to prefix encoded values to aid in identifying the type of hash.
+	 */
+	public static final String KEY_PREFIX = "prefix";
+
 	private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
 	private static final TextEncoder DEFAULT_TEXT_ENCODER = Base64PaddedEncoder.getInstance();
 
 	private static final Map<String, SecureRandom> randoms = new HashMap<String, SecureRandom>();
+
+	private String hashPrefix;
 
 	/**
 	 * Returns a static {@link SecureRandom} matching the name configured in the given {@link Properties}.
@@ -195,4 +202,64 @@ public abstract class AbstractConfigurablePasswordEncoder implements Configurabl
 	protected TextEncoder getTextEncoder() {
 		return DEFAULT_TEXT_ENCODER;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final void configure(final Properties parameters, final String prefix) {
+		hashPrefix = parseString(parameters, prefix, KEY_PREFIX, null);
+		if (!TextUtil.hasLength(hashPrefix)) {
+			hashPrefix = null;
+		}
+		doConfigure(parameters, prefix);
+	}
+
+	/**
+	 * Configures and initializes the encoder using the given Properties.
+	 * @param parameters
+	 * @param prefix
+	 */
+	public abstract void doConfigure(Properties parameters, String prefix);
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final String encode(final CharSequence rawPassword) {
+		if (hashPrefix != null) {
+			return hashPrefix + doEncode(rawPassword);
+		}
+		return doEncode(rawPassword);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final boolean matches(final CharSequence rawPassword, final String encodedPassword) {
+		if (hashPrefix != null) {
+			return isMatch(rawPassword, encodedPassword.substring(hashPrefix.length()));
+		}
+		return isMatch(rawPassword, encodedPassword);
+	}
+
+	/**
+	 * Encode the raw password. This should combine a message digest (hash) function with randomly generated salt.
+	 *
+	 * @param rawPassword the raw password to encode
+	 * @return the encoded password
+	 */
+	public abstract String doEncode(CharSequence rawPassword);
+
+	/**
+	 * Verify the encoded password obtained from storage matches the submitted raw password after it too is encoded.
+	 * Returns true if the passwords match, false if they do not. The stored password itself is never decoded.
+	 *
+	 * @param rawPassword the raw password to encode and match
+	 * @param encodedPassword the encoded password from storage to compare with
+	 * @return true if the raw password, after encoding, matches the encoded password from storage
+	 */
+	public abstract boolean isMatch(CharSequence rawPassword, String encodedPassword);
+
 }

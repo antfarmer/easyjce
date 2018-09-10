@@ -53,7 +53,7 @@ public class BcScryptEncoder extends AbstractScryptPasswordEncoder {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void configure(final Properties parameters, final String prefix) {
+	public void doConfigure(final Properties parameters, final String prefix) {
 
 		cpuCost = parseInt(parameters, prefix, KEY_CPU_COST, DEFAULT_CPU_COST);
 		memoryCost = parseInt(parameters, prefix, KEY_MEM_COST, DEFAULT_MEM_COST);
@@ -94,7 +94,7 @@ public class BcScryptEncoder extends AbstractScryptPasswordEncoder {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String encode(final CharSequence rawPassword) {
+	public String doEncode(final CharSequence rawPassword) {
 		final byte[] salt = new byte[saltLength];
 		random.nextBytes(salt);
 
@@ -118,7 +118,7 @@ public class BcScryptEncoder extends AbstractScryptPasswordEncoder {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
+	public boolean isMatch(final CharSequence rawPassword, final String encodedPassword) {
 		if (!TextUtil.hasLength(encodedPassword)) {
 			return false;
 		}

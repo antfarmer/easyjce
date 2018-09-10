@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import java.security.SecureRandom;
 import java.util.Properties;
 
+import org.antfarmer.ejce.password.encoder.bc.BcBcryptEncoder;
 import org.antfarmer.ejce.password.encoder.spring.SpringBcryptEncoder;
 import org.antfarmer.ejce.test.password.AbstractPasswordTest;
 import org.antfarmer.ejce.util.ReflectionUtil;
@@ -41,6 +42,7 @@ public class SpringBcryptTest extends AbstractPasswordTest<SpringBcryptEncoder> 
 		final Properties props = new Properties();
 		props.setProperty(SpringBcryptEncoder.KEY_STRENGTH, String.valueOf(strength));
 		props.setProperty(SpringBcryptEncoder.KEY_RANDOM, rc.getName());
+		props.setProperty(BcBcryptEncoder.KEY_PREFIX, "{bcrypt}");
 		final SpringBcryptEncoder encoder = createEncoder(props);
 
 		final BCryptPasswordEncoder pswdEncoder = ReflectionUtil.getFieldValue(encoder, "pswdEncoder");
@@ -49,6 +51,7 @@ public class SpringBcryptTest extends AbstractPasswordTest<SpringBcryptEncoder> 
 
 		final String encoded = encoder.encode(PASSWORD);
 		assertFalse(PASSWORD.equals(encoded));
+		assertTrue(encoded.startsWith("{bcrypt}"));
 		assertTrue(encoder.matches(PASSWORD, encoded));
 	}
 

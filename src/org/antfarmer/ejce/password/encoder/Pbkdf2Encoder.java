@@ -128,7 +128,7 @@ public class Pbkdf2Encoder extends AbstractPbkdf2PasswordEncoder {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void configure(final Properties parameters, final String prefix) {
+	public void doConfigure(final Properties parameters, final String prefix) {
 		secret = toBytes(parseString(parameters, prefix, KEY_SECRET, ""));
 
 		hashLengthBits = parseInt(parameters, prefix, KEY_HASH_LENGTH, DEFAULT_HASH_LENGTH);
@@ -186,7 +186,7 @@ public class Pbkdf2Encoder extends AbstractPbkdf2PasswordEncoder {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String encode(final CharSequence rawPassword) {
+	public String doEncode(final CharSequence rawPassword) {
 		final byte[] salt = new byte[saltLengthBytes];
 		random.nextBytes(salt);
 		return encodeBytes(encode(rawPassword, salt));
@@ -213,7 +213,7 @@ public class Pbkdf2Encoder extends AbstractPbkdf2PasswordEncoder {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
+	public boolean isMatch(final CharSequence rawPassword, final String encodedPassword) {
 		final byte[] decoded = decodeBytes(encodedPassword);
 		final byte[] salt = Arrays.copyOfRange(decoded, 0, saltLengthBytes);
 		return Arrays.equals(decoded, encode(rawPassword, salt));

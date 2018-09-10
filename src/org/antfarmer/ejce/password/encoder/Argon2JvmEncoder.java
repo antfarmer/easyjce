@@ -47,7 +47,7 @@ public class Argon2JvmEncoder extends AbstractArgon2PasswordEncoder {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void configure(final Properties parameters, final String prefix) {
+	public void doConfigure(final Properties parameters, final String prefix) {
 		type = parseString(parameters, prefix, KEY_TYPE, DEFAULT_TYPE);
 		if (!("." + TYPE_D + "." + TYPE_I + "." + TYPE_ID + ".").contains("." + type + ".")) {
         	throw new EncryptorConfigurationException("Invalid algorithm type: " + type);
@@ -86,7 +86,7 @@ public class Argon2JvmEncoder extends AbstractArgon2PasswordEncoder {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String encode(final CharSequence rawPassword) {
+	public String doEncode(final CharSequence rawPassword) {
 		return encoder.hash(iterations, memorySize, parallelism, rawPassword.toString(), getCharset());
 	}
 
@@ -94,7 +94,7 @@ public class Argon2JvmEncoder extends AbstractArgon2PasswordEncoder {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
+	public boolean isMatch(final CharSequence rawPassword, final String encodedPassword) {
 		return encoder.verify(encodedPassword, rawPassword.toString(), getCharset());
 	}
 
