@@ -143,6 +143,6 @@ public abstract class AbstractDbTest extends Loggable {
 		 * @param stmt
 		 * @throws SQLException
 		 */
-		abstract void doStatment(Statement stmt) throws SQLException;
+		protected abstract void doStatment(Statement stmt) throws SQLException;
 	}
 }
