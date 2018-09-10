@@ -16,57 +16,76 @@
 package org.antfarmer.ejce.test.db;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.antfarmer.common.hibernate.HibernateManager.HibernateCallback;
 import org.antfarmer.ejce.test.db.bean.TextBean;
+import org.antfarmer.ejce.util.StreamUtil;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.junit.Test;
 
 /**
  * @author Ameer Antar
  */
-public class TextBeanTest extends AbstractDbTest {
+public class TextBeanTest extends AbstractLobDbTest {
 
 	private static final Class<?> BEAN_CLASS = TextBean.class;
 
 	@Test
-	public void test() {
+	public void test() throws IOException {
 
-		final int[] sizes = {1000, 20 * 1024, 800 * 1024};
+		final int[] sizes = {1000, 20 * 1024, 520 * 1024};
 
 		for (int i = 0; i < sizes.length; i++) {
-			final long id = i + 1;
-			final byte[] value = new byte[sizes[i]];
-			for (int j = 0; j < value.length; j++) {
-				value[j] = (byte) (33 + RANDOM.nextInt(94));
-			}
-			final String val = new String(value);
+			final File file = createRandomDataFile(sizes[i], true);
 
-			execute(new HibernateCallback() {
-				@Override
-				public void doInHibernate(final Session session) {
-					TextBean sb = (TextBean) session.get(BEAN_CLASS, id);
-					assertNull(sb);
-					sb = new TextBean(val);
-					saveOrUpdate(sb);
-				}
-			});
+			final long id = i + 1;
+			final InputStream streamValue = new FileInputStream(file);
+
+			try {
+				execute(new HibernateCallback() {
+					@Override
+					public void doInHibernate(final Session session) {
+						TextBean sb = (TextBean) session.get(BEAN_CLASS, id);
+						assertNull(sb);
+						try {
+							sb = new TextBean(new String(StreamUtil.streamToBytes(streamValue)));
+							saveOrUpdate(sb);
+						}
+						catch (final IOException e) {
+							throw new HibernateException(e.getMessage(), e);
+						}
+					}
+				});
+			}
+			finally {
+				close(streamValue);
+			}
 
 			execute(new StatementCallback() {
 				@Override
 				void doStatment(final Statement stmt) throws SQLException {
 					final ResultSet rs = stmt.executeQuery("SELECT value FROM " + BEAN_CLASS.getSimpleName() + " WHERE id = " + id);
 					rs.next();
-					final String encValue = rs.getString(1);
-					logger.info("Original Size: {}; Enc Size: {}", value.length, encValue.length());
-					assertNotEquals(val, encValue);
+					final Clob encValue = rs.getClob(1);
+					logger.info("Original Size: {}; Enc Size: {}", file.length(), encValue.length());
+					try {
+						assertData(false, file, encValue);
+					}
+					catch (final IOException e) {
+						throw new SQLException(e.getMessage(), e);
+					}
 				}
 			});
 
@@ -76,10 +95,10 @@ public class TextBeanTest extends AbstractDbTest {
 					final TextBean sb = (TextBean) session.get(BEAN_CLASS, id);
 					assertNotNull(sb);
 					try {
-						logger.info("Original Size: {}; New Size: {}", value.length, sb.getValue().length());
-						assertEquals(val, sb.getValue());
+						logger.info("Original Size: {}; New Size: {}", file.length(), sb.getValue().length());
+						assertEquals(new String(StreamUtil.streamToBytes(new FileInputStream(file))), sb.getValue());
 					}
-					catch (final Exception e) {
+					catch (final IOException e) {
 						throw new RuntimeException(e);
 					}
 				}
