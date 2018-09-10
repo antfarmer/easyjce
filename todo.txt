@@ -1,2 +1,3 @@
--functional db tests
+-support jpa 2.1+
+-support different hibernate versions
 -add more algorithms, padding, and modes
