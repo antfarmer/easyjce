@@ -15,7 +15,7 @@
  */
 package org.antfarmer.ejce.util;
 
-import org.bouncycastle.util.Arrays;
+import java.util.Arrays;
 
 /**
  * Utility useful for converting numbers to and from bytes.
