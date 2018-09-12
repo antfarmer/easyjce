@@ -99,3 +99,9 @@ artifacts {
 signing {
 	sign configurations.archives
 }
+
+
+tasks.withType(Sign) {
+    onlyIf { System.getenv("IS_TRAVIS_CI") != "true" }
+}
+
