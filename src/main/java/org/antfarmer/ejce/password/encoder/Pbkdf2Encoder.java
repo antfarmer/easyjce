@@ -101,7 +101,7 @@ public class Pbkdf2Encoder extends AbstractPbkdf2PasswordEncoder {
 	public static final String ALGORITHM_PBKDF2_HMAC_GOST = "PBKDF2withHmacGOST3411";
 
 	/**
-	 * The default algorithm value (PBKDF2withHmacSHA1 or PBKDF2withHmacSHA512 [JRE >= 1.8]), if no value is specified.
+	 * The default algorithm value (PBKDF2withHmacSHA1 or PBKDF2withHmacSHA512 [JRE &gt;= 1.8]), if no value is specified.
 	 */
 	public static final String DEFAULT_ALGORITHM = EnvironmentUtil.JAVA_VERSION >= 1.8 ? ALGORITHM_PBKDF2_HMAC_SHA512 : ALGORITHM_PBKDF2_HMAC_SHA1;
 
