@@ -10,7 +10,11 @@ import org.gradle.plugins.ide.eclipse.model.AccessRule
 // Apply the java-library plugin to add support for Java Library
 apply plugin: 'java-library'
 apply plugin: 'eclipse'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
+group = "org.antfarmer"
+archivesBaseName = "easyjce"
 version = '1.0.0'
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
@@ -75,4 +79,23 @@ javadoc {
 		links 'http://docs.jboss.org/hibernate/orm/4.3/javadocs/'
 		links 'https://docs.oracle.com/javase/7/docs/api/'
 	}
+}
+
+// Maven repo requirements ///////////////////////////////////////////////////////////
+task javadocJar(type: Jar) {
+	classifier = 'javadoc'
+	from javadoc
+}
+
+task sourcesJar(type: Jar) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+artifacts {
+	archives javadocJar, sourcesJar
+}
+
+signing {
+	sign configurations.archives
 }
