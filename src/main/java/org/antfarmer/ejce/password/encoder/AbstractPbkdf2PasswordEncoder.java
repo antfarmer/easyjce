@@ -42,7 +42,7 @@ public abstract class AbstractPbkdf2PasswordEncoder extends AbstractConfigurable
 
 	/**
 	 * Property key for the name algorithm to use. The default is currently PBKDF2withHmacSHA1 or
-	 * PBKDF2withHmacSHA512 [JRE >= 1.8].
+	 * PBKDF2withHmacSHA512 [JRE &gt;= 1.8].
 	 */
 	public static final String KEY_ALGORITHM = "algorithm";
 
