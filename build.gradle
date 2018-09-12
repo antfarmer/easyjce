@@ -17,8 +17,11 @@ apply plugin: 'jacoco'
 group = "org.antfarmer"
 archivesBaseName = "easyjce"
 version = '1.0.0'
+
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
+
+def isContBuild = System.getenv("IS_TRAVIS_CI") == "true"
 
 // add exception to allow use of non-API Sun crypto classes (in tests)
 eclipse {
@@ -101,14 +104,14 @@ signing {
 	sign configurations.archives
 }
 tasks.withType(Sign) {
-	onlyIf { System.getenv("IS_TRAVIS_CI") != "true" }
+	onlyIf { ! isContBuild }
 }
 
 // Codecov requirements //////////////////////////////////////////////////////////////
 jacocoTestReport {
 	reports {
-		xml.enabled true
-		html.enabled false
+		xml.enabled isContBuild
+		html.enabled ! isContBuild
 	}
 }
 
