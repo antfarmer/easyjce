@@ -12,6 +12,7 @@ apply plugin: 'java-library'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
 apply plugin: 'signing'
+apply plugin: 'jacoco'
 
 group = "org.antfarmer"
 archivesBaseName = "easyjce"
@@ -32,16 +33,16 @@ eclipse {
 }
 
 jar {
-    manifest {
-        attributes 'Implementation-Title': 'EasyJCE',
-                   'Implementation-Version': version
-    }
+	manifest {
+		attributes 'Implementation-Title': 'EasyJCE',
+				   'Implementation-Version': version
+	}
 }
 
 repositories {
-    // Use jcenter for resolving your dependencies.
-    // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+	// Use jcenter for resolving your dependencies.
+	// You can declare any Maven/Ivy/file repository here.
+	jcenter()
 }
 
 dependencies {
@@ -64,11 +65,11 @@ dependencies {
 
 // copy test resources for testing
 task copyTestResources(type: Copy) {
-    from ("${projectDir}/src/test/resources") {
-    	include '**/*.properties'
-    	include '**/*.xml'
-    }
-    into "${buildDir}/classes/java/test"
+	from ("${projectDir}/src/test/resources") {
+		include '**/*.properties'
+		include '**/*.xml'
+	}
+	into "${buildDir}/classes/java/test"
 }
 processTestResources.dependsOn copyTestResources
 
@@ -99,9 +100,30 @@ artifacts {
 signing {
 	sign configurations.archives
 }
-
-
 tasks.withType(Sign) {
-    onlyIf { System.getenv("IS_TRAVIS_CI") != "true" }
+	onlyIf { System.getenv("IS_TRAVIS_CI") != "true" }
 }
 
+// Codecov requirements //////////////////////////////////////////////////////////////
+subprojects {
+	test.useTestNG()
+}
+
+task codeCoverageReport(type: JacocoReport) {
+	executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+
+	subprojects.each {
+		sourceSets it.sourceSets.main
+	}
+
+	reports {
+		xml.enabled true
+		xml.destination "${buildDir}/reports/jacoco/report.xml"
+		html.enabled false
+		csv.enabled false
+	}
+}
+
+codeCoverageReport.dependsOn {
+	subprojects*.test
+}
