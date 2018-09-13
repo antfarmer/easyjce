@@ -80,12 +80,16 @@ task copyTestResources(type: Copy) {
 processTestResources.dependsOn copyTestResources
 
 javadoc {
+	destinationDir = file("${projectDir}/docs")
 	options.with {
 		overview "src/main/java/overview.html"
 		// links to external docs
 		links 'http://docs.jboss.org/hibernate/orm/4.3/javadocs/'
 		links 'https://docs.oracle.com/javase/7/docs/api/'
 	}
+}
+clean.doLast {
+	file("${projectDir}/docs").deleteDir()
 }
 
 // Maven repo requirements ///////////////////////////////////////////////////////////

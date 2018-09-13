@@ -1,0 +1,13 @@
+org.antfarmer.ejce
+org.antfarmer.ejce.encoder
+org.antfarmer.ejce.exception
+org.antfarmer.ejce.hibernate
+org.antfarmer.ejce.parameter
+org.antfarmer.ejce.parameter.key_loader
+org.antfarmer.ejce.parameter.salt
+org.antfarmer.ejce.password
+org.antfarmer.ejce.password.encoder
+org.antfarmer.ejce.password.encoder.bc
+org.antfarmer.ejce.password.encoder.spring
+org.antfarmer.ejce.stream
+org.antfarmer.ejce.util
