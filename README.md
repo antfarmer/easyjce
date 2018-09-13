@@ -32,18 +32,18 @@ In most cases, you first will need to generate some keys for encryption, unless 
 
 For example, this creates a key for AES-256:
 ```java
-SecretKey key = CryptoUtil.generateSecretKey(AesParameters.KEY_SIZE_256, AesParameters.ALGORITHM_AES);
-String keyCfgValue = Base64Encoder.getInstance().encode(key.getEncoded());
-System.out.println(keyCfgValue);
+	SecretKey key = CryptoUtil.generateSecretKey(AesParameters.KEY_SIZE_256, AesParameters.ALGORITHM_AES);
+	String keyCfgValue = Base64Encoder.getInstance().encode(key.getEncoded());
+	System.out.println(keyCfgValue);
 ```
 
 This creates an asymmetric key pair for RSA-1024:
 ```java
-KeyPair pair = CryptoUtil.generateAsymmetricKeyPair(RsaParameters.KEY_SIZE_1024, RsaParameters.ALGORITHM_RSA);
-String pubKeyCfgValue = Base64Encoder.getInstance().encode(pair.getPublic().getEncoded());
-String privKeyCfgValue = Base64Encoder.getInstance().encode(pair.getPrivate().getEncoded());
-System.out.println(pubKeyCfgValue);
-System.out.println(privKeyCfgValue);
+	KeyPair pair = CryptoUtil.generateAsymmetricKeyPair(RsaParameters.KEY_SIZE_1024, RsaParameters.ALGORITHM_RSA);
+	String pubKeyCfgValue = Base64Encoder.getInstance().encode(pair.getPublic().getEncoded());
+	String privKeyCfgValue = Base64Encoder.getInstance().encode(pair.getPrivate().getEncoded());
+	System.out.println(pubKeyCfgValue);
+	System.out.println(privKeyCfgValue);
 ```
 Overloaded methods allow for use of non-default JCE Provider such as Bouncy-Castle, etc.
 
@@ -66,19 +66,19 @@ Here's an example for setting up AES-256-ECB with HMAC-SHA1:
 (Note: use of the `Base64Encoder` in the parameters constructor which is used to decode the key in the parameters,
 	while the `Base64Encoder` in the encryptor constructor controls how encrypted values are encoded).
 ```java
-final AesParameters parameters = new AesParameters(Base64Encoder.getInstance())
-	.setKey("GsqGjFpSQe0D+8nKLmOoFA2/mfXHzFbYXWwAyxmxhjo")
-	.setBlockMode(AesParameters.BLOCK_MODE_ECB)
-	.setPadding(AesParameters.PADDING_PKCS5)
-	.setMacAlgorithm(AesParameters.MAC_ALGORITHM_HMAC_SHA1)
-	.setMacKeySize(AesParameters.MAC_KEY_SIZE_128)
-;
-final Encryptor encryptor = new Encryptor(Base64Encoder.getInstance()).setAlgorithmParameters(parameters);
-encryptor.initialize();
-final String encrypted = encryptor.encrypt("secret stuff");
-System.out.println("Encrypted: " + encrypted);
-final String decrypted = encryptor.decrypt(encrypted);
-System.out.println("Decrypted: " + decrypted);
+	final AesParameters parameters = new AesParameters(Base64Encoder.getInstance())
+		.setKey("GsqGjFpSQe0D+8nKLmOoFA2/mfXHzFbYXWwAyxmxhjo")
+		.setBlockMode(AesParameters.BLOCK_MODE_ECB)
+		.setPadding(AesParameters.PADDING_PKCS5)
+		.setMacAlgorithm(AesParameters.MAC_ALGORITHM_HMAC_SHA1)
+		.setMacKeySize(AesParameters.MAC_KEY_SIZE_128)
+	;
+	final Encryptor encryptor = new Encryptor(Base64Encoder.getInstance()).setAlgorithmParameters(parameters);
+	encryptor.initialize();
+	final String encrypted = encryptor.encrypt("secret stuff");
+	System.out.println("Encrypted: " + encrypted);
+	final String decrypted = encryptor.decrypt(encrypted);
+	System.out.println("Decrypted: " + decrypted);
 ```
 The `Encryptor` can now be used to encrypt/decrypt values and objects as needed.
 
@@ -87,29 +87,29 @@ In a JPA/Hibernate environment, encryption can be declared on POJO's using annot
 
 Here is an example for AES-256-GCM: (GCM negates the need for a HMAC)
 ```java
-@Type(type = "org.antfarmer.ejce.hibernate.EncryptedStringType", parameters = {
-	@Parameter(name = "paramClass", value = "org.antfarmer.ejce.parameter.AesParameters"),
-	@Parameter(name = "paramEncoder", value = "org.antfarmer.ejce.encoder.Base64Encoder"),
-	@Parameter(name = "blockMode", value = "GCM"),
-	@Parameter(name = "key", value = "th8k9z2PCO9apj1GSYU86t5DP9dfmG7uRkfdGSWrnJ0"),
-	@Parameter(name = "encoder", value = "org.antfarmer.ejce.encoder.Base64Encoder")
-})
-public String getSecretValue() {
-	return secretValue;
-}
+	@Type(type = "org.antfarmer.ejce.hibernate.EncryptedStringType", parameters = {
+		@Parameter(name = "paramClass", value = "org.antfarmer.ejce.parameter.AesParameters"),
+		@Parameter(name = "paramEncoder", value = "org.antfarmer.ejce.encoder.Base64Encoder"),
+		@Parameter(name = "blockMode", value = "GCM"),
+		@Parameter(name = "key", value = "th8k9z2PCO9apj1GSYU86t5DP9dfmG7uRkfdGSWrnJ0"),
+		@Parameter(name = "encoder", value = "org.antfarmer.ejce.encoder.Base64Encoder")
+	})
+	public String getSecretValue() {
+		return secretValue;
+	}
 ```
 
 Here is an example for referencing a pre-configured encryptor in the `EncryptorStore`:
 ```java
-... // in some bootstrap class
-EncryptoreStore.add("com.myapp.enc.secretEncryptor", mySecretEncryptor);
-... // in POJO
-@Type(type = "org.antfarmer.ejce.hibernate.EncryptedStringType", parameters = {
-	@Parameter(name = "storeKey", value = "com.myapp.enc.secretEncryptor")
-})
-public String getSecretValue() {
-	return secretValue;
-}
+	... // in some bootstrap class
+	EncryptoreStore.add("com.myapp.enc.secretEncryptor", mySecretEncryptor);
+	... // in POJO
+	@Type(type = "org.antfarmer.ejce.hibernate.EncryptedStringType", parameters = {
+		@Parameter(name = "storeKey", value = "com.myapp.enc.secretEncryptor")
+	})
+	public String getSecretValue() {
+		return secretValue;
+	}
 ```
 It is up to you to choose the appropriate `AbstractHibernateType`, but `EncryptedStringType` is by far the most common.
 More possible parameter keys and values can found in `ConfigurerUtil` and the appropriate `AlgorithmParameters` classes.
@@ -153,25 +153,25 @@ Password encoding can be performed programmatically by creating an instance of `
 Here's an example for setting up PBKDF2 with secret:
 (Note: parameter values are optional overrides of defaults. Also note that values must be Strings).
 ```java
-final Properties props = new Properties();
-props.setProperty(Pbkdf2Encoder.KEY_SECRET, "secret");
-props.setProperty(Pbkdf2Encoder.KEY_HASH_LENGTH, String.valueOf(1024));
-props.setProperty(Pbkdf2Encoder.KEY_SALT_LENGTH, String.valueOf(128));
-props.setProperty(Pbkdf2Encoder.KEY_ITERATIONS, String.valueOf(200000));
-props.setProperty(Pbkdf2Encoder.KEY_ALGORITHM, Pbkdf2Encoder.ALGORITHM_PBKDF2_HMAC_SHA1);
-props.setProperty(Pbkdf2Encoder.KEY_PROVIDER_CLASS, provider.getClass().getName());
-props.setProperty(Pbkdf2Encoder.KEY_RANDOM, myRandom.getClass().getName());
-props.setProperty(Pbkdf2Encoder.KEY_PREFIX, "{pbkdf2}");
-// Setup encoder
-final Pbkdf2Encoder encoder = new Pbkdf2Encoder();
-encoder.configure(props, null);
-// Hash and compare
-final String encoded1 = encoder.encode("PASSWORD");
-System.out.println("Hashed1: " + encoded1);
-final String encoded2 = encoder.encode("PASSWORD");
-System.out.println("Hashed2: " + encoded2);
-System.out.println("Matches1: " + encoder.matches("PASSWORD", encoded1));
-System.out.println("Matches2: " + encoder.matches("PASSWORD", encoded2));
+	final Properties props = new Properties();
+	props.setProperty(Pbkdf2Encoder.KEY_SECRET, "secret");
+	props.setProperty(Pbkdf2Encoder.KEY_HASH_LENGTH, String.valueOf(1024));
+	props.setProperty(Pbkdf2Encoder.KEY_SALT_LENGTH, String.valueOf(128));
+	props.setProperty(Pbkdf2Encoder.KEY_ITERATIONS, String.valueOf(200000));
+	props.setProperty(Pbkdf2Encoder.KEY_ALGORITHM, Pbkdf2Encoder.ALGORITHM_PBKDF2_HMAC_SHA1);
+	props.setProperty(Pbkdf2Encoder.KEY_PROVIDER_CLASS, provider.getClass().getName());
+	props.setProperty(Pbkdf2Encoder.KEY_RANDOM, myRandom.getClass().getName());
+	props.setProperty(Pbkdf2Encoder.KEY_PREFIX, "{pbkdf2}");
+	// Setup encoder
+	final Pbkdf2Encoder encoder = new Pbkdf2Encoder();
+	encoder.configure(props, null);
+	// Hash and compare
+	final String encoded1 = encoder.encode("PASSWORD");
+	System.out.println("Hashed1: " + encoded1);
+	final String encoded2 = encoder.encode("PASSWORD");
+	System.out.println("Hashed2: " + encoded2);
+	System.out.println("Matches1: " + encoder.matches("PASSWORD", encoded1));
+	System.out.println("Matches2: " + encoder.matches("PASSWORD", encoded2));
 ```
 Note that each encoding will be different, but both will match the same input value.
 
@@ -180,41 +180,41 @@ In a JPA/Hibernate environment, password encoding can be declared on POJO's usin
 
 Here is an example for Argon2id:
 ```java
-@Type(type = "org.antfarmer.ejce.password.EncodedPasswordType", parameters = {
-	@Parameter(name = "pswdEncoder", value = "org.antfarmer.ejce.password.encoder.Argon2JvmEncoder"),
-	@Parameter(name = "type", value = "id"),
-	@Parameter(name = "hashLen", value = "64"),	// Bytes
-	@Parameter(name = "saltLen", value = "32"),	// Bytes
-	@Parameter(name = "iterations", value = "100"),
-	@Parameter(name = "parallelism", value = "4"),	// Threads
-	@Parameter(name = "memSize", value = "65536"),	// KB
-	@Parameter(name = "storeExportKey", value = "com.myapp.pswd.user")
-})
-public String getPassword() {
-	return password;
-}
+	@Type(type = "org.antfarmer.ejce.password.EncodedPasswordType", parameters = {
+		@Parameter(name = "pswdEncoder", value = "org.antfarmer.ejce.password.encoder.Argon2JvmEncoder"),
+		@Parameter(name = "type", value = "id"),
+		@Parameter(name = "hashLen", value = "64"),	// Bytes
+		@Parameter(name = "saltLen", value = "32"),	// Bytes
+		@Parameter(name = "iterations", value = "100"),
+		@Parameter(name = "parallelism", value = "4"),	// Threads
+		@Parameter(name = "memSize", value = "65536"),	// KB
+		@Parameter(name = "storeExportKey", value = "com.myapp.pswd.user")
+	})
+	public String getPassword() {
+		return password;
+	}
 ```
 
 Here is an example for referencing a pre-configured password encoder in the `PasswordEncoderStore`:
 ```java
-... // in some bootstrap class
-PasswordEncoderStore.add("com.myapp.pswd.user", mySecretEncryptor);
-... // in POJO
-@Type(type = "org.antfarmer.ejce.password.EncodedPasswordType", parameters = {
-	@Parameter(name = "storeKey", value = "com.myapp.pswd.user")
-})
-public String getPassword() {
-	return password;
-}
+	... // in some bootstrap class
+	PasswordEncoderStore.add("com.myapp.pswd.user", mySecretEncryptor);
+	... // in POJO
+	@Type(type = "org.antfarmer.ejce.password.EncodedPasswordType", parameters = {
+		@Parameter(name = "storeKey", value = "com.myapp.pswd.user")
+	})
+	public String getPassword() {
+		return password;
+	}
 ```
 
 In your security logic, credential verification can be checked via encoder reference:
 ```java
-public boolean matches(CharSequence rawPassword, String encodedPassword) {
-	// rawPassword comes from user login form
-	// encodedPassword comes from user.getPassword()
-	return PasswordEncoderStore.get("com.myapp.pswd.user").matches(rawPassword, encodedPassword);
-}
+	public boolean matches(CharSequence rawPassword, String encodedPassword) {
+		// rawPassword comes from user login form
+		// encodedPassword comes from user.getPassword()
+		return PasswordEncoderStore.get("com.myapp.pswd.user").matches(rawPassword, encodedPassword);
+	}
 ```
 More possible parameter keys and values can found in `ConfigurerUtil` and the appropriate `PasswordEncoder` classes.
 
