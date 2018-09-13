@@ -87,6 +87,7 @@ javadoc {
 		links 'http://docs.jboss.org/hibernate/orm/4.3/javadocs/'
 		links 'https://docs.oracle.com/javase/7/docs/api/'
 	}
+	options.addStringOption('notimestamp', 'yes')
 }
 clean.doLast {
 	file("${projectDir}/docs").deleteDir()
