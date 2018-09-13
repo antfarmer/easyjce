@@ -37,7 +37,7 @@ public class ObjectBean extends AbstractBean {
 
 	/**
 	 * Constructor.
-	 * @param value
+	 * @param value the value
 	 */
 	public ObjectBean(final Dimension value) {
 		this.value = value;

@@ -35,7 +35,7 @@ public class DoubleBean extends AbstractBean {
 
 	/**
 	 * Constructor.
-	 * @param value
+	 * @param value the value
 	 */
 	public DoubleBean(final Double value) {
 		this.value = value;

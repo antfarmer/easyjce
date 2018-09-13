@@ -60,7 +60,7 @@ public class EncryptorTest {
 	private static final String TEST_TEXT = "abcdefghijklmnopqrstuvwxyz";
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testStream() throws GeneralSecurityException {
@@ -78,7 +78,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void threadSafetyTest() throws Throwable {
@@ -107,7 +107,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testEncryption() throws GeneralSecurityException {
@@ -128,7 +128,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testBooleanEncryption() throws GeneralSecurityException {
@@ -149,7 +149,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testCharacterEncryption() throws GeneralSecurityException {
@@ -170,7 +170,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testDoubleEncryption() throws GeneralSecurityException {
@@ -191,7 +191,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testFloatEncryption() throws GeneralSecurityException {
@@ -212,7 +212,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testIntegerEncryption() throws GeneralSecurityException {
@@ -233,7 +233,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testLongEncryption() throws GeneralSecurityException {
@@ -254,9 +254,9 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
-	 * @throws IOException
-	 * @throws ClassNotFoundException
+	 * @throws GeneralSecurityException GeneralSecurityException
+	 * @throws IOException IOException
+	 * @throws ClassNotFoundException ClassNotFoundException
 	 */
 	@Test
 	public void testObjectEncryption() throws GeneralSecurityException, IOException, ClassNotFoundException {
@@ -277,7 +277,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testShortEncryption() throws GeneralSecurityException {
@@ -298,7 +298,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testEncryptionWithSpecKey() throws GeneralSecurityException {
@@ -319,7 +319,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test(expected = GeneralSecurityException.class)
 	public void testEncryptionWithSpecKeyNotUsingInstanceKey() throws GeneralSecurityException {
@@ -340,7 +340,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testBooleanEncryptionWithSpecKey() throws GeneralSecurityException {
@@ -361,7 +361,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testCharacterEncryptionWithSpecKey() throws GeneralSecurityException {
@@ -382,7 +382,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testDoubleEncryptionWithSpecKey() throws GeneralSecurityException {
@@ -403,7 +403,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testFloatEncryptionWithSpecKey() throws GeneralSecurityException {
@@ -424,7 +424,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testIntegerEncryptionWithSpecKey() throws GeneralSecurityException {
@@ -445,7 +445,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testLongEncryptionWithSpecKey() throws GeneralSecurityException {
@@ -466,9 +466,9 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
-	 * @throws IOException
-	 * @throws ClassNotFoundException
+	 * @throws GeneralSecurityException GeneralSecurityException
+	 * @throws IOException IOException
+	 * @throws ClassNotFoundException ClassNotFoundException
 	 */
 	@Test
 	public void testObjectEncryptionWithSpecKey() throws GeneralSecurityException, IOException, ClassNotFoundException {
@@ -489,7 +489,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testShortEncryptionWithSpecKey() throws GeneralSecurityException {
@@ -510,7 +510,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test(expected=MacDisagreementException.class)
 	public void testMacDisagreement() throws GeneralSecurityException {
@@ -530,7 +530,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testAes() throws GeneralSecurityException {
@@ -550,7 +550,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testAesBlank() throws GeneralSecurityException {
@@ -573,7 +573,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testAesEcb() throws GeneralSecurityException {
@@ -593,7 +593,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testAesGcm() throws GeneralSecurityException {
@@ -611,7 +611,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testAesGcmTagLengths() throws GeneralSecurityException {
@@ -640,7 +640,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testAesMacs() throws GeneralSecurityException {
@@ -680,7 +680,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testAesWithCustomSalts() throws GeneralSecurityException {
@@ -716,7 +716,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testBlowfish() throws GeneralSecurityException {
@@ -736,7 +736,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testDesEde() throws GeneralSecurityException {
@@ -756,7 +756,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testDesEdeEcb() throws GeneralSecurityException {
@@ -776,7 +776,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testDes() throws GeneralSecurityException {
@@ -796,7 +796,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testPbe() throws GeneralSecurityException {
@@ -816,7 +816,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testPbeWithGeneratedPassword() throws GeneralSecurityException {
@@ -835,7 +835,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test(expected=InvalidAlgorithmParameterException.class)
 	public void testPbeNoSalt() throws GeneralSecurityException {
@@ -856,7 +856,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Ignore	// this only works with unlimited strength encryption policy files
 	public void testRc2() throws GeneralSecurityException {
@@ -876,7 +876,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testRc4() throws GeneralSecurityException {
@@ -894,7 +894,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testRsa() throws GeneralSecurityException {
@@ -916,7 +916,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testRsaWithPadding() throws GeneralSecurityException {
@@ -939,7 +939,7 @@ public class EncryptorTest {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void testElGamal() throws GeneralSecurityException {

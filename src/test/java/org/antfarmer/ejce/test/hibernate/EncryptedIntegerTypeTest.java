@@ -35,7 +35,7 @@ public class EncryptedIntegerTypeTest extends EncryptedIntegerType {
 	private static final Integer TEST_VALUE = 9999;
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 *
 	 */
 	@Before
@@ -44,7 +44,7 @@ public class EncryptedIntegerTypeTest extends EncryptedIntegerType {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void test() throws GeneralSecurityException {
@@ -54,9 +54,6 @@ public class EncryptedIntegerTypeTest extends EncryptedIntegerType {
 		assertEquals(o, dec);
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void testThreadSafety() throws Throwable {
 		final int num = 25;

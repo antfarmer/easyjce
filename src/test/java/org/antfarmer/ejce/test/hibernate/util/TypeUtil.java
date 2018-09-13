@@ -44,7 +44,7 @@ public class TypeUtil {
 	/**
 	 * Prepares an encryptor for testing Hibernate user types and adds it to the EncryptorStore.
 	 * @return the properties used to configure the Hibernate user type
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	public static Properties prepareTestEncryptor() throws GeneralSecurityException {
 		return prepareTestEncryptor(null);
@@ -54,7 +54,7 @@ public class TypeUtil {
 	 * Prepares an encryptor for testing Hibernate user types and adds it to the EncryptorStore.
 	 * @param charset the optional {@link Charset} to use for the encryptor (may be null)
 	 * @return the properties used to configure the Hibernate user type
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	public static Properties prepareTestEncryptor(final Charset charset) throws GeneralSecurityException {
 		final AesParameters parameters = new AesParameters(Base64Encoder.getInstance())
@@ -77,7 +77,7 @@ public class TypeUtil {
 	 * Prepares a map of encryptor parameters for testing Hibernate user types.
 	 * @param charset the optional {@link Charset} to use for the encryptor (may be null)
 	 * @return the properties used to configure the Hibernate user type
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	public static Properties prepareTestEncryptorParameters(final Charset charset) throws GeneralSecurityException {
 		return prepareTestEncryptorParameters(charset, null);
@@ -88,7 +88,7 @@ public class TypeUtil {
 	 * @param charset the optional {@link Charset} to use for the encryptor (may be null)
 	 * @param defaults default properties
 	 * @return the properties used to configure the Hibernate user type
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	public static Properties prepareTestEncryptorParameters(final Charset charset, final Properties defaults) throws GeneralSecurityException {
 		final Properties props = new Properties(defaults);

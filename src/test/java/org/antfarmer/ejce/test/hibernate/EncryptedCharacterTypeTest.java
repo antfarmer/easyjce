@@ -36,7 +36,7 @@ public class EncryptedCharacterTypeTest extends EncryptedCharacterType {
 	private static final Character TEST_VALUE = 'J';
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 *
 	 */
 	@Before
@@ -45,7 +45,7 @@ public class EncryptedCharacterTypeTest extends EncryptedCharacterType {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void test() throws GeneralSecurityException {
@@ -55,9 +55,6 @@ public class EncryptedCharacterTypeTest extends EncryptedCharacterType {
 		assertEquals(o, dec);
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void testUnicode() throws GeneralSecurityException {
 		final Character o = "\u0645".charAt(0);
@@ -72,9 +69,6 @@ public class EncryptedCharacterTypeTest extends EncryptedCharacterType {
 		assertEquals(o, dec);
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void testThreadSafety() throws Throwable {
 		final int num = 25;

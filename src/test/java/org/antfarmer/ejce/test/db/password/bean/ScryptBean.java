@@ -35,7 +35,7 @@ public class ScryptBean extends AbstractPasswordBean {
 
 	/**
 	 * Constructor.
-	 * @param password
+	 * @param password the password
 	 */
 	public ScryptBean(final String password) {
 		super(password);

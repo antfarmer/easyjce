@@ -35,7 +35,7 @@ public class EncryptedLongTypeTest extends EncryptedLongType {
 	private static final Long TEST_VALUE = 9999999999999L;
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 *
 	 */
 	@Before
@@ -44,7 +44,7 @@ public class EncryptedLongTypeTest extends EncryptedLongType {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void test() throws GeneralSecurityException {
@@ -54,9 +54,6 @@ public class EncryptedLongTypeTest extends EncryptedLongType {
 		assertEquals(o, dec);
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void testThreadSafety() throws Throwable {
 		final int num = 25;

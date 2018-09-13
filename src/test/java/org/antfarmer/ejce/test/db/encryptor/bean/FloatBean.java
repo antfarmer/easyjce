@@ -35,7 +35,7 @@ public class FloatBean extends AbstractBean {
 
 	/**
 	 * Constructor.
-	 * @param value
+	 * @param value the value
 	 */
 	public FloatBean(final Float value) {
 		this.value = value;

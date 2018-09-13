@@ -38,7 +38,7 @@ public class EncryptedStringTypeTest extends EncryptedStringType {
 	private static final Charset CHARSET = Charset.forName("UTF-16");
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 *
 	 */
 	@Before
@@ -47,7 +47,7 @@ public class EncryptedStringTypeTest extends EncryptedStringType {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void test() throws GeneralSecurityException {
@@ -57,9 +57,6 @@ public class EncryptedStringTypeTest extends EncryptedStringType {
 		assertEquals(o, dec);
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void testUnicode() throws GeneralSecurityException {
 		final String o = "\u0627\u0645\u064a\u0631";
@@ -74,9 +71,6 @@ public class EncryptedStringTypeTest extends EncryptedStringType {
 		assertEquals(o, dec);
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void testThreadSafety() throws Throwable {
 		final int num = 25;

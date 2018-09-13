@@ -24,6 +24,8 @@ public interface PasswordEncoder {
 
 	/**
 	 * Encode the raw password. This should combine a message digest (hash) function with randomly generated salt.
+	 * @param rawPassword the raw password to encode
+	 * @return the encoded password
 	 */
 	String encode(CharSequence rawPassword);
 

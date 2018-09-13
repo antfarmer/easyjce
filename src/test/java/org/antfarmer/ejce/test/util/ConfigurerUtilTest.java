@@ -69,7 +69,7 @@ public class ConfigurerUtilTest {
 	}
 
 	/**
-	 * @throws Exception
+	 * @throws Exception Exception
 	 */
 	@Test
 	public void testSetParameterValues() throws Exception {
@@ -115,7 +115,7 @@ public class ConfigurerUtilTest {
 	}
 
 	/**
-	 * @throws Exception
+	 * @throws Exception Exception
 	 */
 	@Test
 	public void testSetParameterValues2() throws Exception {
@@ -154,7 +154,7 @@ public class ConfigurerUtilTest {
 	}
 
 	/**
-	 * @throws Exception
+	 * @throws Exception Exception
 	 */
 	@Test
 	public void testSetParameterValues3() throws Exception {
@@ -218,7 +218,7 @@ public class ConfigurerUtilTest {
 	}
 
 	/**
-	 * @throws Exception
+	 * @throws Exception Exception
 	 */
 	@Test
 	public void testSetParameterValuesViaSysProps() throws Exception {
@@ -264,7 +264,7 @@ public class ConfigurerUtilTest {
 	}
 
 	/**
-	 * @throws Exception
+	 * @throws Exception Exception
 	 */
 	@Test
 	public void testSetParameterValues2ViaSysProps() throws Exception {
@@ -306,7 +306,7 @@ public class ConfigurerUtilTest {
 	}
 
 	/**
-	 * @throws Exception
+	 * @throws Exception Exception
 	 */
 	@Test
 	public void testSetParameterValues3ViaSysProps() throws Exception {
@@ -350,7 +350,7 @@ public class ConfigurerUtilTest {
 	}
 
 	/**
-	 * @throws Exception
+	 * @throws Exception Exception
 	 */
 	@Test(expected = EncryptorConfigurationException.class)
 	public void testAsymetric() throws Exception {
@@ -362,7 +362,7 @@ public class ConfigurerUtilTest {
 	}
 
 	/**
-	 * @throws Exception
+	 * @throws Exception Exception
 	 */
 	@Test
 	public void testPswdEncoderParameterValues() throws Exception {
@@ -378,7 +378,7 @@ public class ConfigurerUtilTest {
 	}
 
 	/**
-	 * @throws Exception
+	 * @throws Exception Exception
 	 */
 	@Test
 	public void testPswdEncoderViaStore() throws Exception {
@@ -409,7 +409,7 @@ public class ConfigurerUtilTest {
 	}
 
 	/**
-	 * @throws Exception
+	 * @throws Exception Exception
 	 */
 	@Test
 	public void testPswdEncoderParameterValuesViaSysProps() throws Exception {

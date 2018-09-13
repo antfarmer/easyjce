@@ -107,6 +107,7 @@ public abstract class AbstractConfigurablePasswordEncoder implements Configurabl
 	 * Parses the string as a class name and returns a new instance of that class.
 	 * @param value the name of the class
 	 * @return a new instance of the given class name
+	 * @param <T> the returne type of the instance
 	 */
 	@SuppressWarnings("unchecked")
 	protected <T> T parseInstance(final String value) {
@@ -217,8 +218,8 @@ public abstract class AbstractConfigurablePasswordEncoder implements Configurabl
 
 	/**
 	 * Configures and initializes the encoder using the given Properties.
-	 * @param parameters
-	 * @param prefix
+	 * @param parameters the parameters
+	 * @param prefix the prefix
 	 */
 	public abstract void doConfigure(Properties parameters, String prefix);
 

@@ -35,7 +35,7 @@ public class BooleanBean extends AbstractBean {
 
 	/**
 	 * Constructor.
-	 * @param value
+	 * @param value the value
 	 */
 	public BooleanBean(final Boolean value) {
 		this.value = value;

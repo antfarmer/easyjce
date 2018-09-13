@@ -77,9 +77,6 @@ public abstract class AbstractEncoderTest {
 		}
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void threadSafetyTest() throws Throwable {
 		final int num = THREAD_COUNT;

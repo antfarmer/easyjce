@@ -35,7 +35,7 @@ public class LongBean extends AbstractBean {
 
 	/**
 	 * Constructor.
-	 * @param value
+	 * @param value the value
 	 */
 	public LongBean(final Long value) {
 		this.value = value;

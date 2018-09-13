@@ -34,7 +34,7 @@ public abstract class AbstractPasswordBean extends AbstractBean {
 
 	/**
 	 * Constructor.
-	 * @param password
+	 * @param password the password
 	 */
 	public AbstractPasswordBean(final String password) {
 		this.password = password;

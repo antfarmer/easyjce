@@ -37,7 +37,7 @@ public class CalendarBean extends AbstractBean {
 
 	/**
 	 * Constructor.
-	 * @param value
+	 * @param value the value
 	 */
 	public CalendarBean(final Calendar value) {
 		this.value = value;

@@ -25,7 +25,8 @@ public interface ConfigurablePasswordEncoder extends PasswordEncoder {
 
 	/**
 	 * Configures and initializes the encoder using the given {@link Properties}.
-	 * @param parameters
+	 * @param parameters the parameters
+	 * @param prefix the property prefix
 	 */
 	void configure(Properties parameters, String prefix);
 

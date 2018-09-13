@@ -35,7 +35,7 @@ public class IntegerBean extends AbstractBean {
 
 	/**
 	 * Constructor.
-	 * @param value
+	 * @param value the value
 	 */
 	public IntegerBean(final Integer value) {
 		this.value = value;

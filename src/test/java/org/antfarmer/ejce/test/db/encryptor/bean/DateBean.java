@@ -37,7 +37,7 @@ public class DateBean extends AbstractBean {
 
 	/**
 	 * Constructor.
-	 * @param value
+	 * @param value the value
 	 */
 	public DateBean(final Date value) {
 		this.value = value;

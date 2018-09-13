@@ -36,7 +36,7 @@ import org.junit.Test;
 public class CryptoUtilTest {
 
 	/**
-	 * @throws NoSuchAlgorithmException
+	 * @throws NoSuchAlgorithmException NoSuchAlgorithmException
 	 */
 	@Test
 	public void testKeySize() throws NoSuchAlgorithmException {
@@ -46,7 +46,7 @@ public class CryptoUtilTest {
 	}
 
 	/**
-	 * @throws NoSuchAlgorithmException
+	 *
 	 */
 	@Test
 	public void testPbeKeySize() {
@@ -56,7 +56,7 @@ public class CryptoUtilTest {
 	}
 
 	/**
-	 * @throws NoSuchAlgorithmException
+	 * @throws NoSuchAlgorithmException NoSuchAlgorithmException
 	 */
 	@Test
 	public void testGenKeys() throws NoSuchAlgorithmException {

@@ -77,9 +77,6 @@ public abstract class AbstractPasswordTest<P extends ConfigurablePasswordEncoder
 		assertTrue(encoder.matches(PASSWORD, encoded2));
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void threadSafetyTest() throws Throwable {
 		final int num = THREAD_COUNT;

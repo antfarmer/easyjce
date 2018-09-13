@@ -70,7 +70,7 @@ public abstract class AbstractDbTest extends Loggable {
 	/**
 	 * Executes the given callback in the context of a Hibernate session.
 	 *
-	 * @param callback
+	 * @param callback the callback
 	 */
 	protected void execute(final HibernateCallback callback) {
 		HibernateManager.instance().execute(callback);
@@ -80,7 +80,7 @@ public abstract class AbstractDbTest extends Loggable {
 	 * Executes the given callback in the context of a Hibernate session, providing a {@link Connection}
 	 * to the db for executing SQL.
 	 *
-	 * @param callback
+	 * @param callback the callback
 	 */
 	protected void execute(final SqlCallback callback) {
 		execute(new HibernateCallback() {
@@ -99,7 +99,7 @@ public abstract class AbstractDbTest extends Loggable {
 
 	/**
 	 * Saves or updates the given bean.
-	 * @param bean
+	 * @param bean the bean
 	 */
 	protected void saveOrUpdate(final Object bean) {
 		HibernateManager.instance().getSession().saveOrUpdate(bean);
@@ -112,8 +112,8 @@ public abstract class AbstractDbTest extends Loggable {
 	protected static interface SqlCallback {
 		/**
 		 * Executes SQL given a {@link Connection}.
-		 * @param connection
-		 * @throws SQLException
+		 * @param connection the connection
+		 * @throws SQLException SQLException
 		 */
 		void doInConnection(Connection connection) throws SQLException;
 	}
@@ -140,8 +140,8 @@ public abstract class AbstractDbTest extends Loggable {
 
 		/**
 		 * Executes SQL using the given {@link Statement}.
-		 * @param stmt
-		 * @throws SQLException
+		 * @param stmt the stmt
+		 * @throws SQLException SQLException
 		 */
 		protected abstract void doStatment(Statement stmt) throws SQLException;
 	}

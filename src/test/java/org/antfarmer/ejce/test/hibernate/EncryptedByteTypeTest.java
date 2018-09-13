@@ -35,7 +35,7 @@ public class EncryptedByteTypeTest extends EncryptedByteType {
 	private static final Byte TEST_VALUE = 66;
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 *
 	 */
 	@Before
@@ -44,7 +44,7 @@ public class EncryptedByteTypeTest extends EncryptedByteType {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void test() throws GeneralSecurityException {
@@ -54,10 +54,6 @@ public class EncryptedByteTypeTest extends EncryptedByteType {
 		assertEquals(o, dec);
 	}
 
-
-	/**
-	 *
-	 */
 	@Test
 	public void testThreadSafety() throws Throwable {
 		final int num = 25;

@@ -174,6 +174,7 @@ public class MessageDigestUtil {
 	 * @param providerName the name of the JCE-compliant provider (may be null)
 	 * @return a hash of the given text
 	 * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+	 * @throws NoSuchProviderException NoSuchProviderException
 	 */
 	public static String hashString(final String text, final String algorithm, final Provider provider, final String providerName)
 			throws NoSuchAlgorithmException, NoSuchProviderException {
@@ -189,6 +190,7 @@ public class MessageDigestUtil {
 	 * @param providerName the name of the JCE-compliant provider (may be null)
 	 * @return a hash of the given text
 	 * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+	 * @throws NoSuchProviderException NoSuchProviderException
 	 */
 	public static String hashString(final String text, final Charset charset, final String algorithm, final Provider provider, final String providerName)
 			throws NoSuchAlgorithmException, NoSuchProviderException {
@@ -204,6 +206,7 @@ public class MessageDigestUtil {
 	 * @param encoder the TextEncoder
 	 * @return a hash of the given text
 	 * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+	 * @throws NoSuchProviderException NoSuchProviderException
 	 */
 	public static String hashString(final String text, final String algorithm, final Provider provider, final String providerName, final TextEncoder encoder)
 			throws NoSuchAlgorithmException, NoSuchProviderException {
@@ -226,6 +229,7 @@ public class MessageDigestUtil {
 	 * @param encoder the TextEncoder
 	 * @return a hash of the given text
 	 * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+	 * @throws NoSuchProviderException NoSuchProviderException
 	 */
 	public static String hashString(final String text, final Charset charset, final String algorithm, final Provider provider, final String providerName, final TextEncoder encoder)
 			throws NoSuchAlgorithmException, NoSuchProviderException {
@@ -258,6 +262,7 @@ public class MessageDigestUtil {
 	 * @param providerName the name of the JCE-compliant provider (may be null)
 	 * @return a hash of the given bytes
 	 * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+	 * @throws NoSuchProviderException NoSuchProviderException
 	 */
 	public static byte[] hashBytes(final byte[] bytes, final String algorithm, final Provider provider, final String providerName)
 			throws NoSuchAlgorithmException, NoSuchProviderException {

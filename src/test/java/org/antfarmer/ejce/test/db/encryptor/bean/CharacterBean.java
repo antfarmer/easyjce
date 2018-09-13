@@ -35,7 +35,7 @@ public class CharacterBean extends AbstractBean {
 
 	/**
 	 * Constructor.
-	 * @param value
+	 * @param value the value
 	 */
 	public CharacterBean(final Character value) {
 		this.value = value;

@@ -35,7 +35,7 @@ public class EncryptedShortTypeTest extends EncryptedShortType {
 	private static final Short TEST_VALUE = 66;
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 *
 	 */
 	@Before
@@ -44,7 +44,7 @@ public class EncryptedShortTypeTest extends EncryptedShortType {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void test() throws GeneralSecurityException {
@@ -54,9 +54,6 @@ public class EncryptedShortTypeTest extends EncryptedShortType {
 		assertEquals(o, dec);
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void testThreadSafety() throws Throwable {
 		final int num = 25;

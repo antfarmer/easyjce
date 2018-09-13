@@ -35,7 +35,7 @@ public class Argon2Bean extends AbstractPasswordBean {
 
 	/**
 	 * Constructor.
-	 * @param password
+	 * @param password the password
 	 */
 	public Argon2Bean(final String password) {
 		super(password);

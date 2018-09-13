@@ -35,7 +35,7 @@ public class EncryptedDoubleTypeTest extends EncryptedDoubleType {
 	private static final Double TEST_VALUE = 6.66666666;
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 *
 	 */
 	@Before
@@ -44,7 +44,7 @@ public class EncryptedDoubleTypeTest extends EncryptedDoubleType {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void test() throws GeneralSecurityException {
@@ -54,9 +54,6 @@ public class EncryptedDoubleTypeTest extends EncryptedDoubleType {
 		assertEquals(o, dec);
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void testThreadSafety() throws Throwable {
 		final int num = 25;

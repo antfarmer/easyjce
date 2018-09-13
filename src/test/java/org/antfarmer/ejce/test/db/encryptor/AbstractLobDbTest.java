@@ -48,7 +48,7 @@ public abstract class AbstractLobDbTest extends AbstractDbTest {
 	 * Creates a file with random data.
 	 * @param length the file length
 	 * @return the file
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	protected File createRandomDataFile(final int length) throws IOException {
 		return createRandomDataFile(length, false);
@@ -59,7 +59,7 @@ public abstract class AbstractLobDbTest extends AbstractDbTest {
 	 * @param length the file length
 	 * @param createText indicates whether to only store random ASCII characters in the file
 	 * @return the file
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	protected File createRandomDataFile(final int length, final boolean createText) throws IOException {
 		final File file = new File(TMP_PATH, "file.txt");
@@ -96,8 +96,8 @@ public abstract class AbstractLobDbTest extends AbstractDbTest {
 	 * @param isEqual whether the assertion is to be equal or not
 	 * @param file the file
 	 * @param clob the clob
-	 * @throws SQLException
-	 * @throws IOException
+	 * @throws SQLException SQLException
+	 * @throws IOException IOException
 	 */
 	protected void assertData(final boolean isEqual, final File file, final Clob clob) throws SQLException, IOException {
 		assertData(isEqual, file, new ClobBlob(clob));
@@ -108,8 +108,8 @@ public abstract class AbstractLobDbTest extends AbstractDbTest {
 	 * @param isEqual whether the assertion is to be equal or not
 	 * @param file the file
 	 * @param blob the blob
-	 * @throws SQLException
-	 * @throws IOException
+	 * @throws SQLException SQLException
+	 * @throws IOException IOException
 	 */
 	protected void assertData(final boolean isEqual, final File file, final Blob blob) throws SQLException, IOException {
 		if (isEqual) {
@@ -168,7 +168,7 @@ public abstract class AbstractLobDbTest extends AbstractDbTest {
 
 	/**
 	 * Closes the given {@link Closeable}.
-	 * @param closeable
+	 * @param closeable the closeable
 	 */
 	protected void close(final Closeable closeable) {
 		if (closeable == null) return;

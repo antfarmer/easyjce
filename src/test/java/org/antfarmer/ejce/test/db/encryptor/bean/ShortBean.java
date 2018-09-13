@@ -35,7 +35,7 @@ public class ShortBean extends AbstractBean {
 
 	/**
 	 * Constructor.
-	 * @param value
+	 * @param value the value
 	 */
 	public ShortBean(final Short value) {
 		this.value = value;

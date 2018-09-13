@@ -36,7 +36,7 @@ public class TextBean extends AbstractBean {
 
 	/**
 	 * Constructor.
-	 * @param value
+	 * @param value the value
 	 */
 	public TextBean(final String value) {
 		this.value = value;

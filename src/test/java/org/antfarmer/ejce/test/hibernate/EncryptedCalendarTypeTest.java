@@ -36,7 +36,7 @@ public class EncryptedCalendarTypeTest extends EncryptedCalendarType {
 	private static final Calendar TEST_VALUE = Calendar.getInstance();
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 *
 	 */
 	@Before
@@ -45,7 +45,7 @@ public class EncryptedCalendarTypeTest extends EncryptedCalendarType {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void test() throws GeneralSecurityException {
@@ -55,9 +55,6 @@ public class EncryptedCalendarTypeTest extends EncryptedCalendarType {
 		assertEquals(o, dec);
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void testThreadSafety() throws Throwable {
 		final int num = 25;

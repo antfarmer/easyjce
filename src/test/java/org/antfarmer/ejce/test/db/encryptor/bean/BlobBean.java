@@ -37,7 +37,7 @@ public class BlobBean extends AbstractBean {
 
 	/**
 	 * Constructor.
-	 * @param value
+	 * @param value the value
 	 */
 	public BlobBean(final Blob value) {
 		this.value = value;

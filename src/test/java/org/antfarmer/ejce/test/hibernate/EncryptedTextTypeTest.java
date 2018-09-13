@@ -57,7 +57,7 @@ public class EncryptedTextTypeTest extends EncryptedTextType {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 *
 	 */
 	@Before
@@ -67,9 +67,6 @@ public class EncryptedTextTypeTest extends EncryptedTextType {
 		setParameterValues(TypeUtil.prepareTestEncryptorParameters(CHARSET, props));
 	}
 
-	/**
-	 * @throws GeneralSecurityException
-	 */
 	@Test
 	public void test() throws GeneralSecurityException, IOException {
 
@@ -78,9 +75,6 @@ public class EncryptedTextTypeTest extends EncryptedTextType {
 		assertEquals(TEST_VALUE, new String(StreamUtil.streamToBytes(dec), CHARSET));
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void testUnicode() throws GeneralSecurityException, IOException {
 		final String o = "\u0627\u0645\u064a\u0631";
@@ -96,18 +90,12 @@ public class EncryptedTextTypeTest extends EncryptedTextType {
 		assertEquals(o, decString);
 	}
 
-	/**
-	 * @throws IOException
-	 */
 	@Test
 	public void testLobToStream() throws IOException, SQLException {
 		final InputStream is = lobToStream(TEST_VALUE);
 		assertEquals(TEST_VALUE, new String(StreamUtil.streamToBytes(is), CHARSET));
 	}
 
-	/**
-	 * @throws IOException
-	 */
 	@Test
 	public void testCreateLob() throws IOException {
 		String lob = (String) createLob(TEST_VALUE.getBytes(CHARSET), null);
@@ -119,9 +107,6 @@ public class EncryptedTextTypeTest extends EncryptedTextType {
 		assertEquals(TEST_VALUE, lob);
 	}
 
-	/**
-	 * @throws IOException
-	 */
 	@Test
 	public void testStreamToLob() throws IOException, SQLException {
 		byte[] buff = TEST_VALUE.getBytes(CHARSET);
@@ -142,8 +127,8 @@ public class EncryptedTextTypeTest extends EncryptedTextType {
 	}
 
 	/**
-	 * @throws IOException
-	 * @throws SQLException
+	 * @throws IOException IOException
+	 * @throws SQLException SQLException
 	 */
 	@Test
 	public void testSetStream() throws IOException, SQLException {
@@ -186,7 +171,7 @@ public class EncryptedTextTypeTest extends EncryptedTextType {
 	}
 
 	/**
-	 * @throws Exception
+	 * @throws Exception Exception
 	 */
 	@Test
 	public void testGetSet() throws Exception {
@@ -212,9 +197,6 @@ public class EncryptedTextTypeTest extends EncryptedTextType {
 		assertEquals(TEST_VALUE, dec);
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void testThreadSafety() throws Throwable {
 		final int num = 25;

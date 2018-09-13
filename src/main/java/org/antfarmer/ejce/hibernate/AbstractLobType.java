@@ -186,8 +186,8 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 	 * Encrypts the given <tt>InputStream</tt>.
 	 * @param is the InputStream
 	 * @return an encrypted InputStream
-	 * @throws GeneralSecurityException
-	 * @throws IOException
+	 * @throws GeneralSecurityException GeneralSecurityException
+	 * @throws IOException IOException
 	 */
 	protected InputStream encryptStream(final InputStream is) throws GeneralSecurityException, IOException {
 		final byte[] paramData = parameters.generateParameterSpecData();
@@ -201,8 +201,8 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 	 * Decrypts the given <tt>InputStream</tt>.
 	 * @param is the InputStream
 	 * @return a decrypted InputStream
-	 * @throws GeneralSecurityException
-	 * @throws IOException
+	 * @throws GeneralSecurityException GeneralSecurityException
+	 * @throws IOException IOException
 	 */
 	protected InputStream decryptStream(final InputStream is) throws GeneralSecurityException, IOException {
 		final int paramSize = parameters.getParameterSpecSize();
@@ -226,8 +226,8 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 	 * @param st the PreparedStatement
 	 * @param index the parameter index
 	 * @param is the InputStream
-	 * @throws IOException
-	 * @throws SQLException
+	 * @throws IOException IOException
+	 * @throws SQLException SQLException
 	 */
 	protected void setStream(final PreparedStatement st, final int index, final InputStream is) throws IOException, SQLException {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream(streamBuffSize);
@@ -335,7 +335,7 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 	/**
 	 * Returns a newly created temp file. The file will be deleted on normal termination of the VM.
 	 * @return a newly created temp file
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	protected File createTempFile() throws IOException {
 		File file;

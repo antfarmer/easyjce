@@ -35,7 +35,7 @@ public class ByteBean extends AbstractBean {
 
 	/**
 	 * Constructor.
-	 * @param value
+	 * @param value the value
 	 */
 	public ByteBean(final Byte value) {
 		this.value = value;

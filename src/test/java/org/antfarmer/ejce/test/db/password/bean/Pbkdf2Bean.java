@@ -35,7 +35,7 @@ public class Pbkdf2Bean extends AbstractPasswordBean {
 
 	/**
 	 * Constructor.
-	 * @param password
+	 * @param password the password
 	 */
 	public Pbkdf2Bean(final String password) {
 		super(password);

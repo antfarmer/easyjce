@@ -38,7 +38,7 @@ public class EncryptedObjectTypeTest extends EncryptedObjectType {
 	private static final Point TEST_VALUE = new Point(99, 66);
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 *
 	 */
 	@Before
@@ -47,7 +47,7 @@ public class EncryptedObjectTypeTest extends EncryptedObjectType {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void test() throws GeneralSecurityException {
@@ -57,9 +57,6 @@ public class EncryptedObjectTypeTest extends EncryptedObjectType {
 		assertEquals(o, dec);
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void testThreadSafety() throws Throwable {
 		final int num = 25;

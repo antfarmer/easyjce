@@ -34,7 +34,7 @@ public class GZIPCompressionStream extends FilterInputStream {
 	/**
 	 * Constructor.
 	 * @param in the <code>InputStream</code> to be compressed
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public GZIPCompressionStream(final InputStream in) throws IOException {
 		super(in);

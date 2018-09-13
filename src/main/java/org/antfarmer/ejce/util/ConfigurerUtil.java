@@ -550,7 +550,7 @@ public final class ConfigurerUtil {
 	 * Returns a <code>Cipher</code> instance for the given <code>AlgorithmParameters</code>.
 	 * @param parameters the <code>AlgorithmParameters</code>
 	 * @return a <code>Cipher</code> instance for the given <code>AlgorithmParameters</code>
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	public static Cipher getCipherInstance(final AlgorithmParameters<?> parameters)
 			throws GeneralSecurityException {

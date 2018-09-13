@@ -35,7 +35,7 @@ public class BcryptBean extends AbstractPasswordBean {
 
 	/**
 	 * Constructor.
-	 * @param password
+	 * @param password the password
 	 */
 	public BcryptBean(final String password) {
 		super(password);

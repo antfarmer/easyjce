@@ -35,7 +35,7 @@ public class EncryptedFloatTypeTest extends EncryptedFloatType {
 	private static final Float TEST_VALUE = 6.66F;
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 *
 	 */
 	@Before
@@ -44,7 +44,7 @@ public class EncryptedFloatTypeTest extends EncryptedFloatType {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void test() throws GeneralSecurityException {
@@ -54,9 +54,6 @@ public class EncryptedFloatTypeTest extends EncryptedFloatType {
 		assertEquals(o, dec);
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void testThreadSafety() throws Throwable {
 		final int num = 25;

@@ -26,11 +26,11 @@ import org.antfarmer.ejce.encoder.TextEncoder;
  *
  * <pre>
  *	PbeParameters parameters = new PbeParameters()
- *		.setKey(<font color="#0033CC">"key12345678909876543210"</font>)
- *		<font color="#008822">// the MAC settings are optional, but will ensure that the message
- *		// was not altered during transmission.</font>
+ *		.setKey(<span style="color: #0033CC;">"key12345678909876543210"</span>)
+ *		<span style="color: #008822;">// the MAC settings are optional, but will ensure that the message
+ *		// was not altered during transmission.</span>
  *		.setMacAlgorithm(DesEdeParameters.MAC_ALGORITHM_HMAC_SHA1)
- *		.setMacKey(<font color="#0033CC">"12345678"</font>)
+ *		.setMacKey(<span style="color: #0033CC;">"12345678"</span>)
  *		;
  *	Encryptor encryptor = new Encryptor(Base64Encoder.<i>getInstance</i>())
  *		.setAlgorithmParameters(parameters);
@@ -40,7 +40,7 @@ import org.antfarmer.ejce.encoder.TextEncoder;
  *	encryptor.initialize();
  *	decryptor.initialize();
  *
- *	String plainText = <font color="#0033CC">"abcdefghijklmnopqrstuvwxyz"</font>;
+ *	String plainText = <span style="color: #0033CC;">"abcdefghijklmnopqrstuvwxyz"</span>;
  *	String enc = encryptor.encrypt(plainText);
  *	System.out.println(enc);
  *	System.out.println(decryptor.decrypt(enc));

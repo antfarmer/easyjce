@@ -36,7 +36,7 @@ public class EncryptedDateTypeTest extends EncryptedDateType {
 	private static final Date TEST_VALUE = new Date();
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 *
 	 */
 	@Before
@@ -45,7 +45,7 @@ public class EncryptedDateTypeTest extends EncryptedDateType {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
 	public void test() throws GeneralSecurityException {
@@ -55,9 +55,6 @@ public class EncryptedDateTypeTest extends EncryptedDateType {
 		assertEquals(o, dec);
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void testThreadSafety() throws Throwable {
 		final int num = 25;

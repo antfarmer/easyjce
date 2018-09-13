@@ -56,16 +56,13 @@ public class EncryptedBlobTypeTest extends EncryptedBlobType {
 	}
 
 	/**
-	 * @throws GeneralSecurityException
+	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Before
 	public void init() throws GeneralSecurityException {
 		setParameterValues(TypeUtil.prepareTestEncryptorParameters(CHARSET));
 	}
 
-	/**
-	 * @throws GeneralSecurityException
-	 */
 	@Test
 	public void test() throws GeneralSecurityException, IOException {
 
@@ -75,7 +72,7 @@ public class EncryptedBlobTypeTest extends EncryptedBlobType {
 	}
 
 	/**
-	 * @throws Exception
+	 * @throws Exception Exception
 	 */
 	@Test
 	public void testGetSet() throws Exception {
@@ -112,7 +109,7 @@ public class EncryptedBlobTypeTest extends EncryptedBlobType {
 	}
 
 	/**
-	 * @throws Exception
+	 * @throws Exception Exception
 	 */
 	@Test
 	public void testGetSetBuffered() throws Exception {
@@ -152,9 +149,6 @@ public class EncryptedBlobTypeTest extends EncryptedBlobType {
 		EasyMock.verify(bOut, lobCreator, services, factory, session, rs);
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void testThreadSafety() throws Throwable {
 		final int num = 25;
