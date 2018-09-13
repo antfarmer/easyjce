@@ -21,6 +21,7 @@ version = '1.0.0'
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
+def projectName = 'EasyJCE'
 def isContBuild = System.getenv("IS_TRAVIS_CI") == "true"
 
 // add exception to allow use of non-API Sun crypto classes (in tests)
@@ -37,8 +38,10 @@ eclipse {
 
 jar {
 	manifest {
-		attributes 'Implementation-Title': 'EasyJCE',
-				   'Implementation-Version': version
+		attributes	'Name': 'org/antfarmer/ejce/',
+					'Implementation-Title': projectName,
+					'Implementation-Version': version,
+					'Sealed': 'true'
 	}
 }
 
@@ -105,6 +108,51 @@ signing {
 }
 tasks.withType(Sign) {
 	onlyIf { ! isContBuild }
+}
+
+uploadArchives {
+	repositories {
+		mavenDeployer {
+			beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+				authentication(userName: ossrhUsername, password: ossrhPassword)
+			}
+
+			snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+				authentication(userName: ossrhUsername, password: ossrhPassword)
+			}
+
+			pom.project {
+				name projectName
+				packaging 'jar'
+				// optionally artifactId can be defined here 
+				description 'EasyJCE provides an easy to use interface for encrypting and decrypting data for transmission or storage using the Java Cryptographic Extension (JCE).'
+				url 'https://github.com/antfarmer/easyjce'
+
+				scm {
+					connection 'scm:git:git://github.com/antfarmer/easyjce.git'
+					developerConnection 'scm:git:ssh:git@github.com:antfarmer/easyjce.git'
+					url 'https://github.com/antfarmer/easyjce'
+				}
+
+				licenses {
+					license {
+						name 'The Apache License, Version 2.0'
+						url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+					}
+				}
+
+				developers {
+					developer {
+						id 'antfarmer'
+						name 'Ameer Antar'
+						email 'fivejeez@yahoo.com'
+					}
+				}
+			}
+		}
+	}
 }
 
 // Codecov requirements //////////////////////////////////////////////////////////////
