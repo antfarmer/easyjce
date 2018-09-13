@@ -65,19 +65,19 @@ Here's an example for setting up AES-256-ECB with HMAC-SHA1:
 (Note: use of the `Base64Encoder` in the parameters constructor which is used to decode the key in the parameters,
 	while the `Base64Encoder` in the encryptor constructor controls how encrypted values are encoded).
 ```java
-		final AesParameters parameters = new AesParameters(Base64Encoder.getInstance())
-				.setKey("GsqGjFpSQe0D+8nKLmOoFA2/mfXHzFbYXWwAyxmxhjo")
-				.setBlockMode(AesParameters.BLOCK_MODE_ECB)
-				.setPadding(AesParameters.PADDING_PKCS5)
-				.setMacAlgorithm(AesParameters.MAC_ALGORITHM_HMAC_SHA1)
-				.setMacKeySize(AesParameters.MAC_KEY_SIZE_128)
-		;
-		final Encryptor encryptor = new Encryptor(Base64Encoder.getInstance()).setAlgorithmParameters(parameters);
-		encryptor.initialize();
-		final String encrypted = encryptor.encrypt("secret stuff");
-		System.out.println("Encrypted: " + encrypted);
-		final String decrypted = encryptor.decrypt(encrypted);
-		System.out.println("Decrypted: " + decrypted);
+	final AesParameters parameters = new AesParameters(Base64Encoder.getInstance())
+		.setKey("GsqGjFpSQe0D+8nKLmOoFA2/mfXHzFbYXWwAyxmxhjo")
+		.setBlockMode(AesParameters.BLOCK_MODE_ECB)
+		.setPadding(AesParameters.PADDING_PKCS5)
+		.setMacAlgorithm(AesParameters.MAC_ALGORITHM_HMAC_SHA1)
+		.setMacKeySize(AesParameters.MAC_KEY_SIZE_128)
+	;
+	final Encryptor encryptor = new Encryptor(Base64Encoder.getInstance()).setAlgorithmParameters(parameters);
+	encryptor.initialize();
+	final String encrypted = encryptor.encrypt("secret stuff");
+	System.out.println("Encrypted: " + encrypted);
+	final String decrypted = encryptor.decrypt(encrypted);
+	System.out.println("Decrypted: " + decrypted);
 ```
 The `Encryptor` can now be used to encrypt/decrypt values and objects as needed.
 
@@ -87,11 +87,11 @@ In a JPA/Hibernate environment, encryption can be declared on POJO's using annot
 Here is an example for AES-256-GCM: (GCM negates the need for a HMAC)
 ```java
 	@Type(type = "org.antfarmer.ejce.hibernate.EncryptedStringType", parameters = {
-			@Parameter(name = "paramClass", value = "org.antfarmer.ejce.parameter.AesParameters"),
-			@Parameter(name = "paramEncoder", value = "org.antfarmer.ejce.encoder.Base64Encoder"),
-			@Parameter(name = "blockMode", value = "GCM"),
-			@Parameter(name = "key", value = "th8k9z2PCO9apj1GSYU86t5DP9dfmG7uRkfdGSWrnJ0"),
-			@Parameter(name = "encoder", value = "org.antfarmer.ejce.encoder.Base64Encoder")
+		@Parameter(name = "paramClass", value = "org.antfarmer.ejce.parameter.AesParameters"),
+		@Parameter(name = "paramEncoder", value = "org.antfarmer.ejce.encoder.Base64Encoder"),
+		@Parameter(name = "blockMode", value = "GCM"),
+		@Parameter(name = "key", value = "th8k9z2PCO9apj1GSYU86t5DP9dfmG7uRkfdGSWrnJ0"),
+		@Parameter(name = "encoder", value = "org.antfarmer.ejce.encoder.Base64Encoder")
 	})
 	public String getSecretValue() {
 		return secretValue;
@@ -104,7 +104,7 @@ Here is an example for referencing a pre-configured encryptor in the `EncryptorS
 	EncryptoreStore.add("com.myapp.enc.secretEncryptor", mySecretEncryptor);
 	... // in POJO
 	@Type(type = "org.antfarmer.ejce.hibernate.EncryptedStringType", parameters = {
-			@Parameter(name = "storeKey", value = "com.myapp.enc.secretEncryptor")
+		@Parameter(name = "storeKey", value = "com.myapp.enc.secretEncryptor")
 	})
 	public String getSecretValue() {
 		return secretValue;
@@ -180,14 +180,14 @@ In a JPA/Hibernate environment, password encoding can be declared on POJO's usin
 Here is an example for Argon2id:
 ```java
 	@Type(type = "org.antfarmer.ejce.password.EncodedPasswordType", parameters = {
-			@Parameter(name = "encoderAdapter", value = "org.antfarmer.ejce.password.encoder.Argon2JvmEncoder"),
-			@Parameter(name = "type", value = "id"),
-			@Parameter(name = "hashLen", value = "64"),	// Bytes
-			@Parameter(name = "saltLen", value = "32"),	// Bytes
-			@Parameter(name = "iterations", value = "100"),
-			@Parameter(name = "parallelism", value = "4"),	// Threads
-			@Parameter(name = "memSize", value = "65536"),	// KB
-			@Parameter(name = "storeExportKey", value = "com.myapp.pswd.user")
+		@Parameter(name = "encoderAdapter", value = "org.antfarmer.ejce.password.encoder.Argon2JvmEncoder"),
+		@Parameter(name = "type", value = "id"),
+		@Parameter(name = "hashLen", value = "64"),	// Bytes
+		@Parameter(name = "saltLen", value = "32"),	// Bytes
+		@Parameter(name = "iterations", value = "100"),
+		@Parameter(name = "parallelism", value = "4"),	// Threads
+		@Parameter(name = "memSize", value = "65536"),	// KB
+		@Parameter(name = "storeExportKey", value = "com.myapp.pswd.user")
 	})
 	public String getPassword() {
 		return password;
@@ -200,7 +200,7 @@ Here is an example for referencing a pre-configured password encoder in the `Pas
 	PasswordEncoderStore.add("com.myapp.pswd.user", mySecretEncryptor);
 	... // in POJO
 	@Type(type = "org.antfarmer.ejce.password.EncodedPasswordType", parameters = {
-			@Parameter(name = "storeKey", value = "com.myapp.pswd.user")
+		@Parameter(name = "storeKey", value = "com.myapp.pswd.user")
 	})
 	public String getPassword() {
 		return password;
@@ -220,9 +220,6 @@ More possible parameter keys and values can found in `ConfigurerUtil` and the ap
 #### Password encoding via Hibernate UserType using XML configuration
 In a JPA/Hibernate environment, password encoding can also be configured via mapping XML. This allows for hashing of the field value as it is persisted to the database. The value retrieved from the database will remain hashed. Matching of the password will require a reference to the encoder, which can be retrieved via the `PasswordEncoderStore` after setting the name in the storeExportKey property. Except for 'encoderAdapter', the parameters are all optional overrides of default settings.
 
-			@Parameter(name = "encoderAdapter", value = "org.antfarmer.ejce.password.encoder.bc.BcBcryptEncoder"),
-			@Parameter(name = "storeExportKey", value = STORE_EXPORT_KEY),
-			@Parameter(name = "strength", value = "5")
 Here is an example for the BCrypt algorithm:
 ```xml
 <hibernate-mapping>
