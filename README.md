@@ -20,14 +20,14 @@ These include Hex, Base32, and Base64 implementations, with variations for the a
 In most cases, you first will need to generate some keys for encryption, unless you are using a hashing algorithm. Use methods on `CryptoUtil` to generate the keys you want.
 
 For example, this creates a key for AES-256:
-```
+```java
 	SecretKey key = CryptoUtil.generateSecretKey(AesParameters.KEY_SIZE_256, AesParameters.ALGORITHM_AES);
 	String keyCfgValue = Base64Encoder.getInstance().encode(key.getEncoded());
 	System.out.println(keyCfgValue);
 ```
 
 This creates an asymmetric key pair for RSA-1024:
-```
+```java
 	KeyPair pair = CryptoUtil.generateAsymmetricKeyPair(RsaParameters.KEY_SIZE_1024, RsaParameters.ALGORITHM_RSA);
 	String pubKeyCfgValue = Base64Encoder.getInstance().encode(pair.getPublic().getEncoded());
 	String privKeyCfgValue = Base64Encoder.getInstance().encode(pair.getPrivate().getEncoded());
@@ -47,7 +47,7 @@ Encryption can be performed programmatically by creating an instance of `Algorit
 Here's an example for setting up AES-256-ECB with HMAC-SHA1:
 (Note: use of the `Base64Encoder` in the parameters constructor which is used to decode the key in the parameters,
 	while the `Base64Encoder` in the encryptor constructor controls how encrypted values are encoded).
-```
+```java
 		final AesParameters parameters = new AesParameters(Base64Encoder.getInstance())
 				.setKey("GsqGjFpSQe0D+8nKLmOoFA2/mfXHzFbYXWwAyxmxhjo")
 				.setBlockMode(AesParameters.BLOCK_MODE_ECB)
@@ -64,11 +64,11 @@ Here's an example for setting up AES-256-ECB with HMAC-SHA1:
 ```
 The `Encryptor` can now be used to encrypt/decrypt values and objects as needed.
 
-#### Declarative encryption via Hibernate UserType
+#### Declarative encryption via Hibernate UserType annotations
 In a JPA/Hibernate environment, encryption can be declared on POJO's using annotations. This allows for encryption of the field value as it is persisted to the database, and decryption as it is read from the database back into the POJO. This allows transparent handling of sensitive data within your application.
 
 Here is an example for AES-256-GCM: (GCM negates the need for a HMAC)
-```
+```java
 	@Type(type = "org.antfarmer.ejce.hibernate.EncryptedStringType", parameters = {
 			@Parameter(name = "paramClass", value = "org.antfarmer.ejce.parameter.AesParameters"),
 			@Parameter(name = "paramEncoder", value = "org.antfarmer.ejce.encoder.Base64Encoder"),
@@ -87,22 +87,22 @@ More possible parameter keys and values can found in `ConfigurerUtil` and the ap
 In a JPA/Hibernate environment, encryption can also be configured via mapping XML. This allows for encryption of the field value as it is persisted to the database, and decryption as it is read from the database back into the POJO. This allows transparent handling of sensitive data within your application.
 
 Here is an example for AES-256-GCM: (GCM negates the need for a HMAC)
-```
-&lt;hibernate-mapping&gt;
-	&lt;typedef name="encryptedPassword" class="org.antfarmer.ejce.hibernate.EncryptedStringType"&gt;
-		&lt;param name="paramClass"&gt;org.antfarmer.ejce.parameter.AesParameters&lt;/param&gt;
-		&lt;param name="paramEncoder"&gt;org.antfarmer.ejce.encoder.Base64Encoder&lt;/param&gt;
-		&lt;param name="key"&gt;jlor+XrLXfT2ytV5lpQN0Q&lt;/param&gt;
-		&lt;param name="macAlgorithm"&gt;HmacSHA1&lt;/param&gt;
-		&lt;param name="macKey"&gt;fZB8/kF5BPKB/0bCiR+Rxg&lt;/param&gt;
-	&lt;/typedef&gt;
+```xml
+<hibernate-mapping>
+	<typedef name="encryptedPassword" class="org.antfarmer.ejce.hibernate.EncryptedStringType">
+		<param name="paramClass">org.antfarmer.ejce.parameter.AesParameters</param>
+		<param name="paramEncoder">org.antfarmer.ejce.encoder.Base64Encoder</param>
+		<param name="key">jlor+XrLXfT2ytV5lpQN0Q</param>
+		<param name="macAlgorithm">HmacSHA1</param>
+		<param name="macKey">fZB8/kF5BPKB/0bCiR+Rxg</param>
+	</typedef>
 	...
-	&lt;class name="..."&gt;
+	<class name="...">
 		...
-		&lt;property name="password" type="encryptedPassword"/&gt;
+		<property name="password" type="encryptedPassword"/>
 		...
-	&lt;/class&gt;
-&lt;/hibernate-mapping&gt;
+	</class>
+</hibernate-mapping>
 ```
 It is up to you to choose the appropriate `AbstractHibernateType`, but `EncryptedStringType` is by far the most common.
 More possible parameter keys and values can found in `ConfigurerUtil` and the appropriate `AlgorithmParameters` classes.
