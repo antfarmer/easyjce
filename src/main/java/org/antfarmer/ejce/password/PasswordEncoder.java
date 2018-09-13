@@ -16,11 +16,11 @@
 package org.antfarmer.ejce.password;
 
 /**
- * Adapter interface for password encoders to be used for the encoded password Hibernate type.
+ * Interface for password encoders to be used for the encoded password Hibernate type.
  * @see EncodedPasswordType
  * @author Ameer Antar
  */
-public interface PasswordEncoderAdapter {
+public interface PasswordEncoder {
 
 	/**
 	 * Encode the raw password. This should combine a message digest (hash) function with randomly generated salt.

@@ -26,14 +26,14 @@ import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
  */
 public class SpringScryptEncoder extends AbstractScryptPasswordEncoder {
 
-	private SCryptPasswordEncoder pswdEncoder;
+	private SCryptPasswordEncoder pswdEnc;
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public void doConfigure(final Properties parameters, final String prefix) {
-		pswdEncoder = new SCryptPasswordEncoder(
+		pswdEnc = new SCryptPasswordEncoder(
 				parseInt(parameters, prefix, KEY_CPU_COST, DEFAULT_CPU_COST),
 				parseInt(parameters, prefix, KEY_MEM_COST, DEFAULT_MEM_COST),
 				parseInt(parameters, prefix, KEY_PARALLELIZATION, DEFAULT_PARALLELIZATION),
@@ -47,7 +47,7 @@ public class SpringScryptEncoder extends AbstractScryptPasswordEncoder {
 	 */
 	@Override
 	public String doEncode(final CharSequence rawPassword) {
-		return pswdEncoder.encode(rawPassword);
+		return pswdEnc.encode(rawPassword);
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class SpringScryptEncoder extends AbstractScryptPasswordEncoder {
 	 */
 	@Override
 	public boolean isMatch(final CharSequence rawPassword, final String encodedPassword) {
-		return pswdEncoder.matches(rawPassword, encodedPassword);
+		return pswdEnc.matches(rawPassword, encodedPassword);
 	}
 
 }

@@ -192,7 +192,7 @@ public final class ConfigurerUtil {
 	 * Property key for the full class name of the {@link ConfigurablePasswordEncoder} to
 	 * be used with the {@link org.antfarmer.ejce.password.EncodedPasswordType}.
 	 */
-	public static final String KEY_PSWD_ENCODER_ADAPTER_CLASS = "encoderAdapter";
+	public static final String KEY_PSWD_ENCODER_CLASS = "pswdEncoder";
 
 	/**
 	 * Property key for the key to be used to export the {@link ConfigurablePasswordEncoder} into the
@@ -497,7 +497,7 @@ public final class ConfigurerUtil {
 	 */
 	public static ConfigurablePasswordEncoder configurePswdEncoder(final Properties properties, final String prefix)
 			throws EncryptorConfigurationException {
-		ConfigurablePasswordEncoder pswdEncoder;
+		ConfigurablePasswordEncoder pswdEnc;
 
 		// get password encoder settings from system properties
 		String property = properties.getProperty(getPropertyName(prefix, KEY_PROPERTY_PREFIX));
@@ -511,39 +511,39 @@ public final class ConfigurerUtil {
 		// get password encoder from store if password encoder name is set
 		property = properties.getProperty(getPropertyName(prefix, KEY_ENCRYPTOR_STORE_KEY));
 		if (TextUtil.hasLength(property)) {
-			pswdEncoder = PasswordEncoderStore.get(property);
-			if (pswdEncoder == null) {
+			pswdEnc = PasswordEncoderStore.get(property);
+			if (pswdEnc == null) {
 				throw new EncryptorConfigurationException("Could not find password encoder in store with name: " + property);
 			}
-			return pswdEncoder;
+			return pswdEnc;
 		}
 
-		// load adapter class
-		property = properties.getProperty(getPropertyName(prefix, KEY_PSWD_ENCODER_ADAPTER_CLASS));
+		// load password encoder class
+		property = properties.getProperty(getPropertyName(prefix, KEY_PSWD_ENCODER_CLASS));
 		if (!TextUtil.hasLength(property)) {
-			throw new EncryptorConfigurationException("Missing '" + KEY_PSWD_ENCODER_ADAPTER_CLASS + "' property in Hibernate mapping");
+			throw new EncryptorConfigurationException("Missing '" + KEY_PSWD_ENCODER_CLASS + "' property in Hibernate mapping");
 		}
 		try {
-			final Class<?> adapterClass = Class.forName(property);
-			if (!ConfigurablePasswordEncoder.class.isAssignableFrom(adapterClass)) {
+			final Class<?> pswdEncoderClass = Class.forName(property);
+			if (!ConfigurablePasswordEncoder.class.isAssignableFrom(pswdEncoderClass)) {
 				throw new EncryptorConfigurationException(property + " must implement " + ConfigurablePasswordEncoder.class.getName());
 			}
-			pswdEncoder = (ConfigurablePasswordEncoder) adapterClass.newInstance();
+			pswdEnc = (ConfigurablePasswordEncoder) pswdEncoderClass.newInstance();
 		}
 		catch (final Exception e) {
 			throw new EncryptorConfigurationException("Error instantiating: " + property, e);
 		}
 
 		// configure
-		pswdEncoder.configure(properties, prefix);
+		pswdEnc.configure(properties, prefix);
 
 		// export password encoder to store if export key is set
 		property = properties.getProperty(getPropertyName(prefix, KEY_PSWD_ENCODER_STORE_EXPORT_KEY));
 		if (TextUtil.hasLength(property)) {
-			PasswordEncoderStore.add(property, pswdEncoder);
+			PasswordEncoderStore.add(property, pswdEnc);
 		}
 
-		return pswdEncoder;
+		return pswdEnc;
 	}
 
 	/**

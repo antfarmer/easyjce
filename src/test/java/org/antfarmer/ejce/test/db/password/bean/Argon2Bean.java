@@ -47,7 +47,7 @@ public class Argon2Bean extends AbstractPasswordBean {
 	 */
 	@Override
 	@Type(type = "org.antfarmer.ejce.password.EncodedPasswordType", parameters = {
-			@Parameter(name = "encoderAdapter", value = "org.antfarmer.ejce.password.encoder.Argon2JvmEncoder"),
+			@Parameter(name = "pswdEncoder", value = "org.antfarmer.ejce.password.encoder.Argon2JvmEncoder"),
 			@Parameter(name = "storeExportKey", value = STORE_EXPORT_KEY)
 	})
 	public String getPassword() {

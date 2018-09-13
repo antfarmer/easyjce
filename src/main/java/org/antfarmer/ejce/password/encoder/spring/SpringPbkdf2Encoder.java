@@ -40,7 +40,7 @@ public class SpringPbkdf2Encoder extends AbstractPbkdf2PasswordEncoder {
 	public static final String KEY_ENCODE_HEX = "encodeHex";
 
 
-	private Pbkdf2PasswordEncoder pswdEncoder;
+	private Pbkdf2PasswordEncoder pswdEnc;
 
 	/**
 	 * {@inheritDoc}
@@ -58,16 +58,16 @@ public class SpringPbkdf2Encoder extends AbstractPbkdf2PasswordEncoder {
 			throw new EncryptorConfigurationException("Iterations must be > 0");
 		}
 
-		pswdEncoder = new Pbkdf2PasswordEncoder(
+		pswdEnc = new Pbkdf2PasswordEncoder(
 				parseString(parameters, prefix, KEY_SECRET, ""),
 				iterations,
 				hashLengthBits
 		);
 
 		final String algo = parseString(parameters, prefix, KEY_ALGORITHM, DEFAULT_ALGORITHM);
-		pswdEncoder.setAlgorithm(SecretKeyFactoryAlgorithm.valueOf(algo));
+		pswdEnc.setAlgorithm(SecretKeyFactoryAlgorithm.valueOf(algo));
 
-		pswdEncoder.setEncodeHashAsBase64(! parseBoolean(parameters, prefix, KEY_ENCODE_HEX, false));
+		pswdEnc.setEncodeHashAsBase64(! parseBoolean(parameters, prefix, KEY_ENCODE_HEX, false));
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class SpringPbkdf2Encoder extends AbstractPbkdf2PasswordEncoder {
 	 */
 	@Override
 	public String doEncode(final CharSequence rawPassword) {
-		return pswdEncoder.encode(rawPassword);
+		return pswdEnc.encode(rawPassword);
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class SpringPbkdf2Encoder extends AbstractPbkdf2PasswordEncoder {
 	 */
 	@Override
 	public boolean isMatch(final CharSequence rawPassword, final String encodedPassword) {
-		return pswdEncoder.matches(rawPassword, encodedPassword);
+		return pswdEnc.matches(rawPassword, encodedPassword);
 	}
 
 }

@@ -581,7 +581,7 @@
 <dt><span class="memberNameLink"><a href="org/antfarmer/ejce/stream/GZIPCompressionStream.html#close--">close()</a></span> - Method in class org.antfarmer.ejce.stream.<a href="org/antfarmer/ejce/stream/GZIPCompressionStream.html" title="class in org.antfarmer.ejce.stream">GZIPCompressionStream</a></dt>
 <dt><a href="org/antfarmer/ejce/password/ConfigurablePasswordEncoder.html" title="interface in org.antfarmer.ejce.password"><span class="typeNameLink">ConfigurablePasswordEncoder</span></a> - Interface in <a href="org/antfarmer/ejce/password/package-summary.html">org.antfarmer.ejce.password</a></dt>
 <dd>
-<div class="block">Extension of <a href="org/antfarmer/ejce/password/PasswordEncoderAdapter.html" title="interface in org.antfarmer.ejce.password"><code>PasswordEncoderAdapter</code></a> which allows configuration via <a href="https://docs.oracle.com/javase/7/docs/api/java/util/Properties.html?is-external=true" title="class or interface in java.util"><code>Properties</code></a>.</div>
+<div class="block">Extension of <a href="org/antfarmer/ejce/password/PasswordEncoder.html" title="interface in org.antfarmer.ejce.password"><code>PasswordEncoder</code></a> which allows configuration via <a href="https://docs.oracle.com/javase/7/docs/api/java/util/Properties.html?is-external=true" title="class or interface in java.util"><code>Properties</code></a>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="org/antfarmer/ejce/hibernate/AbstractHibernateType.html#configure-java.util.Properties-">configure(Properties)</a></span> - Method in class org.antfarmer.ejce.hibernate.<a href="org/antfarmer/ejce/hibernate/AbstractHibernateType.html" title="class in org.antfarmer.ejce.hibernate">AbstractHibernateType</a></dt>
 <dd>
@@ -1199,7 +1199,7 @@
 <dd>
 <div class="block">Encode the raw password.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="org/antfarmer/ejce/password/PasswordEncoderAdapter.html#encode-java.lang.CharSequence-">encode(CharSequence)</a></span> - Method in interface org.antfarmer.ejce.password.<a href="org/antfarmer/ejce/password/PasswordEncoderAdapter.html" title="interface in org.antfarmer.ejce.password">PasswordEncoderAdapter</a></dt>
+<dt><span class="memberNameLink"><a href="org/antfarmer/ejce/password/PasswordEncoder.html#encode-java.lang.CharSequence-">encode(CharSequence)</a></span> - Method in interface org.antfarmer.ejce.password.<a href="org/antfarmer/ejce/password/PasswordEncoder.html" title="interface in org.antfarmer.ejce.password">PasswordEncoder</a></dt>
 <dd>
 <div class="block">Encode the raw password.</div>
 </dd>
@@ -2436,7 +2436,7 @@
 <dd>
 <div class="block">Property key for the JCE provider name to be used with the <a href="org/antfarmer/ejce/Encryptor.html" title="class in org.antfarmer.ejce"><code>Encryptor</code></a>.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="org/antfarmer/ejce/util/ConfigurerUtil.html#KEY_PSWD_ENCODER_ADAPTER_CLASS">KEY_PSWD_ENCODER_ADAPTER_CLASS</a></span> - Static variable in class org.antfarmer.ejce.util.<a href="org/antfarmer/ejce/util/ConfigurerUtil.html" title="class in org.antfarmer.ejce.util">ConfigurerUtil</a></dt>
+<dt><span class="memberNameLink"><a href="org/antfarmer/ejce/util/ConfigurerUtil.html#KEY_PSWD_ENCODER_CLASS">KEY_PSWD_ENCODER_CLASS</a></span> - Static variable in class org.antfarmer.ejce.util.<a href="org/antfarmer/ejce/util/ConfigurerUtil.html" title="class in org.antfarmer.ejce.util">ConfigurerUtil</a></dt>
 <dd>
 <div class="block">Property key for the full class name of the <a href="org/antfarmer/ejce/password/ConfigurablePasswordEncoder.html" title="interface in org.antfarmer.ejce.password"><code>ConfigurablePasswordEncoder</code></a> to
  be used with the <a href="org/antfarmer/ejce/password/EncodedPasswordType.html" title="class in org.antfarmer.ejce.password"><code>EncodedPasswordType</code></a>.</div>
@@ -2684,7 +2684,7 @@
 <div class="block">Verify the encoded password obtained from storage matches the submitted raw
  password after it too is encoded.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="org/antfarmer/ejce/password/PasswordEncoderAdapter.html#matches-java.lang.CharSequence-java.lang.String-">matches(CharSequence, String)</a></span> - Method in interface org.antfarmer.ejce.password.<a href="org/antfarmer/ejce/password/PasswordEncoderAdapter.html" title="interface in org.antfarmer.ejce.password">PasswordEncoderAdapter</a></dt>
+<dt><span class="memberNameLink"><a href="org/antfarmer/ejce/password/PasswordEncoder.html#matches-java.lang.CharSequence-java.lang.String-">matches(CharSequence, String)</a></span> - Method in interface org.antfarmer.ejce.password.<a href="org/antfarmer/ejce/password/PasswordEncoder.html" title="interface in org.antfarmer.ejce.password">PasswordEncoder</a></dt>
 <dd>
 <div class="block">Verify the encoded password obtained from storage matches the submitted raw
  password after it too is encoded.</div>
@@ -2838,9 +2838,9 @@
 <dd>
 <div class="block">Parses the property value from the given parameters.</div>
 </dd>
-<dt><a href="org/antfarmer/ejce/password/PasswordEncoderAdapter.html" title="interface in org.antfarmer.ejce.password"><span class="typeNameLink">PasswordEncoderAdapter</span></a> - Interface in <a href="org/antfarmer/ejce/password/package-summary.html">org.antfarmer.ejce.password</a></dt>
+<dt><a href="org/antfarmer/ejce/password/PasswordEncoder.html" title="interface in org.antfarmer.ejce.password"><span class="typeNameLink">PasswordEncoder</span></a> - Interface in <a href="org/antfarmer/ejce/password/package-summary.html">org.antfarmer.ejce.password</a></dt>
 <dd>
-<div class="block">Adapter interface for password encoders to be used for the encoded password Hibernate type.</div>
+<div class="block">Interface for password encoders to be used for the encoded password Hibernate type.</div>
 </dd>
 <dt><a href="org/antfarmer/ejce/password/PasswordEncoderStore.html" title="class in org.antfarmer.ejce.password"><span class="typeNameLink">PasswordEncoderStore</span></a> - Class in <a href="org/antfarmer/ejce/password/package-summary.html">org.antfarmer.ejce.password</a></dt>
 <dd>

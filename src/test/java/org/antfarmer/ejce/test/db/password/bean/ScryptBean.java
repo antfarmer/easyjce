@@ -47,7 +47,7 @@ public class ScryptBean extends AbstractPasswordBean {
 	 */
 	@Override
 	@Type(type = "org.antfarmer.ejce.password.EncodedPasswordType", parameters = {
-			@Parameter(name = "encoderAdapter", value = "org.antfarmer.ejce.password.encoder.bc.BcScryptEncoder"),
+			@Parameter(name = "pswdEncoder", value = "org.antfarmer.ejce.password.encoder.bc.BcScryptEncoder"),
 			@Parameter(name = "storeExportKey", value = STORE_EXPORT_KEY),
 			@Parameter(name = "cpu", value = "512")
 	})

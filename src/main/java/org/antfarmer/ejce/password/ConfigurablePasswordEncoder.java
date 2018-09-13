@@ -18,10 +18,10 @@ package org.antfarmer.ejce.password;
 import java.util.Properties;
 
 /**
- * Extension of {@link PasswordEncoderAdapter} which allows configuration via {@link Properties}.
+ * Extension of {@link PasswordEncoder} which allows configuration via {@link Properties}.
  * @author Ameer Antar
  */
-public interface ConfigurablePasswordEncoder extends PasswordEncoderAdapter {
+public interface ConfigurablePasswordEncoder extends PasswordEncoder {
 
 	/**
 	 * Configures and initializes the encoder using the given {@link Properties}.

@@ -26,14 +26,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  */
 public class SpringBcryptEncoder extends AbstractBcryptPasswordEncoder {
 
-	private BCryptPasswordEncoder pswdEncoder;
+	private BCryptPasswordEncoder pswdEnc;
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public void doConfigure(final Properties parameters, final String prefix) {
-		pswdEncoder = new BCryptPasswordEncoder(
+		pswdEnc = new BCryptPasswordEncoder(
 				parseInt(parameters, prefix, KEY_STRENGTH, DEFAULT_STRENGTH),
 				getRandom(parameters, prefix)
 		);
@@ -44,7 +44,7 @@ public class SpringBcryptEncoder extends AbstractBcryptPasswordEncoder {
 	 */
 	@Override
 	public String doEncode(final CharSequence rawPassword) {
-		return pswdEncoder.encode(rawPassword);
+		return pswdEnc.encode(rawPassword);
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class SpringBcryptEncoder extends AbstractBcryptPasswordEncoder {
 	 */
 	@Override
 	public boolean isMatch(final CharSequence rawPassword, final String encodedPassword) {
-		return pswdEncoder.matches(rawPassword, encodedPassword);
+		return pswdEnc.matches(rawPassword, encodedPassword);
 	}
 
 }

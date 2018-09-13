@@ -46,7 +46,7 @@ public class Pbkdf2Bean extends AbstractPasswordBean {
 	 * @return the password
 	 */
 	@Type(type = "org.antfarmer.ejce.password.EncodedPasswordType", parameters = {
-			@Parameter(name = "encoderAdapter", value = "org.antfarmer.ejce.password.encoder.Pbkdf2Encoder"),
+			@Parameter(name = "pswdEncoder", value = "org.antfarmer.ejce.password.encoder.Pbkdf2Encoder"),
 			@Parameter(name = "storeExportKey", value = STORE_EXPORT_KEY),
 			@Parameter(name = "iterations", value = "10000"),
 			@Parameter(name = "secret", value = "aBaloni")

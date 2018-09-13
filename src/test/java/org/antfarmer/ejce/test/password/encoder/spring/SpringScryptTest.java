@@ -48,12 +48,12 @@ public class SpringScryptTest extends AbstractPasswordTest<SpringScryptEncoder> 
 		props.setProperty(SpringScryptEncoder.KEY_SALT_LENGTH, String.valueOf(saltLen));
 		final SpringScryptEncoder encoder = createEncoder(props);
 
-		final SCryptPasswordEncoder pswdEncoder = ReflectionUtil.getFieldValue(encoder, "pswdEncoder");
-		assertEquals(Integer.valueOf(cpuCost), ReflectionUtil.getFieldValue(pswdEncoder, "cpuCost"));
-		assertEquals(Integer.valueOf(memCost), ReflectionUtil.getFieldValue(pswdEncoder, "memoryCost"));
-		assertEquals(Integer.valueOf(parallel), ReflectionUtil.getFieldValue(pswdEncoder, "parallelization"));
-		assertEquals(Integer.valueOf(keyLen), ReflectionUtil.getFieldValue(pswdEncoder, "keyLength"));
-		assertEquals(Integer.valueOf(saltLen), Integer.valueOf(((BytesKeyGenerator)ReflectionUtil.getFieldValue(pswdEncoder, "saltGenerator")).getKeyLength()));
+		final SCryptPasswordEncoder pswdEnc = ReflectionUtil.getFieldValue(encoder, "pswdEnc");
+		assertEquals(Integer.valueOf(cpuCost), ReflectionUtil.getFieldValue(pswdEnc, "cpuCost"));
+		assertEquals(Integer.valueOf(memCost), ReflectionUtil.getFieldValue(pswdEnc, "memoryCost"));
+		assertEquals(Integer.valueOf(parallel), ReflectionUtil.getFieldValue(pswdEnc, "parallelization"));
+		assertEquals(Integer.valueOf(keyLen), ReflectionUtil.getFieldValue(pswdEnc, "keyLength"));
+		assertEquals(Integer.valueOf(saltLen), Integer.valueOf(((BytesKeyGenerator)ReflectionUtil.getFieldValue(pswdEnc, "saltGenerator")).getKeyLength()));
 
 		final String encoded = encoder.encode(PASSWORD);
 		assertFalse(PASSWORD.equals(encoded));

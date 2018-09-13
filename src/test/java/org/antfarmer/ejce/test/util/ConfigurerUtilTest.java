@@ -368,7 +368,7 @@ public class ConfigurerUtilTest {
 	public void testPswdEncoderParameterValues() throws Exception {
 		final String exportKey = "org.antfarmer.test.springPswdEncoder";
 		final Properties properties = new Properties();
-		properties.put(ConfigurerUtil.KEY_PSWD_ENCODER_ADAPTER_CLASS, SpringBcryptEncoder.class.getName());
+		properties.put(ConfigurerUtil.KEY_PSWD_ENCODER_CLASS, SpringBcryptEncoder.class.getName());
 		properties.put(ConfigurerUtil.KEY_PSWD_ENCODER_STORE_EXPORT_KEY, exportKey);
 
 		final ConfigurablePasswordEncoder encoder = ConfigurerUtil.configurePswdEncoder(properties);
@@ -382,13 +382,13 @@ public class ConfigurerUtilTest {
 	 */
 	@Test
 	public void testPswdEncoderViaStore() throws Exception {
-		final SpringBcryptEncoder pswdEncoder = new SpringBcryptEncoder();
-		PasswordEncoderStore.add("name", pswdEncoder);
+		final SpringBcryptEncoder pswdEnc = new SpringBcryptEncoder();
+		PasswordEncoderStore.add("name", pswdEnc);
 
 		final Properties properties = new Properties();
 		properties.put(ConfigurerUtil.KEY_ENCRYPTOR_STORE_KEY, "name");
 
-		assertSame(pswdEncoder, ConfigurerUtil.configurePswdEncoder(properties));
+		assertSame(pswdEnc, ConfigurerUtil.configurePswdEncoder(properties));
 	}
 
 	/**
@@ -396,14 +396,14 @@ public class ConfigurerUtilTest {
 	 */
 	@Test
 	public void testPswdEncoderStoredViaSysProps() {
-		final SpringBcryptEncoder pswdEncoder = new SpringBcryptEncoder();
-		PasswordEncoderStore.add("name", pswdEncoder);
+		final SpringBcryptEncoder pswdEnc = new SpringBcryptEncoder();
+		PasswordEncoderStore.add("name", pswdEnc);
 
 		final VolatileProperties properties = new VolatileProperties(System.getProperties());
-		final String propPrefix = "ejce.pswdEncoder1";
+		final String propPrefix = "ejce.pswdEnc1";
 		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_ENCRYPTOR_STORE_KEY), "name");
 
-		assertSame(pswdEncoder, ConfigurerUtil.configurePswdEncoder(properties.getProperties(), propPrefix));
+		assertSame(pswdEnc, ConfigurerUtil.configurePswdEncoder(properties.getProperties(), propPrefix));
 
 		properties.rollback();
 	}
@@ -413,10 +413,10 @@ public class ConfigurerUtilTest {
 	 */
 	@Test
 	public void testPswdEncoderParameterValuesViaSysProps() throws Exception {
-		final String propPrefix = "ejce.pswdEncoder1";
+		final String propPrefix = "ejce.pswdEnc1";
 		final String exportKey = "org.antfarmer.test.springPswdEncoder";
 		final VolatileProperties properties = new VolatileProperties(System.getProperties());
-		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_PSWD_ENCODER_ADAPTER_CLASS), SpringBcryptEncoder.class.getName());
+		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_PSWD_ENCODER_CLASS), SpringBcryptEncoder.class.getName());
 		properties.put(getPropertyName(propPrefix, ConfigurerUtil.KEY_PSWD_ENCODER_STORE_EXPORT_KEY), exportKey);
 
 		final ConfigurablePasswordEncoder encoder = ConfigurerUtil.configurePswdEncoder(properties.getProperties(), propPrefix);

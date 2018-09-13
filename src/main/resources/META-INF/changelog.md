@@ -1,6 +1,6 @@
 # EasyJCE Changelog
 
-# [1.0.0] - 2018-09-12
+# [1.0.0] - 2018-09-13
 - add password encoding functionality including a Hibernate UserType for the following algorithms: Argon2, BCrypt, PBKDF2, and SCrypt
 - add support for GCM block mode as well as newer HMAC schemes beyond SHA1
 - add MessageDigestUtil for simple hashing operations

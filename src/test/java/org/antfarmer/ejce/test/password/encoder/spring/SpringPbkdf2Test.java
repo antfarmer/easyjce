@@ -49,12 +49,12 @@ public class SpringPbkdf2Test extends AbstractPasswordTest<SpringPbkdf2Encoder> 
 		props.setProperty(SpringPbkdf2Encoder.KEY_ENCODE_HEX, String.valueOf(true));
 		final SpringPbkdf2Encoder encoder = createEncoder(props);
 
-		final Pbkdf2PasswordEncoder pswdEncoder = ReflectionUtil.getFieldValue(encoder, "pswdEncoder");
-		assertArrayEquals(toBytes(secret), (byte[]) ReflectionUtil.getFieldValue(pswdEncoder, "secret"));
-		assertEquals(Integer.valueOf(hashLen), ReflectionUtil.getFieldValue(pswdEncoder, "hashWidth"));
-		assertEquals(Integer.valueOf(iterations), ReflectionUtil.getFieldValue(pswdEncoder, "iterations"));
-		assertEquals(algo, ReflectionUtil.getFieldValue(pswdEncoder, "algorithm"));
-		assertFalse((Boolean) ReflectionUtil.getFieldValue(pswdEncoder, "encodeHashAsBase64"));
+		final Pbkdf2PasswordEncoder pswdEnc = ReflectionUtil.getFieldValue(encoder, "pswdEnc");
+		assertArrayEquals(toBytes(secret), (byte[]) ReflectionUtil.getFieldValue(pswdEnc, "secret"));
+		assertEquals(Integer.valueOf(hashLen), ReflectionUtil.getFieldValue(pswdEnc, "hashWidth"));
+		assertEquals(Integer.valueOf(iterations), ReflectionUtil.getFieldValue(pswdEnc, "iterations"));
+		assertEquals(algo, ReflectionUtil.getFieldValue(pswdEnc, "algorithm"));
+		assertFalse((Boolean) ReflectionUtil.getFieldValue(pswdEnc, "encodeHashAsBase64"));
 
 		final String encoded = encoder.encode(PASSWORD);
 		assertFalse(PASSWORD.equals(encoded));

@@ -42,7 +42,7 @@ public class EncodedPasswordType implements UserType, ParameterizedType {
 
 	private static final int[] sqlTypes = new int[] {Types.VARCHAR};
 
-	private ConfigurablePasswordEncoder pswdEncoder;
+	private ConfigurablePasswordEncoder pswdEnc;
 
 	private final ReentrantLock lock = new ReentrantLock();
 
@@ -120,7 +120,7 @@ public class EncodedPasswordType implements UserType, ParameterizedType {
 			st.setNull(index, Types.VARCHAR);
 		}
 		else if (value instanceof CharSequence) {
-			st.setString(index, pswdEncoder.encode((CharSequence) value));
+			st.setString(index, pswdEnc.encode((CharSequence) value));
 		}
 		else {
 			throw new HibernateException("Cannot encode password object of type: " + value.getClass().getName());
@@ -162,10 +162,10 @@ public class EncodedPasswordType implements UserType, ParameterizedType {
 	 * @param parameters the parameter values
 	 */
 	protected void configure(final Properties parameters) {
-		if (pswdEncoder != null) {
+		if (pswdEnc != null) {
 			throw new IllegalStateException("This type can only be configured once");
 		}
-		pswdEncoder = ConfigurerUtil.configurePswdEncoder(parameters);
+		pswdEnc = ConfigurerUtil.configurePswdEncoder(parameters);
 	}
 
 	/**

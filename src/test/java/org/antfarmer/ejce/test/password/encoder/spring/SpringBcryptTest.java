@@ -45,9 +45,9 @@ public class SpringBcryptTest extends AbstractPasswordTest<SpringBcryptEncoder> 
 		props.setProperty(BcBcryptEncoder.KEY_PREFIX, "{bcrypt}");
 		final SpringBcryptEncoder encoder = createEncoder(props);
 
-		final BCryptPasswordEncoder pswdEncoder = ReflectionUtil.getFieldValue(encoder, "pswdEncoder");
-		assertEquals(Integer.valueOf(strength), ReflectionUtil.getFieldValue(pswdEncoder, "strength"));
-		assertSame(rc, ReflectionUtil.getFieldValue(pswdEncoder, "random").getClass());
+		final BCryptPasswordEncoder pswdEnc = ReflectionUtil.getFieldValue(encoder, "pswdEnc");
+		assertEquals(Integer.valueOf(strength), ReflectionUtil.getFieldValue(pswdEnc, "strength"));
+		assertSame(rc, ReflectionUtil.getFieldValue(pswdEnc, "random").getClass());
 
 		final String encoded = encoder.encode(PASSWORD);
 		assertFalse(PASSWORD.equals(encoded));
