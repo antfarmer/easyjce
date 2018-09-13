@@ -111,9 +111,9 @@ tasks.withType(Sign) {
 }
 
 uploadArchives {
-	onlyIf { ! isContBuild }
 	repositories {
 		mavenDeployer {
+			onlyIf { ! isContBuild }
 			beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
 			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
