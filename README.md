@@ -20,7 +20,7 @@ Testing requires slf4j, logback, easymock, junit, and h2 db
 
 
 ## Usage
-Please have a look at the [API documentation](/docs).
+Please have a look at the [API documentation](https://antfarmer.github.io/easyjce/).
 
 ### TextEncoder
 TextEncoder's are responsible for encoding/decoding binary data to/from ASCII-based String forms which allow you to specify keys in configuration and encrypted/hashed data in normal varchar/text database columns. 
@@ -242,4 +242,4 @@ More possible parameter keys and values can found in `ConfigurerUtil` and the ap
 
 
 ## API Documentation
-Please have a look at the [API documentation](/docs).
+Please have a look at the [API documentation](https://antfarmer.github.io/easyjce/).
