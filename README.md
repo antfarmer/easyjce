@@ -55,7 +55,7 @@ Keys will be used to configure your encryptors below and can be defined in a num
 Encryptors allow you to encrypt and decrypt information using specified algorithms, block modes, padding, and HMAC schemes. These types of 
 algorithms are reversible, so that the sensitive data can be recovered for later use. This is appropriate for storing credentials that must be
 used in their original form later on, but not for storing credentials for the given application as it need not be transmitted. See the 
-Password Encoding section below for one-way hashing algorithms.
+[Password Encoding section](#password-encoding-hashing) below for one-way hashing algorithms.
 
 Encryptors can be created programmatically or defined via configuration (annotations or XML). System properties may also be used by specifying the system property prefix and organizing the appropriate encryption properties under that prefix. Encryptors can also be 'registered' for use JVM-wide using the `EncryptorStore` class. This can be helpful when trying to control the number of instances created through Hibernate mappings by creating them programmatically and referencing them by name in configuration.
 
@@ -152,25 +152,25 @@ Password encoding can be performed programmatically by creating an instance of `
 Here's an example for setting up PBKDF2 with secret:
 (Note: parameter values are optional overrides of defaults. Also note that values must be Strings).
 ```java
-		final Properties props = new Properties();
-		props.setProperty(Pbkdf2Encoder.KEY_SECRET, "secret");
-		props.setProperty(Pbkdf2Encoder.KEY_HASH_LENGTH, String.valueOf(1024));
-		props.setProperty(Pbkdf2Encoder.KEY_SALT_LENGTH, String.valueOf(128));
-		props.setProperty(Pbkdf2Encoder.KEY_ITERATIONS, String.valueOf(200000));
-		props.setProperty(Pbkdf2Encoder.KEY_ALGORITHM, Pbkdf2Encoder.ALGORITHM_PBKDF2_HMAC_SHA1);
-		props.setProperty(Pbkdf2Encoder.KEY_PROVIDER_CLASS, provider.getClass().getName());
-		props.setProperty(Pbkdf2Encoder.KEY_RANDOM, rc.getName());
-		props.setProperty(Pbkdf2Encoder.KEY_PREFIX, "{pbkdf2}");
-		// Setup encoder
-		final Pbkdf2Encoder encoder = new Pbkdf2Encoder();
-		encoder.configure(props, null);
-		// Hash and compare
-		final String encoded1 = encoder.encode("PASSWORD");
-		System.out.println("Hashed1: " + encoded1);
-		final String encoded2 = encoder.encode("PASSWORD");
-		System.out.println("Hashed2: " + encoded2);
-		System.out.println("Matches1: " + encoder.matches("PASSWORD", encoded1));
-		System.out.println("Matches2: " + encoder.matches("PASSWORD", encoded2));
+	final Properties props = new Properties();
+	props.setProperty(Pbkdf2Encoder.KEY_SECRET, "secret");
+	props.setProperty(Pbkdf2Encoder.KEY_HASH_LENGTH, String.valueOf(1024));
+	props.setProperty(Pbkdf2Encoder.KEY_SALT_LENGTH, String.valueOf(128));
+	props.setProperty(Pbkdf2Encoder.KEY_ITERATIONS, String.valueOf(200000));
+	props.setProperty(Pbkdf2Encoder.KEY_ALGORITHM, Pbkdf2Encoder.ALGORITHM_PBKDF2_HMAC_SHA1);
+	props.setProperty(Pbkdf2Encoder.KEY_PROVIDER_CLASS, provider.getClass().getName());
+	props.setProperty(Pbkdf2Encoder.KEY_RANDOM, rc.getName());
+	props.setProperty(Pbkdf2Encoder.KEY_PREFIX, "{pbkdf2}");
+	// Setup encoder
+	final Pbkdf2Encoder encoder = new Pbkdf2Encoder();
+	encoder.configure(props, null);
+	// Hash and compare
+	final String encoded1 = encoder.encode("PASSWORD");
+	System.out.println("Hashed1: " + encoded1);
+	final String encoded2 = encoder.encode("PASSWORD");
+	System.out.println("Hashed2: " + encoded2);
+	System.out.println("Matches1: " + encoder.matches("PASSWORD", encoded1));
+	System.out.println("Matches2: " + encoder.matches("PASSWORD", encoded2));
 ```
 Note that each encoding will be different, but both will match the same input value.
 
