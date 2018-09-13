@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 
+import org.antfarmer.ejce.encoder.Base64Encoder;
 import org.antfarmer.ejce.parameter.AbstractAlgorithmParameters;
 import org.antfarmer.ejce.parameter.AesParameters;
 import org.antfarmer.ejce.parameter.PbeParameters;
@@ -53,4 +54,20 @@ public class CryptoUtilTest {
 		final Key key = CryptoUtil.getSecretKeyFromTextKey(password, PbeParameters.ALGORITHM_PBE_MD5_DES);
 		assertEquals(password.length(), key.getEncoded().length);
 	}
+
+	/**
+	 * @throws NoSuchAlgorithmException
+	 */
+	@Test
+	public void testGenKeys() throws NoSuchAlgorithmException {
+		final int keySize = AbstractAlgorithmParameters.KEY_SIZE_256;
+		final Key key = CryptoUtil.generateSecretKey(keySize, AesParameters.ALGORITHM_AES);
+		System.out.println(Base64Encoder.getInstance().encode(key.getEncoded()));
+		assertEquals(keySize, key.getEncoded().length * Byte.SIZE);
+		final int macKeySize = AbstractAlgorithmParameters.MAC_KEY_SIZE_128;
+		final Key macKey = CryptoUtil.generateSecretKey(macKeySize, AesParameters.MAC_ALGORITHM_HMAC_SHA1);
+		System.out.println(Base64Encoder.getInstance().encode(macKey.getEncoded()));
+		assertEquals(macKeySize, macKey.getEncoded().length * Byte.SIZE);
+	}
+
 }
