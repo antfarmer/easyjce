@@ -111,6 +111,7 @@ tasks.withType(Sign) {
 }
 
 uploadArchives {
+	onlyIf { ! isContBuild }
 	repositories {
 		mavenDeployer {
 			beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
