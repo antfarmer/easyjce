@@ -12,7 +12,7 @@
   - [Gradle](#gradle)
   - [Required Libraries](#required-libraries)
 - [Usage](#usage)
-  - [TextEncoders](#textencoder)
+  - [TextEncoder](#textencoder)
   - [Keys](#keys)
   - [Encryption](#encryption)
     - [Programmatic encryption](#programmatic-encryption)
@@ -26,7 +26,7 @@
 
 ## Installation
 ### Maven
-Add this to `pom.xml` under the dependencies tag:
+Add this to `pom.xml` within the `dependencies` tag:
 ```xml
 <dependency>
 	<groupId>org.antfarmer</groupId>
@@ -35,10 +35,9 @@ Add this to `pom.xml` under the dependencies tag:
 </dependency>
 ```
 ### Gradle
-Add this to `build.gradle` in the dependencies block:
+Add this to `build.gradle` in the `dependencies` block:
 ```
 	compile 'org.antfarmer:easyjce:1.0.0'
-}
 ```
 ### Required Libraries
 While the compile-time and testing dependencies are documented in the provided pom file, technically, there are no runtime dependencies for encryption. Here is a summary of the runtime requirements depending on the features needed:
