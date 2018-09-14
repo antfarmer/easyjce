@@ -1,13 +1,45 @@
 # EasyJCE
 
 [![Build Status](https://travis-ci.org/antfarmer/easyjce.svg?branch=master)](https://travis-ci.org/antfarmer/easyjce)
+[![Maven Central](https://img.shields.io/maven-central/v/org.antfarmer/easyjce.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22org.antfarmer%22%20AND%20a:%22easyjce%22)
+[![License](https://img.shields.io/badge/License-Apache%202.0-red.svg)](/LICENSE)
 
 **EasyJCE** provides an easy to use interface for encrypting, decrypting, and hashing data for transmission or storage using the Java Cryptographic Extension (JCE). EasyJCE supports most algorithms implemented for the JCE, including those provided by third-party encryption service providers. Integrated MAC (Message Authentication Code) support can optionally be used to ensure data integrity and indicate possible data tampering. A set of Hibernate user types is also included to transparently integrate encryption into the data layer, ensuring data is persisted in its encrypted form while obscuring encryption and decryption logic from application code. EasyJCE also provides basic encoding and decoding facilities for transmitting encrypted binary data through mediums which are limited to printable ASCII characters, such as email messages or URL's.
 
+## Contents
+- [Installation](#installation)
+  - [Maven](#maven)
+  - [Gradle](#gradle)
+  - [Required Libraries](#required-libraries)
+- [Usage](#usage)
+  - [TextEncoders](#textencoder)
+  - [Keys](#keys)
+  - [Encryption](#encryption)
+    - [Programmatic encryption](#programmatic-encryption)
+    - [Declarative encryption via Hibernate UserType annotations](#declarative-encryption-via-hibernate-usertype-annotations)
+    - [Encryption via Hibernate UserType using XML configuration](#encryption-via-hibernate-usertype-using-xml-configuration)
+  - [Password Encoding (Hashing)](#password-encoding-hashing)
+    - [Programmatic password encoding](#programmatic-password-encoding)
+    - [Declarative password encoding via Hibernate UserType annotations](#declarative-password-encoding-via-hibernate-usertype-annotations)
+    - [Password encoding via Hibernate UserType using XML configuration](#password-encoding-via-hibernate-usertype-using-xml-configuration)
+- [API Documentation](#api-documentation)
 
 ## Installation
 ### Maven
+Add this to `pom.xml` under the dependencies tag:
+```xml
+<dependency>
+	<groupId>org.antfarmer</groupId>
+	<artifactId>easyjce</artifactId>
+	<version>1.0.0</version>
+</dependency>
+```
 ### Gradle
+Add this to `build.gradle` in the dependencies block:
+```
+	compile 'org.antfarmer:easyjce:1.0.0'
+}
+```
 ### Required Libraries
 While the compile-time and testing dependencies are documented in the provided pom file, technically, there are no runtime dependencies for encryption. Here is a summary of the runtime requirements depending on the features needed:
 
