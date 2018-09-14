@@ -36,7 +36,7 @@ Add this to `pom.xml` within the `dependencies` tag:
 ```
 ### Gradle
 Add this to `build.gradle` in the `dependencies` block:
-```
+```groovy
 	compile 'org.antfarmer:easyjce:1.0.0'
 ```
 ### Required Libraries
@@ -184,14 +184,16 @@ Password encoding can be performed programmatically by creating an instance of `
 Here's an example for setting up PBKDF2 with secret:
 (Note: parameter values are optional overrides of defaults. Also note that values must be Strings).
 ```java
+	final Class<? extends Provider> providerClass = BouncyCastleProvider.class;
+	final Class<? extends SecureRandom> myRandomClass = SecureRandom.class;
 	final Properties props = new Properties();
 	props.setProperty(Pbkdf2Encoder.KEY_SECRET, "secret");
 	props.setProperty(Pbkdf2Encoder.KEY_HASH_LENGTH, String.valueOf(1024));
 	props.setProperty(Pbkdf2Encoder.KEY_SALT_LENGTH, String.valueOf(128));
 	props.setProperty(Pbkdf2Encoder.KEY_ITERATIONS, String.valueOf(200000));
 	props.setProperty(Pbkdf2Encoder.KEY_ALGORITHM, Pbkdf2Encoder.ALGORITHM_PBKDF2_HMAC_SHA1);
-	props.setProperty(Pbkdf2Encoder.KEY_PROVIDER_CLASS, provider.getClass().getName());
-	props.setProperty(Pbkdf2Encoder.KEY_RANDOM, myRandom.getClass().getName());
+	props.setProperty(Pbkdf2Encoder.KEY_PROVIDER_CLASS, providerClass.getName());
+	props.setProperty(Pbkdf2Encoder.KEY_RANDOM, myRandomClass.getName());
 	props.setProperty(Pbkdf2Encoder.KEY_PREFIX, "{pbkdf2}");
 	// Setup encoder
 	final Pbkdf2Encoder encoder = new Pbkdf2Encoder();
