@@ -17,7 +17,10 @@ package org.antfarmer.ejce.test.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 
+import java.nio.charset.Charset;
+import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Provider;
@@ -41,6 +44,22 @@ public class MessageDigestUtilTest {
 	private static final int HASH_COUNT = 5;
 	private static final int MAX_INPUT_SIZE = 4096;
 	private static final Random random = new SecureRandom();
+	private static final Charset charset = Charset.forName("UTF-8");
+
+	@Test
+	public void testHashBytesNoProvider() throws NoSuchAlgorithmException, NoSuchProviderException {
+		byte[] input;
+		byte[] output;
+		input = new byte[random.nextInt(MAX_INPUT_SIZE) + 1];
+		random.nextBytes(input);
+
+		output = MessageDigestUtil.hashBytes(input, MessageDigestUtil.ALGORITHM_SHA1, null, null);
+
+		assertEquals(20, output.length);
+		assertFalse(Arrays.equals(input, output));
+		System.out.print(output.length + " ");
+		System.out.println(Base64Encoder.getInstance().encode(output));
+	}
 
 	@Test
 	public void testHashBytes() throws NoSuchAlgorithmException, NoSuchProviderException {
@@ -101,6 +120,95 @@ public class MessageDigestUtilTest {
 				System.out.println(Base64Encoder.getInstance().encode(output));
 			}
 		}
+	}
+
+	@Test
+	public void testHashString() throws GeneralSecurityException {
+
+		byte[] input;
+		String output;
+
+		final Map<String, Integer> algoMap = new LinkedHashMap<String, Integer>();
+		algoMap.put(MessageDigestUtil.ALGORITHM_MD2, 16);
+		algoMap.put(MessageDigestUtil.ALGORITHM_MD5, 16);
+		algoMap.put(MessageDigestUtil.ALGORITHM_SHA1, 20);
+		algoMap.put(MessageDigestUtil.ALGORITHM_SHA2_224, 28);
+		algoMap.put(MessageDigestUtil.ALGORITHM_SHA2_256, 32);
+		algoMap.put(MessageDigestUtil.ALGORITHM_SHA2_384, 48);
+		algoMap.put(MessageDigestUtil.ALGORITHM_SHA2_512, 64);
+
+		final Provider provider = new BouncyCastleProvider();
+		final StringHasher[] hashers = {
+				new StringHasher() {
+					@Override
+					public String hash(final String text, final String algorithm) throws GeneralSecurityException {
+						return MessageDigestUtil.hashString(text, algorithm);
+					}
+				},
+				new StringHasher() {
+					@Override
+					public String hash(final String text, final String algorithm) throws GeneralSecurityException {
+						return MessageDigestUtil.hashString(text, charset, algorithm);
+					}
+				},
+				new StringHasher() {
+					@Override
+					public String hash(final String text, final String algorithm) throws GeneralSecurityException {
+						return MessageDigestUtil.hashString(text, algorithm, Base64Encoder.getInstance());
+					}
+				},
+				new StringHasher() {
+					@Override
+					public String hash(final String text, final String algorithm) throws GeneralSecurityException {
+						return MessageDigestUtil.hashString(text, charset, algorithm, Base64Encoder.getInstance());
+					}
+				},
+				new StringHasher() {
+					@Override
+					public String hash(final String text, final String algorithm) throws GeneralSecurityException {
+						return MessageDigestUtil.hashString(text, algorithm, provider, null);
+					}
+				},
+				new StringHasher() {
+					@Override
+					public String hash(final String text, final String algorithm) throws GeneralSecurityException {
+						return MessageDigestUtil.hashString(text, charset, algorithm, provider, null);
+					}
+				},
+				new StringHasher() {
+					@Override
+					public String hash(final String text, final String algorithm) throws GeneralSecurityException {
+						return MessageDigestUtil.hashString(text, algorithm, provider, null, Base64Encoder.getInstance());
+					}
+				},
+				new StringHasher() {
+					@Override
+					public String hash(final String text, final String algorithm) throws GeneralSecurityException {
+						return MessageDigestUtil.hashString(text, charset, algorithm, provider, null, Base64Encoder.getInstance());
+					}
+				}
+		};
+
+		for (final StringHasher hasher : hashers) {
+			for (final Entry<String, Integer> algo : algoMap.entrySet()) {
+				for (int i = 0; i < HASH_COUNT; i++) {
+					input = new byte[random.nextInt(MAX_INPUT_SIZE) + 1];
+					random.nextBytes(input);
+					final String text = new String(input, charset);
+
+					output = hasher.hash(text, algo.getKey());
+
+					assertNotEquals(input, output);
+					assertNotEquals(text.getBytes(charset), Base64Encoder.getInstance().decode(output));
+					System.out.print(output.length() + " ");
+					System.out.println(output);
+				}
+			}
+		}
+	}
+
+	private static interface StringHasher {
+		String hash(String text, String algorithm) throws GeneralSecurityException;
 	}
 
 //	@Test

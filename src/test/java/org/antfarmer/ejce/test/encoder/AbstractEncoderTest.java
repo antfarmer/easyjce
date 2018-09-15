@@ -16,6 +16,8 @@
 package org.antfarmer.ejce.test.encoder;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.security.SecureRandom;
@@ -39,7 +41,7 @@ public abstract class AbstractEncoderTest {
 
 	private static final SecureRandom rand = new SecureRandom();
 
-	private final TextEncoder encoder = getEncoder();
+	protected final TextEncoder encoder = getEncoder();
 
 	private final Pattern encodedCharPattern = Pattern.compile(getEncodedCharsetPattern());
 
@@ -58,6 +60,10 @@ public abstract class AbstractEncoderTest {
 	 */
 	@Test
 	public void test() {
+		assertNull(encoder.encode(null));
+		assertEquals("", encoder.encode(new byte[0]));
+		assertNull(encoder.decode(null));
+		assertArrayEquals(new byte[0], encoder.decode(""));
 		final String encoded = encoder.encode(TEST_TEXT.getBytes());
 		assertTrue(encodedCharPattern.matcher(encoded).matches());
 		assertArrayEquals(TEST_TEXT.getBytes(), encoder.decode(encoded));

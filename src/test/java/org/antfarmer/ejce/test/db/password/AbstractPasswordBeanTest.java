@@ -32,6 +32,7 @@ import org.antfarmer.ejce.password.PasswordEncoderStore;
 import org.antfarmer.ejce.test.db.AbstractDbTest;
 import org.antfarmer.ejce.test.db.password.bean.AbstractPasswordBean;
 import org.hibernate.Session;
+import org.junit.After;
 import org.junit.Test;
 
 /**
@@ -113,6 +114,11 @@ public abstract class AbstractPasswordBeanTest<T extends AbstractPasswordBean> e
 						"Could not find a Bean subclass parameterized type");
 			}
 		}
+	}
+
+	@After
+	public void after() {
+		PasswordEncoderStore.clear();
 	}
 
 }

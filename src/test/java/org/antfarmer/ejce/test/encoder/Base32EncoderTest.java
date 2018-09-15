@@ -17,6 +17,7 @@ package org.antfarmer.ejce.test.encoder;
 
 import org.antfarmer.ejce.encoder.Base32Encoder;
 import org.antfarmer.ejce.encoder.TextEncoder;
+import org.junit.Test;
 
 /**
  * @author Ameer Antar
@@ -40,4 +41,21 @@ public class Base32EncoderTest extends AbstractEncoderTest {
 		return "[A-Z2-7]+";
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testInvalidChar1() {
+		final byte[] bytes = {-1};
+		encoder.decode(new String(bytes));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testInvalidChar2() {
+		final byte[] bytes = {127};
+		encoder.decode(new String(bytes));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testInvalidChar3() {
+		final byte[] bytes = {120};
+		encoder.decode(new String(bytes));
+	}
 }

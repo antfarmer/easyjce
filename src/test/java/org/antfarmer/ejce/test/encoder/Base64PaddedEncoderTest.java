@@ -17,6 +17,7 @@ package org.antfarmer.ejce.test.encoder;
 
 import org.antfarmer.ejce.encoder.Base64PaddedEncoder;
 import org.antfarmer.ejce.encoder.TextEncoder;
+import org.junit.Test;
 
 /**
  * @author Ameer Antar
@@ -40,4 +41,9 @@ public class Base64PaddedEncoderTest extends AbstractEncoderTest {
 		return "[A-Za-z0-9+=/]+";
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testInvalidLength() {
+		final byte[] bytes = {1};
+		encoder.decode(new String(bytes));
+	}
 }

@@ -52,7 +52,8 @@ public class ClobBean extends AbstractBean {
 			@Parameter(name = "paramEncoder", value = "org.antfarmer.ejce.encoder.Base64Encoder"),
 			@Parameter(name = "key", value = "imCIPVJpkYbkt7KTIwcwJHHaQLSOSc5Oz0QApywJ7UM"),
 			@Parameter(name = "encoder", value = "org.antfarmer.ejce.encoder.Base64Encoder"),
-			@Parameter(name = "streamLobs", value = "true")
+			@Parameter(name = "streamLobs", value = "true"),
+			@Parameter(name = "compress", value = "true")
 	})
 	public Clob getValue() {
 		return value;
