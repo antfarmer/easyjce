@@ -485,7 +485,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 		}
 		try {
 			if (macKeyLoader != null) {
-				return macKeyLoader.loadKey(macAlgorithm);
+				return macKey = macKeyLoader.loadKey(macAlgorithm);
 			}
 			if (rawMacKey == null) {
 				if (macKeySize < 1) {
@@ -493,8 +493,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 				}
 				rawMacKey = CryptoUtil.generateSecretKey(macKeySize, macAlgorithm, getProviderName(), getProvider()).getEncoded();
 			}
-			macKey = CryptoUtil.getSecretKeyFromRawKey(rawMacKey, macAlgorithm);
-			return macKey;
+			return macKey = CryptoUtil.getSecretKeyFromRawKey(rawMacKey, macAlgorithm);
 		}
 		finally {
 			ByteUtil.clear(rawMacKey);
