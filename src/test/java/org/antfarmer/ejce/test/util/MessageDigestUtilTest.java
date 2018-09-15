@@ -45,6 +45,7 @@ public class MessageDigestUtilTest {
 	private static final int MAX_INPUT_SIZE = 4096;
 	private static final Random random = new SecureRandom();
 	private static final Charset charset = Charset.forName("UTF-8");
+	private static final BouncyCastleProvider BC_PROVIDER = new BouncyCastleProvider();
 
 	@Test
 	public void testHashBytesNoProvider() throws NoSuchAlgorithmException, NoSuchProviderException {
@@ -106,7 +107,7 @@ public class MessageDigestUtilTest {
 		extAlgoMap.put(MessageDigestUtil.ALGORITHM_SHA3_384, 48);
 		extAlgoMap.put(MessageDigestUtil.ALGORITHM_SHA3_512, 64);
 
-		final Provider provider = new BouncyCastleProvider();
+		final Provider provider = BC_PROVIDER;
 		for (final Entry<String, Integer> algo : extAlgoMap.entrySet()) {
 			for (int i = 0; i < HASH_COUNT; i++) {
 				input = new byte[random.nextInt(MAX_INPUT_SIZE) + 1];
@@ -137,7 +138,7 @@ public class MessageDigestUtilTest {
 		algoMap.put(MessageDigestUtil.ALGORITHM_SHA2_384, 48);
 		algoMap.put(MessageDigestUtil.ALGORITHM_SHA2_512, 64);
 
-		final Provider provider = new BouncyCastleProvider();
+		final Provider provider = BC_PROVIDER;
 		final StringHasher[] hashers = {
 				new StringHasher() {
 					@Override
@@ -217,7 +218,7 @@ public class MessageDigestUtilTest {
 //		for (final Provider provider : providers) {
 //			showHashAlgorithms(provider, MessageDigest.class);
 //		}
-//		showHashAlgorithms(new BouncyCastleProvider(), MessageDigest.class);
+//		showHashAlgorithms(BC_PROVIDER, MessageDigest.class);
 //	}
 //
 //	private static final void showHashAlgorithms(final Provider prov, final Class<?> typeClass) {

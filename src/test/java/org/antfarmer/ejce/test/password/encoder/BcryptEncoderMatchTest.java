@@ -30,7 +30,7 @@ import org.junit.Test;
 public class BcryptEncoderMatchTest {
 
 	private static final String TEXT = "bandOgyps";
-	private static final int STRENGTH = 7;
+	private static final int STRENGTH = 5;
 
 	@Test
 	public void testBCrypt() {

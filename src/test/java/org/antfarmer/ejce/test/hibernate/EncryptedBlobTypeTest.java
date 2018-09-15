@@ -16,6 +16,8 @@
 package org.antfarmer.ejce.test.hibernate;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -147,6 +149,18 @@ public class EncryptedBlobTypeTest extends EncryptedBlobType {
 		EasyMock.replay(bOut, lobCreator, services, factory, session, rs);
 		nullSafeGet(rs, columnNames, session, null);
 		EasyMock.verify(bOut, lobCreator, services, factory, session, rs);
+	}
+
+	@Test
+	public void testTypeMethods() throws GeneralSecurityException {
+
+		// enc/decrypt
+		final String o = new String();
+		assertNull(encrypt(o));
+		assertNull(decrypt(o));
+
+		// default: no compression
+		assertFalse(isUseCompression());
 	}
 
 	@Test

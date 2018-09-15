@@ -114,6 +114,18 @@ public class Pbkdf2Test extends AbstractPasswordTest<Pbkdf2Encoder> {
 		assertException(props, "initializing algorithm");
 	}
 
+	@Test
+	public void testConfigureRandom() throws NoSuchFieldException, IllegalAccessException {
+		final Properties props = new Properties();
+		props.setProperty(Pbkdf2Encoder.KEY_RANDOM, "");
+
+		final Pbkdf2Encoder enc = createEncoder(props);
+		assertSame(SecureRandom.class, ReflectionUtil.getFieldValue(enc, "random").getClass());
+
+		props.setProperty(Pbkdf2Encoder.KEY_RANDOM, "c");
+		assertException(props, "Error creating instance");
+	}
+
 	@Override
 	protected Pbkdf2Encoder createEncoder() {
 		final Properties props = new Properties();
@@ -124,7 +136,7 @@ public class Pbkdf2Test extends AbstractPasswordTest<Pbkdf2Encoder> {
 	@Override
 	protected Pbkdf2Encoder createFastEncoder() {
 		final Properties props = new Properties();
-		props.setProperty(Pbkdf2Encoder.KEY_ITERATIONS, String.valueOf(3000));
+		props.setProperty(Pbkdf2Encoder.KEY_ITERATIONS, String.valueOf(2000));
 		return createEncoder(props);
 	}
 

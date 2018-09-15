@@ -72,6 +72,33 @@ public class SpringPbkdf2Test extends AbstractPasswordTest<SpringPbkdf2Encoder> 
 		assertException(props, "Iterations");
 	}
 
+	@Test
+	public void testParseBoolean() throws NoSuchFieldException, IllegalAccessException {
+		final Properties props = new Properties();
+
+		props.setProperty(SpringPbkdf2Encoder.KEY_ENCODE_HEX, "");
+		assertTrue(getB64Boolean(createEncoder(props)));
+
+		props.setProperty(SpringPbkdf2Encoder.KEY_ENCODE_HEX, "0");
+		assertTrue(getB64Boolean(createEncoder(props)));
+
+		props.setProperty(SpringPbkdf2Encoder.KEY_ENCODE_HEX, "false");
+		assertTrue(getB64Boolean(createEncoder(props)));
+
+		props.setProperty(SpringPbkdf2Encoder.KEY_ENCODE_HEX, "true");
+		assertFalse(getB64Boolean(createEncoder(props)));
+
+		props.setProperty(SpringPbkdf2Encoder.KEY_ENCODE_HEX, "1");
+		assertFalse(getB64Boolean(createEncoder(props)));
+
+		props.setProperty(SpringPbkdf2Encoder.KEY_ENCODE_HEX, "yes");
+		assertFalse(getB64Boolean(createEncoder(props)));
+	}
+
+	private boolean getB64Boolean(final SpringPbkdf2Encoder encoder) throws NoSuchFieldException, IllegalAccessException {
+		return ReflectionUtil.getFieldValue(ReflectionUtil.getFieldValue(encoder, "pswdEnc"), "encodeHashAsBase64");
+	}
+
 	@Override
 	protected SpringPbkdf2Encoder createEncoder() {
 		final Properties props = new Properties();
@@ -82,7 +109,7 @@ public class SpringPbkdf2Test extends AbstractPasswordTest<SpringPbkdf2Encoder> 
 	@Override
 	protected SpringPbkdf2Encoder createFastEncoder() {
 		final Properties props = new Properties();
-		props.setProperty(SpringPbkdf2Encoder.KEY_ITERATIONS, String.valueOf(3000));
+		props.setProperty(SpringPbkdf2Encoder.KEY_ITERATIONS, String.valueOf(2000));
 		return createEncoder(props);
 	}
 

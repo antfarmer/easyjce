@@ -24,29 +24,38 @@ import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.Key;
 import java.security.KeyPair;
-import java.security.Provider;
 import java.util.Arrays;
 import java.util.TimeZone;
 
 import org.antfarmer.ejce.Encryptor;
 import org.antfarmer.ejce.ValueEncryptorInterface;
+import org.antfarmer.ejce.encoder.Base32Encoder;
 import org.antfarmer.ejce.encoder.Base64Encoder;
+import org.antfarmer.ejce.exception.EncryptorConfigurationException;
 import org.antfarmer.ejce.exception.MacDisagreementException;
+import org.antfarmer.ejce.parameter.AbstractBlockCipherParameters;
 import org.antfarmer.ejce.parameter.AesParameters;
 import org.antfarmer.ejce.parameter.BlowfishParameters;
+import org.antfarmer.ejce.parameter.CamelliaParameters;
 import org.antfarmer.ejce.parameter.DesEdeParameters;
 import org.antfarmer.ejce.parameter.DesParameters;
 import org.antfarmer.ejce.parameter.ElGamalParameters;
 import org.antfarmer.ejce.parameter.PbeParameters;
 import org.antfarmer.ejce.parameter.Rc2Parameters;
 import org.antfarmer.ejce.parameter.Rc4Parameters;
+import org.antfarmer.ejce.parameter.Rc5Parameters;
+import org.antfarmer.ejce.parameter.Rc6Parameters;
 import org.antfarmer.ejce.parameter.RsaParameters;
+import org.antfarmer.ejce.parameter.SerpentParameters;
+import org.antfarmer.ejce.parameter.TeaParameters;
+import org.antfarmer.ejce.parameter.TwofishParameters;
+import org.antfarmer.ejce.parameter.XteaParameters;
+import org.antfarmer.ejce.parameter.key_loader.KeyLoader;
 import org.antfarmer.ejce.parameter.salt.SaltGenerator;
 import org.antfarmer.ejce.parameter.salt.SaltMatcher;
 import org.antfarmer.ejce.util.ByteUtil;
 import org.antfarmer.ejce.util.CryptoUtil;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -59,6 +68,8 @@ public class EncryptorTest {
 	private static ValueEncryptorInterface<Encryptor> encryptor;
 	private static final String PBE_KEY = "password";
 	private static final String TEST_TEXT = "abcdefghijklmnopqrstuvwxyz";
+
+	private static final BouncyCastleProvider BC_PROVIDER = new BouncyCastleProvider();
 
 	/**
 	 * @throws GeneralSecurityException GeneralSecurityException
@@ -688,7 +699,6 @@ public class EncryptorTest {
 		};
 
 
-		final Provider provider = new BouncyCastleProvider();
 		for (final String mac : macs) {
 			final AesParameters parameters = new AesParameters()
 					.setKeySize(AesParameters.KEY_SIZE_128)
@@ -696,7 +706,7 @@ public class EncryptorTest {
 					.setBlockSize(32)
 					.setMacAlgorithm(mac)
 					.setMacKeySize(AesParameters.MAC_KEY_SIZE_128)
-					.setProvider(provider)
+					.setProvider(BC_PROVIDER)
 					;
 			encryptor = new Encryptor(Base64Encoder.getInstance())
 					.setAlgorithmParameters(parameters);
@@ -763,6 +773,60 @@ public class EncryptorTest {
 		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
 	}
 
+	@Test
+	public void testBlowfishKey() throws GeneralSecurityException {
+		final Key key = CryptoUtil.generateSecretKey(BlowfishParameters.ALGORITHM_BLOWFISH);
+		final BlowfishParameters parameters = new BlowfishParameters(Base64Encoder.getInstance())
+				.setKey(Base64Encoder.getInstance().encode(key.getEncoded()))
+				.setBlockMode(BlowfishParameters.BLOCK_MODE_CFB)
+				.setBlockSize(32)
+				.setMacAlgorithm(BlowfishParameters.MAC_ALGORITHM_HMAC_SHA1)
+				.setMacKeySize(BlowfishParameters.MAC_KEY_SIZE_128)
+				;
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
+	@Test
+	public void testTwofish() throws GeneralSecurityException {
+		final TwofishParameters parameters = new TwofishParameters()
+				.setKeySize(TwofishParameters.KEY_SIZE_128)
+				.setBlockMode(TwofishParameters.BLOCK_MODE_CFB)
+				.setBlockSize(32)
+				.setMacAlgorithm(TwofishParameters.MAC_ALGORITHM_HMAC_SHA1)
+				.setMacKeySize(TwofishParameters.MAC_KEY_SIZE_128)
+				.setProvider(BC_PROVIDER)
+				;
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
+	@Test
+	public void testTwofishKey() throws GeneralSecurityException {
+		final Key key = CryptoUtil.generateSecretKey(TwofishParameters.ALGORITHM_TWOFISH, null, BC_PROVIDER);
+		final TwofishParameters parameters = new TwofishParameters(Base64Encoder.getInstance())
+				.setKey(Base64Encoder.getInstance().encode(key.getEncoded()))
+				.setBlockMode(TwofishParameters.BLOCK_MODE_GCM)
+				.setPadding(TwofishParameters.PADDING_NONE)
+				.setBlockSize(32)
+				.setProvider(BC_PROVIDER)
+				;
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
 	/**
 	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
@@ -790,6 +854,24 @@ public class EncryptorTest {
 	public void testDesEdeEcb() throws GeneralSecurityException {
 		final DesEdeParameters parameters = new DesEdeParameters()
 				.setKeySize(DesEdeParameters.KEY_SIZE_DES_EDE_112)
+				.setBlockMode(DesEdeParameters.BLOCK_MODE_ECB)
+				.setBlockSize(32)
+				.setMacAlgorithm(DesEdeParameters.MAC_ALGORITHM_HMAC_SHA1)
+				.setMacKeySize(DesEdeParameters.MAC_KEY_SIZE_128)
+				;
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
+	@Test
+	public void testDesEdeKey() throws GeneralSecurityException {
+		final Key key = CryptoUtil.generateSecretKey(DesEdeParameters.ALGORITHM_TRIPLE_DES);
+		final DesEdeParameters parameters = new DesEdeParameters(Base64Encoder.getInstance())
+				.setKey(Base64Encoder.getInstance().encode(key.getEncoded()))
 				.setBlockMode(DesEdeParameters.BLOCK_MODE_ECB)
 				.setBlockSize(32)
 				.setMacAlgorithm(DesEdeParameters.MAC_ALGORITHM_HMAC_SHA1)
@@ -865,6 +947,29 @@ public class EncryptorTest {
 	/**
 	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
+	@Test
+	public void testPbeKey() throws GeneralSecurityException {
+
+		final Key key = CryptoUtil.getSecretKeyFromTextKey(PBE_KEY, PbeParameters.ALGORITHM_PBE_MD5_DES);
+
+		final PbeParameters parameters = new PbeParameters()
+				.setKey(key)
+				.setBlockMode(PbeParameters.BLOCK_MODE_CFB)
+				.setBlockSize(32)
+				.setMacAlgorithm(PbeParameters.MAC_ALGORITHM_HMAC_SHA1)
+				.setMacKeySize(PbeParameters.MAC_KEY_SIZE_128)
+				;
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
+	/**
+	 * @throws GeneralSecurityException GeneralSecurityException
+	 */
 	@Test(expected=InvalidAlgorithmParameterException.class)
 	public void testPbeNoSalt() throws GeneralSecurityException {
 		final PbeParameters parameters = new PbeParameters()
@@ -883,17 +988,15 @@ public class EncryptorTest {
 		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
-	@Ignore	// this only works with unlimited strength encryption policy files
-	public void testRc2() throws GeneralSecurityException {
-		final Rc2Parameters parameters = new Rc2Parameters()
-				.setKeySize(Rc2Parameters.KEY_SIZE_128)
-				.setBlockMode(Rc2Parameters.BLOCK_MODE_CFB)
+	@Test
+	public void testCamellia() throws GeneralSecurityException {
+		final CamelliaParameters parameters = new CamelliaParameters()
+				.setKeySize(CamelliaParameters.KEY_SIZE_128)
+				.setBlockMode(CamelliaParameters.BLOCK_MODE_CFB)
 				.setBlockSize(32)
-				.setMacAlgorithm(Rc2Parameters.MAC_ALGORITHM_HMAC_SHA1)
-				.setMacKeySize(Rc2Parameters.MAC_KEY_SIZE_128)
+				.setMacAlgorithm(CamelliaParameters.MAC_ALGORITHM_HMAC_SHA1)
+				.setMacKeySize(CamelliaParameters.MAC_KEY_SIZE_128)
+				.setProvider(BC_PROVIDER)
 				;
 		encryptor = new Encryptor(Base64Encoder.getInstance())
 				.setAlgorithmParameters(parameters);
@@ -903,15 +1006,250 @@ public class EncryptorTest {
 		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
+	@Test
+	public void testCamelliaKey() throws GeneralSecurityException {
+		final Key key = CryptoUtil.generateSecretKey(CamelliaParameters.ALGORITHM_CAMELLIA, null, BC_PROVIDER);
+		final CamelliaParameters parameters = new CamelliaParameters(Base64Encoder.getInstance())
+				.setKey(Base64Encoder.getInstance().encode(key.getEncoded()))
+				.setBlockMode(CamelliaParameters.BLOCK_MODE_GCM)
+				.setPadding(CamelliaParameters.PADDING_NONE)
+				.setBlockSize(32)
+				.setProvider(BC_PROVIDER)
+				;
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
+	@Test
+	public void testRc2() throws GeneralSecurityException {
+		final Rc2Parameters parameters = new Rc2Parameters()
+				.setKeySize(Rc2Parameters.KEY_SIZE_128)
+				.setBlockMode(Rc2Parameters.BLOCK_MODE_CFB)
+				.setBlockSize(32)
+				.setMacAlgorithm(Rc2Parameters.MAC_ALGORITHM_HMAC_SHA1)
+				.setMacKeySize(Rc2Parameters.MAC_KEY_SIZE_128)
+				.setProvider(BC_PROVIDER)
+				;
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
+	@Test
+	public void testRc2Key() throws GeneralSecurityException {
+		final Key key = CryptoUtil.generateSecretKey(Rc2Parameters.ALGORITHM_RC2);
+
+		final Rc2Parameters parameters = new Rc2Parameters(Base32Encoder.getInstance())
+				.setKey(Base32Encoder.getInstance().encode(key.getEncoded()))
+				.setBlockMode(Rc2Parameters.BLOCK_MODE_CFB)
+				.setMacAlgorithm(Rc2Parameters.MAC_ALGORITHM_HMAC_SHA1)
+				.setMacKeySize(Rc2Parameters.MAC_KEY_SIZE_128)
+				.setProvider(BC_PROVIDER)
+				;
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
 	@Test
 	public void testRc4() throws GeneralSecurityException {
 		final Rc4Parameters parameters = new Rc4Parameters()
-				.setKeySize(Rc2Parameters.KEY_SIZE_128)
-				.setMacAlgorithm(Rc2Parameters.MAC_ALGORITHM_HMAC_SHA1)
-				.setMacKeySize(Rc2Parameters.MAC_KEY_SIZE_128)
+				.setKeySize(Rc4Parameters.KEY_SIZE_128)
+				.setMacAlgorithm(Rc4Parameters.MAC_ALGORITHM_HMAC_SHA1)
+				.setMacKeySize(Rc4Parameters.MAC_KEY_SIZE_128)
+				.setProvider(BC_PROVIDER)
+				;
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
+	@Test
+	public void testRc4Key() throws GeneralSecurityException {
+		final Key key = CryptoUtil.generateSecretKey(Rc4Parameters.ALGORITHM_RC4);
+		final Rc4Parameters parameters = new Rc4Parameters(Base64Encoder.getInstance())
+				.setKey(Base64Encoder.getInstance().encode(key.getEncoded()))
+				.setMacAlgorithm(Rc4Parameters.MAC_ALGORITHM_HMAC_SHA1)
+				.setMacKeySize(Rc4Parameters.MAC_KEY_SIZE_128)
+				.setProvider(BC_PROVIDER)
+				;
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
+	@Test
+	public void testRc5() throws GeneralSecurityException {
+		final Rc5Parameters parameters = new Rc5Parameters()
+				.setKeySize(Rc5Parameters.KEY_SIZE_128)
+				.setMacAlgorithm(Rc5Parameters.MAC_ALGORITHM_HMAC_SHA1)
+				.setMacKeySize(Rc5Parameters.MAC_KEY_SIZE_128)
+				.setProvider(BC_PROVIDER)
+				;
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
+	@Test
+	public void testRc5Key() throws GeneralSecurityException {
+		final Key key = CryptoUtil.generateSecretKey(Rc5Parameters.ALGORITHM_RC5, null, BC_PROVIDER);
+		final Rc5Parameters parameters = new Rc5Parameters(Base64Encoder.getInstance())
+				.setKey(Base64Encoder.getInstance().encode(key.getEncoded()))
+				.setMacAlgorithm(Rc5Parameters.MAC_ALGORITHM_HMAC_SHA1)
+				.setMacKeySize(Rc5Parameters.MAC_KEY_SIZE_128)
+				.setProvider(BC_PROVIDER)
+				;
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
+	@Test
+	public void testRc6() throws GeneralSecurityException {
+		final Rc6Parameters parameters = new Rc6Parameters()
+				.setKeySize(Rc6Parameters.KEY_SIZE_128)
+				.setMacAlgorithm(Rc6Parameters.MAC_ALGORITHM_HMAC_SHA1)
+				.setMacKeySize(Rc6Parameters.MAC_KEY_SIZE_128)
+				.setProvider(BC_PROVIDER)
+				;
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
+	@Test
+	public void testRc6Key() throws GeneralSecurityException {
+		final Key key = CryptoUtil.generateSecretKey(Rc6Parameters.ALGORITHM_RC6, null, BC_PROVIDER);
+		final Rc6Parameters parameters = new Rc6Parameters(Base64Encoder.getInstance())
+				.setKey(Base64Encoder.getInstance().encode(key.getEncoded()))
+				.setMacAlgorithm(Rc6Parameters.MAC_ALGORITHM_HMAC_SHA1)
+				.setMacKeySize(Rc6Parameters.MAC_KEY_SIZE_128)
+				.setProvider(BC_PROVIDER)
+				;
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
+	@Test
+	public void testSerpent() throws GeneralSecurityException {
+		final SerpentParameters parameters = new SerpentParameters()
+				.setKeySize(SerpentParameters.KEY_SIZE_128)
+				.setMacAlgorithm(SerpentParameters.MAC_ALGORITHM_HMAC_SHA1)
+				.setMacKeySize(SerpentParameters.MAC_KEY_SIZE_128)
+				.setProvider(BC_PROVIDER)
+				;
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
+	@Test
+	public void testSerpentKey() throws GeneralSecurityException {
+		final Key key = CryptoUtil.generateSecretKey(SerpentParameters.ALGORITHM_SERPENT, null, BC_PROVIDER);
+		final SerpentParameters parameters = new SerpentParameters(Base64Encoder.getInstance())
+				.setKey(Base64Encoder.getInstance().encode(key.getEncoded()))
+				.setMacAlgorithm(SerpentParameters.MAC_ALGORITHM_HMAC_SHA1)
+				.setMacKeySize(SerpentParameters.MAC_KEY_SIZE_128)
+				.setProvider(BC_PROVIDER)
+				;
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
+	@Test
+	public void testTea() throws GeneralSecurityException {
+		final TeaParameters parameters = new TeaParameters()
+				.setKeySize(TeaParameters.KEY_SIZE_128)
+				.setMacAlgorithm(TeaParameters.MAC_ALGORITHM_HMAC_SHA1)
+				.setMacKeySize(TeaParameters.MAC_KEY_SIZE_128)
+				.setProvider(BC_PROVIDER)
+				;
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
+	@Test
+	public void testTeaKey() throws GeneralSecurityException {
+		final Key key = CryptoUtil.generateSecretKey(TeaParameters.ALGORITHM_TEA, null, BC_PROVIDER);
+		final TeaParameters parameters = new TeaParameters(Base64Encoder.getInstance())
+				.setKey(Base64Encoder.getInstance().encode(key.getEncoded()))
+				.setMacAlgorithm(TeaParameters.MAC_ALGORITHM_HMAC_SHA1)
+				.setMacKeySize(TeaParameters.MAC_KEY_SIZE_128)
+				.setProvider(BC_PROVIDER)
+				;
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
+	@Test
+	public void testXtea() throws GeneralSecurityException {
+		final XteaParameters parameters = new XteaParameters()
+				.setKeySize(XteaParameters.KEY_SIZE_128)
+				.setMacAlgorithm(XteaParameters.MAC_ALGORITHM_HMAC_SHA1)
+				.setMacKeySize(XteaParameters.MAC_KEY_SIZE_128)
+				.setProvider(BC_PROVIDER)
+				;
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
+	@Test
+	public void testXteaKey() throws GeneralSecurityException {
+		final Key key = CryptoUtil.generateSecretKey(XteaParameters.ALGORITHM_XTEA, null, BC_PROVIDER);
+		final XteaParameters parameters = new XteaParameters(Base64Encoder.getInstance())
+				.setKey(Base64Encoder.getInstance().encode(key.getEncoded()))
+				.setMacAlgorithm(XteaParameters.MAC_ALGORITHM_HMAC_SHA1)
+				.setMacKeySize(XteaParameters.MAC_KEY_SIZE_128)
+				.setProvider(BC_PROVIDER)
 				;
 		encryptor = new Encryptor(Base64Encoder.getInstance())
 				.setAlgorithmParameters(parameters);
@@ -941,6 +1279,9 @@ public class EncryptorTest {
 
 		final String enc = encryptor.encrypt(TEST_TEXT);
 		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+
+		assertEquals(AbstractBlockCipherParameters.BLOCK_MODE_ECB, parameters.getBlockType());
+		assertNull(parameters.getPadding());
 	}
 
 	/**
@@ -953,6 +1294,7 @@ public class EncryptorTest {
 		final RsaParameters parameters = new RsaParameters()
 			.setEncryptionKey(keyPair.getPublic())
 			.setDecryptionKey(keyPair.getPrivate())
+			.setBlockType(AbstractBlockCipherParameters.BLOCK_MODE_ECB)
 			.setPadding(RsaParameters.PADDING_PKCS1)
 			.setMacAlgorithm(Rc2Parameters.MAC_ALGORITHM_HMAC_SHA1)
 			.setMacKeySize(Rc2Parameters.MAC_KEY_SIZE_128)
@@ -970,16 +1312,65 @@ public class EncryptorTest {
 	 * @throws GeneralSecurityException GeneralSecurityException
 	 */
 	@Test
+	public void testRsaGenKey() throws GeneralSecurityException {
+		final RsaParameters parameters = new RsaParameters(Base64Encoder.getInstance())
+			.setMacAlgorithm(Rc2Parameters.MAC_ALGORITHM_HMAC_SHA1)
+			.setMacKeySize(Rc2Parameters.MAC_KEY_SIZE_128)
+			;
+
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
+	/**
+	 * @throws GeneralSecurityException GeneralSecurityException
+	 */
+	@Test
+	public void testRsaKeyLoader() throws GeneralSecurityException {
+		final KeyPair keyPair = CryptoUtil.generateAsymmetricKeyPair(RsaParameters.KEY_SIZE_512,
+			RsaParameters.ALGORITHM_RSA);
+		final RsaParameters parameters = new RsaParameters()
+			.setEncryptionKeyLoader(new KeyLoader() {
+				@Override
+				public Key loadKey(final String algorithm) {
+					return keyPair.getPublic();
+				}
+			})
+			.setDecryptionKeyLoader(new KeyLoader() {
+				@Override
+				public Key loadKey(final String algorithm) {
+					return keyPair.getPrivate();
+				}
+			})
+			.setMacAlgorithm(Rc2Parameters.MAC_ALGORITHM_HMAC_SHA1)
+			.setMacKeySize(Rc2Parameters.MAC_KEY_SIZE_128)
+			;
+
+		encryptor = new Encryptor(Base64Encoder.getInstance())
+				.setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final String enc = encryptor.encrypt(TEST_TEXT);
+		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
+	}
+
+	/**
+	 * @throws GeneralSecurityException GeneralSecurityException
+	 */
+	@Test
 	public void testElGamal() throws GeneralSecurityException {
-		final Provider provider = new BouncyCastleProvider();
 		final KeyPair keyPair = CryptoUtil.generateAsymmetricKeyPair(ElGamalParameters.KEY_SIZE_256,
-			ElGamalParameters.ALGORITHM_ELGAMAL, null, provider);
+			ElGamalParameters.ALGORITHM_ELGAMAL, null, BC_PROVIDER);
 		final ElGamalParameters parameters = new ElGamalParameters()
 			.setEncryptionKey(keyPair.getPublic())
 			.setDecryptionKey(keyPair.getPrivate())
 			.setMacAlgorithm(Rc2Parameters.MAC_ALGORITHM_HMAC_SHA1)
 			.setMacKeySize(Rc2Parameters.MAC_KEY_SIZE_128)
-			.setProvider(provider)
+			.setProvider(BC_PROVIDER)
 			;
 
 		encryptor = new Encryptor(Base64Encoder.getInstance())
@@ -989,6 +1380,12 @@ public class EncryptorTest {
 		final String txt = "abcd";
 		final String enc = encryptor.encrypt(txt);
 		assertEquals(txt, encryptor.decrypt(enc));
+	}
+
+	@Test(expected = EncryptorConfigurationException.class)
+	public void testWrongKeyLoader() {
+
+		new AesParameters().setKeyLoader(new String());
 	}
 
 //	@Test

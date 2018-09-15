@@ -71,9 +71,11 @@ public class BcScryptTest extends AbstractPasswordTest<BcScryptEncoder> {
 
 		final Properties props = new Properties();
 		props.setProperty(BcScryptEncoder.KEY_CPU_COST, "0");
-		assertException(props, iae, "Cpu cost");
+		assertException(props, iae, "Cpu cost parameter");
 		props.setProperty(BcScryptEncoder.KEY_CPU_COST, "524288");
-		assertException(props, iae, "Cpu cost");
+		assertException(props, iae, "Cpu cost parameter");
+		props.setProperty(BcScryptEncoder.KEY_CPU_COST, "555");
+		assertException(props, iae, "Cpu cost must");
 
 		props.setProperty(BcScryptEncoder.KEY_CPU_COST, "8");
 		props.setProperty(BcScryptEncoder.KEY_MEM_COST, "0");
@@ -117,7 +119,7 @@ public class BcScryptTest extends AbstractPasswordTest<BcScryptEncoder> {
 	@Override
 	protected BcScryptEncoder createFastEncoder() {
 		final Properties props = new Properties();
-		props.setProperty(BcScryptEncoder.KEY_CPU_COST, String.valueOf(2048));
+		props.setProperty(BcScryptEncoder.KEY_CPU_COST, String.valueOf(1024));
 		return createEncoder(props);
 	}
 

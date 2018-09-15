@@ -29,7 +29,7 @@ import org.junit.Test;
 public class ScryptEncoderMatchTest {
 
 	private static final String TEXT = "bandOgyps";
-	private static final int CPU_COST = 2048;
+	private static final int CPU_COST = 1024;
 
 	@Test
 	public void testSCrypt() {

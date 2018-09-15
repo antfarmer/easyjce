@@ -104,7 +104,7 @@ public class SpringScryptTest extends AbstractPasswordTest<SpringScryptEncoder> 
 	@Override
 	protected SpringScryptEncoder createFastEncoder() {
 		final Properties props = new Properties();
-		props.setProperty(SpringScryptEncoder.KEY_CPU_COST, String.valueOf(2048));
+		props.setProperty(SpringScryptEncoder.KEY_CPU_COST, String.valueOf(1024));
 		return createEncoder(props);
 	}
 

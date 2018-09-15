@@ -65,6 +65,8 @@ public class BcBcryptTest extends AbstractPasswordTest<BcBcryptEncoder> {
 		props.setProperty(BcBcryptEncoder.KEY_VERSION, String.valueOf(BcBcryptEncoder.VERSION_2Y));
 		props.setProperty(BcBcryptEncoder.KEY_STRENGTH, String.valueOf(1));
 		assertException(props, "Strength");
+		props.setProperty(BcBcryptEncoder.KEY_STRENGTH, String.valueOf(40));
+		assertException(props, "Strength");
 	}
 
 	@Override

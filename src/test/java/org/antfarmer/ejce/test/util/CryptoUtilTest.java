@@ -47,6 +47,8 @@ import org.junit.Test;
 public class CryptoUtilTest {
 
 	private static final Random random = new Random();
+	private static final BouncyCastleProvider BC_PROVIDER = new BouncyCastleProvider();
+
 
 	@Test
 	public void testKeySize() throws NoSuchAlgorithmException {
@@ -73,6 +75,10 @@ public class CryptoUtilTest {
 		System.out.println(Base64Encoder.getInstance().encode(simpleKey.getEncoded()));
 		assertEquals(AesParameters.KEY_SIZE_128, simpleKey.getEncoded().length * Byte.SIZE);
 
+		final Key simpleKey2 = CryptoUtil.generateSecretKey(AesParameters.ALGORITHM_AES, null, BC_PROVIDER);
+		System.out.println(Base64Encoder.getInstance().encode(simpleKey2.getEncoded()));
+		assertEquals(AesParameters.KEY_SIZE_192, simpleKey2.getEncoded().length * Byte.SIZE);
+
 		final int keySize = AbstractAlgorithmParameters.KEY_SIZE_192;
 		final Key key = CryptoUtil.generateSecretKey(keySize, AesParameters.ALGORITHM_AES);
 		System.out.println(Base64Encoder.getInstance().encode(key.getEncoded()));
@@ -84,7 +90,7 @@ public class CryptoUtilTest {
 		assertEquals(macKeySize, macKey.getEncoded().length * Byte.SIZE);
 
 		final int keySize2 = AbstractAlgorithmParameters.KEY_SIZE_256;
-		final Key key2 = CryptoUtil.generateSecretKey(keySize2, AesParameters.ALGORITHM_AES, null, new BouncyCastleProvider());
+		final Key key2 = CryptoUtil.generateSecretKey(keySize2, AesParameters.ALGORITHM_AES, null, BC_PROVIDER);
 		System.out.println(Base64Encoder.getInstance().encode(key2.getEncoded()));
 		assertEquals(keySize2, key2.getEncoded().length * Byte.SIZE);
 	}
@@ -98,7 +104,10 @@ public class CryptoUtilTest {
 		System.out.println(Base64Encoder.getInstance().encode(key1.getPublic().getEncoded()));
 		assertEquals(1008, key1.getPublic().getEncoded().length * Byte.SIZE);
 
-		final KeyPair key2 = CryptoUtil.generateAsymmetricKeyPair(RsaParameters.KEY_SIZE_512, RsaParameters.ALGORITHM_RSA, null, new BouncyCastleProvider());
+		final KeyPair simpleKey2 = CryptoUtil.generateAsymmetricKeyPair(RsaParameters.ALGORITHM_RSA, null, BC_PROVIDER);
+		System.out.println(Base64Encoder.getInstance().encode(simpleKey2.getPublic().getEncoded()));
+
+		final KeyPair key2 = CryptoUtil.generateAsymmetricKeyPair(RsaParameters.KEY_SIZE_512, RsaParameters.ALGORITHM_RSA, null, BC_PROVIDER);
 		System.out.println(Base64Encoder.getInstance().encode(key2.getPublic().getEncoded()));
 		assertEquals(752, key2.getPublic().getEncoded().length * Byte.SIZE);
 	}

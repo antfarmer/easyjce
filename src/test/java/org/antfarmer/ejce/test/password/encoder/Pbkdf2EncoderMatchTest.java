@@ -29,7 +29,7 @@ import org.junit.Test;
 public class Pbkdf2EncoderMatchTest {
 
 	private static final String TEXT = "bandOgyps";
-	private static final int ITERATIONS = 3000;
+	private static final int ITERATIONS = 2000;
 
 	@Test
 	public void testPBKDF2() {

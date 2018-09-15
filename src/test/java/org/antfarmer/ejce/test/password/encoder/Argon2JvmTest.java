@@ -109,7 +109,7 @@ public class Argon2JvmTest extends AbstractPasswordTest<Argon2JvmEncoder> {
 	protected Argon2JvmEncoder createFastEncoder() {
 		final Properties props = new Properties();
 		props.setProperty(Argon2JvmEncoder.KEY_ITERATIONS, String.valueOf(5));
-		props.setProperty(Argon2JvmEncoder.KEY_MEMORY_SIZE, String.valueOf(512));
+		props.setProperty(Argon2JvmEncoder.KEY_MEMORY_SIZE, String.valueOf(256));
 		props.setProperty(Argon2JvmEncoder.KEY_PARALLELISM, String.valueOf(4));
 		return createEncoder(props);
 	}
