@@ -36,6 +36,8 @@ public abstract class AbstractPasswordTest<P extends ConfigurablePasswordEncoder
 	private static final int THREAD_COUNT = 25;
 	private static final int THREAD_ITERATIONS = 50;
 
+	public static final boolean SKIP_THREAD_TESTS = false;
+
 	protected final P encoder = createEncoder();
 
 	/**
@@ -79,6 +81,7 @@ public abstract class AbstractPasswordTest<P extends ConfigurablePasswordEncoder
 
 	@Test
 	public void threadSafetyTest() throws Throwable {
+		if (SKIP_THREAD_TESTS) return;
 		final int num = THREAD_COUNT;
 		EncodeThread thread;
 		final P encoder = createFastEncoder();
