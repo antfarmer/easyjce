@@ -87,6 +87,33 @@ public class Pbkdf2Test extends AbstractPasswordTest<Pbkdf2Encoder> {
 		}
 	}
 
+	@Test
+	public void testConfigureBad() {
+		final Properties props = new Properties();
+		props.setProperty(Pbkdf2Encoder.KEY_HASH_LENGTH, "0");
+		assertException(props, "Hash");
+
+		props.setProperty(Pbkdf2Encoder.KEY_HASH_LENGTH, "10");
+		props.setProperty(Pbkdf2Encoder.KEY_SALT_LENGTH, "5");
+		assertException(props, "Salt");
+
+		props.setProperty(Pbkdf2Encoder.KEY_SALT_LENGTH, "8");
+		props.setProperty(Pbkdf2Encoder.KEY_ITERATIONS, "0");
+		assertException(props, "Iterations");
+
+		props.setProperty(Pbkdf2Encoder.KEY_ITERATIONS, "100");
+		props.setProperty(Pbkdf2Encoder.KEY_PROVIDER_CLASS, "o");
+		assertException(props, "instantiating");
+		props.setProperty(Pbkdf2Encoder.KEY_PROVIDER_CLASS, Integer.class.getName());
+		assertException(props, "instantiating");
+		props.setProperty(Pbkdf2Encoder.KEY_PROVIDER_CLASS, String.class.getName());
+		assertException(props, "instantiating");
+
+		props.remove(Pbkdf2Encoder.KEY_PROVIDER_CLASS);
+		props.setProperty(Pbkdf2Encoder.KEY_ALGORITHM, "o");
+		assertException(props, "initializing algorithm");
+	}
+
 	@Override
 	protected Pbkdf2Encoder createEncoder() {
 		final Properties props = new Properties();
@@ -101,7 +128,8 @@ public class Pbkdf2Test extends AbstractPasswordTest<Pbkdf2Encoder> {
 		return createEncoder(props);
 	}
 
-	private Pbkdf2Encoder createEncoder(final Properties defaults) {
+	@Override
+	protected Pbkdf2Encoder createEncoder(final Properties defaults) {
 		final Pbkdf2Encoder encoder = new Pbkdf2Encoder();
 		final Properties props = new Properties(defaults);
 		encoder.configure(props, null);

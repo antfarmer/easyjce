@@ -68,6 +68,37 @@ public class Argon2JvmTest extends AbstractPasswordTest<Argon2JvmEncoder> {
 		}
 	}
 
+	@Test
+	public void testConfigureBad() {
+		final Properties props = new Properties();
+		props.setProperty(Argon2JvmEncoder.KEY_TYPE, "0");
+		assertException(props, "algorithm type");
+
+		props.setProperty(Argon2JvmEncoder.KEY_TYPE, Argon2JvmEncoder.TYPE_D);
+		props.setProperty(Argon2JvmEncoder.KEY_HASH_LENGTH, "2");
+		assertException(props, "Hash");
+
+		props.setProperty(Argon2JvmEncoder.KEY_HASH_LENGTH, "10");
+		props.setProperty(Argon2JvmEncoder.KEY_SALT_LENGTH, "5");
+		assertException(props, "Salt");
+
+		props.setProperty(Argon2JvmEncoder.KEY_SALT_LENGTH, "8");
+		props.setProperty(Argon2JvmEncoder.KEY_ITERATIONS, "0");
+		assertException(props, "Iterations");
+
+		props.setProperty(Argon2JvmEncoder.KEY_ITERATIONS, "20");
+		props.setProperty(Argon2JvmEncoder.KEY_PARALLELISM, "0");
+		assertException(props, "Parallelism");
+		props.setProperty(Argon2JvmEncoder.KEY_PARALLELISM, String.valueOf(Integer.MAX_VALUE));
+		assertException(props, "Parallelism");
+
+		props.setProperty(Argon2JvmEncoder.KEY_PARALLELISM, "1");
+		props.setProperty(Argon2JvmEncoder.KEY_MEMORY_SIZE, "0");
+		assertException(props, "Memory");
+		props.setProperty(Argon2JvmEncoder.KEY_MEMORY_SIZE, "5");
+		assertException(props, "Memory");
+	}
+
 	@Override
 	protected Argon2JvmEncoder createEncoder() {
 		final Properties props = new Properties();
@@ -83,7 +114,8 @@ public class Argon2JvmTest extends AbstractPasswordTest<Argon2JvmEncoder> {
 		return createEncoder(props);
 	}
 
-	private Argon2JvmEncoder createEncoder(final Properties defaults) {
+	@Override
+	protected Argon2JvmEncoder createEncoder(final Properties defaults) {
 		final Argon2JvmEncoder encoder = new Argon2JvmEncoder();
 		final Properties props = new Properties(defaults);
 		encoder.configure(props, null);

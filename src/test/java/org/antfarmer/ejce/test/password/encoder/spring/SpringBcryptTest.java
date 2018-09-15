@@ -55,6 +55,13 @@ public class SpringBcryptTest extends AbstractPasswordTest<SpringBcryptEncoder> 
 		assertTrue(encoder.matches(PASSWORD, encoded));
 	}
 
+	@Test
+	public void testConfigureBad() {
+		final Properties props = new Properties();
+		props.setProperty(SpringBcryptEncoder.KEY_STRENGTH, String.valueOf(1));
+		assertException(props, IllegalArgumentException.class, "strength");
+	}
+
 	@Override
 	protected SpringBcryptEncoder createEncoder() {
 		return createEncoder(null);
@@ -67,7 +74,8 @@ public class SpringBcryptTest extends AbstractPasswordTest<SpringBcryptEncoder> 
 		return createEncoder(props);
 	}
 
-	private SpringBcryptEncoder createEncoder(final Properties defaults) {
+	@Override
+	protected SpringBcryptEncoder createEncoder(final Properties defaults) {
 		final SpringBcryptEncoder encoder = new SpringBcryptEncoder();
 		final Properties props = new Properties(defaults);
 		encoder.configure(props, null);

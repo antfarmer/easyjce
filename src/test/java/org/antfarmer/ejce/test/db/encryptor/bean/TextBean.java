@@ -46,12 +46,14 @@ public class TextBean extends AbstractBean {
 	 * Returns the value.
 	 * @return the value
 	 */
-	@Type(type = "org.antfarmer.ejce.hibernate.EncryptedStringType", parameters = {
+	@Type(type = "org.antfarmer.ejce.hibernate.EncryptedTextType", parameters = {
 			@Parameter(name = "paramClass", value = "org.antfarmer.ejce.parameter.AesParameters"),
 			@Parameter(name = "paramEncoder", value = "org.antfarmer.ejce.encoder.Base64Encoder"),
 			@Parameter(name = "key", value = "mZKfvksbC1PhCvucsAcHMFqT/6s/xuJfmZs2QK+UGOw"),
 			@Parameter(name = "encoder", value = "org.antfarmer.ejce.encoder.Base64Encoder"),
-			@Parameter(name = "streamLobs", value = "true")
+			@Parameter(name = "streamLobs", value = "true"),
+			@Parameter(name = "streamBuffSize", value = "4096"),
+			@Parameter(name = "maxInMemBuffSize", value = "16384")
 	})
 	@Column(length = 1100 * 1024)
 	public String getValue() {

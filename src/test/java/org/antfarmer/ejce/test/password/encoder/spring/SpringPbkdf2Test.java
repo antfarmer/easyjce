@@ -61,6 +61,17 @@ public class SpringPbkdf2Test extends AbstractPasswordTest<SpringPbkdf2Encoder> 
 		assertTrue(encoder.matches(PASSWORD, encoded));
 	}
 
+	@Test
+	public void testConfigureBad() {
+		final Properties props = new Properties();
+		props.setProperty(SpringPbkdf2Encoder.KEY_HASH_LENGTH, "0");
+		assertException(props, "Hash");
+
+		props.setProperty(SpringPbkdf2Encoder.KEY_HASH_LENGTH, "10");
+		props.setProperty(SpringPbkdf2Encoder.KEY_ITERATIONS, "0");
+		assertException(props, "Iterations");
+	}
+
 	@Override
 	protected SpringPbkdf2Encoder createEncoder() {
 		final Properties props = new Properties();
@@ -75,7 +86,8 @@ public class SpringPbkdf2Test extends AbstractPasswordTest<SpringPbkdf2Encoder> 
 		return createEncoder(props);
 	}
 
-	private SpringPbkdf2Encoder createEncoder(final Properties defaults) {
+	@Override
+	protected SpringPbkdf2Encoder createEncoder(final Properties defaults) {
 		final SpringPbkdf2Encoder encoder = new SpringPbkdf2Encoder();
 		final Properties props = new Properties(defaults);
 		encoder.configure(props, null);

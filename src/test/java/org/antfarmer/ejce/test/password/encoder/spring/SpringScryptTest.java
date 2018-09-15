@@ -60,6 +60,42 @@ public class SpringScryptTest extends AbstractPasswordTest<SpringScryptEncoder> 
 		assertTrue(encoder.matches(PASSWORD, encoded));
 	}
 
+	@Test
+	public void testConfigureBad() {
+		final Class<IllegalArgumentException> iae = IllegalArgumentException.class;
+
+		final Properties props = new Properties();
+		props.setProperty(SpringScryptEncoder.KEY_CPU_COST, "0");
+		assertException(props, iae, "Cpu cost");
+		props.setProperty(SpringScryptEncoder.KEY_MEM_COST, "1");
+		props.setProperty(SpringScryptEncoder.KEY_CPU_COST, "524288");
+		assertException(props, iae, "Cpu cost");
+
+		props.setProperty(SpringScryptEncoder.KEY_CPU_COST, "8");
+		props.setProperty(SpringScryptEncoder.KEY_MEM_COST, "0");
+		assertException(props, iae, "Memory cost");
+
+		props.setProperty(SpringScryptEncoder.KEY_CPU_COST, "8");
+		props.setProperty(SpringScryptEncoder.KEY_MEM_COST, "10");
+		props.setProperty(SpringScryptEncoder.KEY_PARALLELIZATION, "0");
+		assertException(props, iae, "Parallelisation");
+		props.setProperty(SpringScryptEncoder.KEY_PARALLELIZATION, String.valueOf(Integer.MAX_VALUE));
+		assertException(props, iae, "Parallelisation");
+
+		props.setProperty(SpringScryptEncoder.KEY_CPU_COST, "8");
+		props.setProperty(SpringScryptEncoder.KEY_MEM_COST, "10");
+		props.setProperty(SpringScryptEncoder.KEY_PARALLELIZATION, "1");
+		props.setProperty(SpringScryptEncoder.KEY_KEY_LENGTH, "0");
+		assertException(props, iae, "Key");
+
+		props.setProperty(SpringScryptEncoder.KEY_CPU_COST, "8");
+		props.setProperty(SpringScryptEncoder.KEY_MEM_COST, "10");
+		props.setProperty(SpringScryptEncoder.KEY_PARALLELIZATION, "1");
+		props.setProperty(SpringScryptEncoder.KEY_KEY_LENGTH, "8");
+		props.setProperty(SpringScryptEncoder.KEY_SALT_LENGTH, "0");
+		assertException(props, iae, "Salt");
+	}
+
 	@Override
 	protected SpringScryptEncoder createEncoder() {
 		return createEncoder(null);
@@ -72,7 +108,8 @@ public class SpringScryptTest extends AbstractPasswordTest<SpringScryptEncoder> 
 		return createEncoder(props);
 	}
 
-	private SpringScryptEncoder createEncoder(final Properties defaults) {
+	@Override
+	protected SpringScryptEncoder createEncoder(final Properties defaults) {
 		final SpringScryptEncoder encoder = new SpringScryptEncoder();
 		final Properties props = new Properties(defaults);
 		encoder.configure(props, null);

@@ -16,13 +16,17 @@
 package org.antfarmer.ejce.test.password;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
+import org.antfarmer.ejce.exception.EncryptorConfigurationException;
 import org.antfarmer.ejce.password.ConfigurablePasswordEncoder;
 import org.junit.Test;
 
@@ -51,12 +55,44 @@ public abstract class AbstractPasswordTest<P extends ConfigurablePasswordEncoder
 	protected abstract P createFastEncoder();
 
 	/**
+	 * @return an encoder to be used for default tests
+	 */
+	protected abstract P createEncoder(Properties defaults);
+
+	/**
 	 * Converts the given text to a byte array using the UTF-8 charset.
 	 * @param text the text
 	 * @return the byte representation of the given text
 	 */
 	protected byte[] toBytes(final String text) {
 		return text.getBytes(CHARSET_UTF_8);
+	}
+
+	protected void assertException(final Properties props) {
+		assertException(props, EncryptorConfigurationException.class, null);
+	}
+
+	protected void assertException(final Properties props, final Class<? extends Exception> exc) {
+		assertException(props, exc, null);
+	}
+
+	protected void assertException(final Properties props, final String messagePhrase) {
+		assertException(props, EncryptorConfigurationException.class, messagePhrase);
+	}
+
+	protected void assertException(final Properties props, final Class<? extends Exception> exc, final String messagePhrase) {
+		Exception ex = null;
+		try {
+			createEncoder(props);
+		}
+		catch (final Exception e) {
+			ex = e;
+		}
+		assertNotNull(ex);
+		assertSame(exc, ex.getClass());
+		if (messagePhrase != null) {
+			assertTrue(ex.getMessage(), ex.getMessage().contains(messagePhrase));
+		}
 	}
 
 	/**

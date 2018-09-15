@@ -55,6 +55,18 @@ public class BcBcryptTest extends AbstractPasswordTest<BcBcryptEncoder> {
 		assertTrue(encoder.matches(PASSWORD, encoded));
 	}
 
+	@Test
+	public void testConfigureBad() {
+		final Properties props = new Properties();
+		props.setProperty(BcBcryptEncoder.KEY_VERSION, "2v");
+
+		assertException(props, "version");
+
+		props.setProperty(BcBcryptEncoder.KEY_VERSION, String.valueOf(BcBcryptEncoder.VERSION_2Y));
+		props.setProperty(BcBcryptEncoder.KEY_STRENGTH, String.valueOf(1));
+		assertException(props, "Strength");
+	}
+
 	@Override
 	protected BcBcryptEncoder createEncoder() {
 		return createEncoder(null);
@@ -67,7 +79,8 @@ public class BcBcryptTest extends AbstractPasswordTest<BcBcryptEncoder> {
 		return createEncoder(props);
 	}
 
-	private BcBcryptEncoder createEncoder(final Properties defaults) {
+	@Override
+	protected BcBcryptEncoder createEncoder(final Properties defaults) {
 		final BcBcryptEncoder encoder = new BcBcryptEncoder();
 		final Properties props = new Properties(defaults);
 		encoder.configure(props, null);
