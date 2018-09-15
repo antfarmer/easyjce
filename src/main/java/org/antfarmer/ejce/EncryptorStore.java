@@ -86,4 +86,17 @@ public class EncryptorStore {
 		}
 	}
 
+	/**
+	 * Removes all {@link Encryptor}'s from the store.
+	 */
+	public static void clear() {
+		lock.lock();
+		try {
+			store.clear();;
+		}
+		finally {
+			lock.unlock();
+		}
+	}
+
 }

@@ -86,4 +86,17 @@ public class PasswordEncoderStore {
 		}
 	}
 
+	/**
+	 * Removes all {@link ConfigurablePasswordEncoder}'s from the store.
+	 */
+	public static void clear() {
+		lock.lock();
+		try {
+			store.clear();;
+		}
+		finally {
+			lock.unlock();
+		}
+	}
+
 }
