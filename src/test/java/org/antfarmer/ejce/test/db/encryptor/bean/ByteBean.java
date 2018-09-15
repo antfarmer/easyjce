@@ -17,7 +17,6 @@ package org.antfarmer.ejce.test.db.encryptor.bean;
 
 import javax.persistence.Entity;
 
-import org.antfarmer.ejce.test.db.AbstractBean;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
@@ -25,7 +24,7 @@ import org.hibernate.annotations.Type;
  * @author Ameer Antar
  */
 @Entity
-public class ByteBean extends AbstractBean {
+public class ByteBean extends AbstractEncryptedValueBean<Byte> {
 
 	private Byte value;
 
@@ -45,6 +44,7 @@ public class ByteBean extends AbstractBean {
 	 * Returns the value.
 	 * @return the value
 	 */
+	@Override
 	@Type(type = "org.antfarmer.ejce.hibernate.EncryptedByteType", parameters = {
 			@Parameter(name = "paramClass", value = "org.antfarmer.ejce.parameter.BlowfishParameters"),
 			@Parameter(name = "paramEncoder", value = "org.antfarmer.ejce.encoder.Base64Encoder"),

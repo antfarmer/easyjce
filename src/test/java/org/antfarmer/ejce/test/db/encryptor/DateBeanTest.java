@@ -15,65 +15,25 @@
  */
 package org.antfarmer.ejce.test.db.encryptor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Date;
 
-import org.antfarmer.common.hibernate.HibernateManager.HibernateCallback;
-import org.antfarmer.ejce.test.db.AbstractDbTest;
 import org.antfarmer.ejce.test.db.encryptor.bean.DateBean;
-import org.hibernate.Session;
-import org.junit.Test;
 
 /**
  * @author Ameer Antar
  */
-public class DateBeanTest extends AbstractDbTest {
+public class DateBeanTest extends AbstractEncDbTest<DateBean> {
 
-	private static final Class<?> BEAN_CLASS = DateBean.class;
+	private final Date value = new Date(System.currentTimeMillis() - (800000 * 1000));
 
-	@Test
-	public void test() {
+	@Override
+	protected DateBean createBean() {
+		return new DateBean(value);
+	}
 
-		final long id = 1;
-		final Date value = new Date(System.currentTimeMillis() - (800000 * 1000));
-
-		execute(new HibernateCallback() {
-			@Override
-			public void doInHibernate(final Session session) {
-				DateBean sb = (DateBean) session.get(BEAN_CLASS, id);
-				assertNull(sb);
-				sb = new DateBean(value);
-				saveOrUpdate(sb);
-			}
-		});
-
-		execute(new StatementCallback() {
-			@Override
-			protected void doStatment(final Statement stmt) throws SQLException {
-				final ResultSet rs = stmt.executeQuery("SELECT value FROM " + BEAN_CLASS.getSimpleName() + " WHERE id = " + id);
-				rs.next();
-				final String encValue = rs.getString(1);
-				logger.info(encValue);
-				assertNotEquals(value, encValue);
-			}
-		});
-
-		execute(new HibernateCallback() {
-			@Override
-			public void doInHibernate(final Session session) {
-				final DateBean sb = (DateBean) session.get(BEAN_CLASS, id);
-				assertNotNull(sb);
-				logger.info("{}", sb.getValue());
-				assertEquals(value, sb.getValue());
-			}
-		});
+	@Override
+	protected DateBean createEmptyBean() {
+		return new DateBean(null);
 	}
 
 }

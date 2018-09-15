@@ -17,6 +17,7 @@ package org.antfarmer.ejce.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -125,6 +126,9 @@ public class EncryptorTest {
 		final long l = 99;
 		final String enc = encryptor.encryptAndEncode(ByteUtil.toBytes(l));
 		assertEquals(l, ByteUtil.toLong(encryptor.decryptAndDecode(enc)));
+
+		assertNull(encryptor.encryptAndEncode(null));
+		assertNull(encryptor.decryptAndDecode(null));
 	}
 
 	/**
@@ -146,6 +150,9 @@ public class EncryptorTest {
 		final boolean o = true;
 		final String enc = encryptor.encryptBoolean(o);
 		assertEquals(o, encryptor.decryptBoolean(enc));
+
+		assertNull(encryptor.encryptBoolean(null));
+		assertNull(encryptor.decryptBoolean(null));
 	}
 
 	/**
@@ -167,6 +174,9 @@ public class EncryptorTest {
 		final Character o = 'z';
 		final String enc = encryptor.encryptCharacter(o);
 		assertEquals(o, encryptor.decryptCharacter(enc));
+
+		assertNull(encryptor.encryptCharacter(null));
+		assertNull(encryptor.decryptCharacter(null));
 	}
 
 	/**
@@ -188,6 +198,9 @@ public class EncryptorTest {
 		final Double o = 9.99999999999999;
 		final String enc = encryptor.encryptDouble(o);
 		assertEquals(o, encryptor.decryptDouble(enc));
+
+		assertNull(encryptor.encryptDouble(null));
+		assertNull(encryptor.decryptDouble(null));
 	}
 
 	/**
@@ -209,6 +222,9 @@ public class EncryptorTest {
 		final Float o = 9.99999999999999F;
 		final String enc = encryptor.encryptFloat(o);
 		assertEquals(o, encryptor.decryptFloat(enc));
+
+		assertNull(encryptor.encryptFloat(null));
+		assertNull(encryptor.decryptFloat(null));
 	}
 
 	/**
@@ -230,6 +246,9 @@ public class EncryptorTest {
 		final Integer o = 66666666;
 		final String enc = encryptor.encryptInteger(o);
 		assertEquals(o, encryptor.decryptInteger(enc));
+
+		assertNull(encryptor.encryptInteger(null));
+		assertNull(encryptor.decryptInteger(null));
 	}
 
 	/**
@@ -251,6 +270,9 @@ public class EncryptorTest {
 		final Long o = 6666666666666666666L;
 		final String enc = encryptor.encryptLong(o);
 		assertEquals(o, encryptor.decryptLong(enc));
+
+		assertNull(encryptor.encryptLong(null));
+		assertNull(encryptor.decryptLong(null));
 	}
 
 	/**
@@ -274,6 +296,9 @@ public class EncryptorTest {
 		final Object o = TimeZone.getDefault();
 		final String enc = encryptor.encryptObject(o);
 		assertEquals(o, encryptor.decryptObject(enc));
+
+		assertNull(encryptor.encryptObject(null));
+		assertNull(encryptor.decryptObject(null));
 	}
 
 	/**
@@ -295,6 +320,9 @@ public class EncryptorTest {
 		final Short o = 5555;
 		final String enc = encryptor.encryptShort(o);
 		assertEquals(o, encryptor.decryptShort(enc));
+
+		assertNull(encryptor.encryptShort(null));
+		assertNull(encryptor.decryptShort(null));
 	}
 
 	/**

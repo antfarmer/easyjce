@@ -15,9 +15,6 @@
  */
 package org.antfarmer.ejce.test.db.encryptor;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -25,78 +22,88 @@ import java.io.Reader;
 import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
-import org.antfarmer.common.hibernate.HibernateManager.HibernateCallback;
+import org.antfarmer.common.hibernate.HibernateManager;
 import org.antfarmer.ejce.test.db.encryptor.bean.ClobBean;
 import org.hibernate.Hibernate;
-import org.hibernate.Session;
 import org.junit.Test;
 
 /**
  * @author Ameer Antar
  */
-public class ClobBeanTest extends AbstractLobDbTest {
+public class ClobBeanTest extends AbstractLobDbTest<ClobBean> {
 
-	private static final Class<?> BEAN_CLASS = ClobBean.class;
+	private File file;
+	private Reader streamValue;
+	private long id = 1;
 
+	@Override
 	@Test
 	public void test() throws IOException {
 
 		final int[] sizes = {1000, 20 * 1024, 1200 * 1024};
 
 		for (int i = 0; i < sizes.length; i++) {
-			final File file = createRandomDataFile(sizes[i], true);
-
-			final long id = i + 1;
-			final Reader streamValue = new FileReader(file);
-
-			try {
-				execute(new HibernateCallback() {
-					@Override
-					public void doInHibernate(final Session session) {
-						ClobBean sb = (ClobBean) session.get(BEAN_CLASS, id);
-						assertNull(sb);
-						sb = new ClobBean(Hibernate.getLobCreator(session).createClob(streamValue, file.length()));
-						saveOrUpdate(sb);
-					}
-				});
-			}
-			finally {
-				close(streamValue);
-			}
-
-			execute(new StatementCallback() {
-				@Override
-				protected void doStatment(final Statement stmt) throws SQLException {
-					final ResultSet rs = stmt.executeQuery("SELECT value FROM " + BEAN_CLASS.getSimpleName() + " WHERE id = " + id);
-					rs.next();
-					final Clob encValue = rs.getClob(1);
-					logger.info("Original Size: {}; Enc Size: {}", file.length(), encValue.length());
-					try {
-						assertData(false, file, encValue);
-					}
-					catch (final IOException e) {
-						throw new SQLException(e.getMessage(), e);
-					}
-				}
-			});
-
-			execute(new HibernateCallback() {
-				@Override
-				public void doInHibernate(final Session session) {
-					final ClobBean sb = (ClobBean) session.get(BEAN_CLASS, id);
-					assertNotNull(sb);
-					try {
-						logger.info("Original Size: {}; New Size: {}", file.length(), sb.getValue().length());
-						assertData(true, file, sb.getValue());
-					}
-					catch (final Exception e) {
-						throw new RuntimeException(e);
-					}
-				}
-			});
+			file = createRandomDataFile(sizes[i], true);
+			streamValue = new FileReader(file);
+			super.test();
+			id += 2;
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void afterSave() {
+		close(streamValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected long getNextId() {
+		return id;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void assertEncrypted(final Object value, final ResultSet rs) throws SQLException, IOException {
+		final Clob encValue = rs.getClob(1);
+		logger.info("Original Size: {}; Enc Size: {}", file.length(), encValue.length());
+		try {
+			assertData(false, file, encValue);
+		}
+		catch (final IOException e) {
+			throw new SQLException(e.getMessage(), e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void assertDecryptedEqual(final Object value, final ClobBean bean) throws SQLException, IOException {
+		try {
+			logger.info("Original Size: {}; New Size: {}", file.length(), bean.getValue().length());
+			assertData(true, file, bean.getValue());
+		}
+		catch (final Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	protected ClobBean createBean() {
+		return new ClobBean(Hibernate.getLobCreator(HibernateManager.instance().getSession()).createClob(streamValue, file.length()));
+	}
+
+	@Override
+	protected ClobBean createEmptyBean() {
+		return new ClobBean(null);
 	}
 
 }

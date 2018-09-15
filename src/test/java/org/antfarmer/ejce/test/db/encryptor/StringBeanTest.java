@@ -15,64 +15,21 @@
  */
 package org.antfarmer.ejce.test.db.encryptor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import org.antfarmer.common.hibernate.HibernateManager.HibernateCallback;
-import org.antfarmer.ejce.test.db.AbstractDbTest;
 import org.antfarmer.ejce.test.db.encryptor.bean.StringBean;
-import org.hibernate.Session;
-import org.junit.Test;
 
 /**
  * @author Ameer Antar
  */
-public class StringBeanTest extends AbstractDbTest {
+public class StringBeanTest extends AbstractEncDbTest<StringBean> {
 
-	private static final Class<?> BEAN_CLASS = StringBean.class;
+	@Override
+	protected StringBean createBean() {
+		return new StringBean("test");
+	}
 
-	@Test
-	public void test() {
-
-		final long id = 1;
-		final String value = "test";
-
-		execute(new HibernateCallback() {
-			@Override
-			public void doInHibernate(final Session session) {
-				StringBean sb = (StringBean) session.get(BEAN_CLASS, id);
-				assertNull(sb);
-				sb = new StringBean(value);
-				saveOrUpdate(sb);
-			}
-		});
-
-		execute(new StatementCallback() {
-			@Override
-			protected void doStatment(final Statement stmt) throws SQLException {
-				final ResultSet rs = stmt.executeQuery("SELECT value FROM " + BEAN_CLASS.getSimpleName() + " WHERE id = " + id);
-				rs.next();
-				final String encValue = rs.getString(1);
-				logger.info(encValue);
-				assertNotEquals(value, encValue);
-			}
-		});
-
-		execute(new HibernateCallback() {
-			@Override
-			public void doInHibernate(final Session session) {
-				final StringBean sb = (StringBean) session.get(BEAN_CLASS, id);
-				assertNotNull(sb);
-				logger.info(sb.getValue());
-				assertEquals(value, sb.getValue());
-			}
-		});
+	@Override
+	protected StringBean createEmptyBean() {
+		return new StringBean(null);
 	}
 
 }

@@ -16,94 +16,101 @@
 package org.antfarmer.ejce.test.db.encryptor;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
-import org.antfarmer.common.hibernate.HibernateManager.HibernateCallback;
 import org.antfarmer.ejce.test.db.encryptor.bean.TextBean;
 import org.antfarmer.ejce.util.StreamUtil;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.junit.Test;
 
 /**
  * @author Ameer Antar
  */
-public class TextBeanTest extends AbstractLobDbTest {
+public class TextBeanTest extends AbstractLobDbTest<TextBean> {
 
-	private static final Class<?> BEAN_CLASS = TextBean.class;
+	private File file;
+	private Reader streamValue;
+	private long id = 1;
 
+	@Override
 	@Test
 	public void test() throws IOException {
 
-		final int[] sizes = {1000, 20 * 1024, 520 * 1024};
+		final int[] sizes = {1000, 20 * 1024, 1200 * 1024};
 
 		for (int i = 0; i < sizes.length; i++) {
-			final File file = createRandomDataFile(sizes[i], true);
-
-			final long id = i + 1;
-			final InputStream streamValue = new FileInputStream(file);
-
-			try {
-				execute(new HibernateCallback() {
-					@Override
-					public void doInHibernate(final Session session) {
-						TextBean sb = (TextBean) session.get(BEAN_CLASS, id);
-						assertNull(sb);
-						try {
-							sb = new TextBean(new String(StreamUtil.streamToBytes(streamValue)));
-							saveOrUpdate(sb);
-						}
-						catch (final IOException e) {
-							throw new HibernateException(e.getMessage(), e);
-						}
-					}
-				});
-			}
-			finally {
-				close(streamValue);
-			}
-
-			execute(new StatementCallback() {
-				@Override
-				protected void doStatment(final Statement stmt) throws SQLException {
-					final ResultSet rs = stmt.executeQuery("SELECT value FROM " + BEAN_CLASS.getSimpleName() + " WHERE id = " + id);
-					rs.next();
-					final Clob encValue = rs.getClob(1);
-					logger.info("Original Size: {}; Enc Size: {}", file.length(), encValue.length());
-					try {
-						assertData(false, file, encValue);
-					}
-					catch (final IOException e) {
-						throw new SQLException(e.getMessage(), e);
-					}
-				}
-			});
-
-			execute(new HibernateCallback() {
-				@Override
-				public void doInHibernate(final Session session) {
-					final TextBean sb = (TextBean) session.get(BEAN_CLASS, id);
-					assertNotNull(sb);
-					try {
-						logger.info("Original Size: {}; New Size: {}", file.length(), sb.getValue().length());
-						assertEquals(new String(StreamUtil.streamToBytes(new FileInputStream(file))), sb.getValue());
-					}
-					catch (final IOException e) {
-						throw new RuntimeException(e);
-					}
-				}
-			});
+			file = createRandomDataFile(sizes[i]);
+			streamValue = new FileReader(file);
+			super.test();
+			id += 2;
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void afterSave() {
+		close(streamValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected long getNextId() {
+		return id;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void assertEncrypted(final Object value, final ResultSet rs) throws SQLException, IOException {
+		final Clob encValue = rs.getClob(1);
+		logger.info("Original Size: {}; Enc Size: {}", file.length(), encValue.length());
+		try {
+			assertData(false, file, encValue);
+		}
+		catch (final IOException e) {
+			throw new SQLException(e.getMessage(), e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void assertDecryptedEqual(final Object value, final TextBean bean) throws SQLException, IOException {
+		try {
+			logger.info("Original Size: {}; New Size: {}", file.length(), bean.getValue().length());
+			assertEquals(new String(StreamUtil.streamToBytes(new FileInputStream(file))), bean.getValue());
+		}
+		catch (final Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	protected TextBean createBean() {
+		try {
+			return new TextBean(new String(StreamUtil.streamToBytes(new FileInputStream(file))));
+		}
+		catch (final IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	protected TextBean createEmptyBean() {
+		return new TextBean(null);
 	}
 
 }

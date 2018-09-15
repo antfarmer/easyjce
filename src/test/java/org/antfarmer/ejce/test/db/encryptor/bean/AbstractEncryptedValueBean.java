@@ -13,23 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.antfarmer.ejce.test.db.encryptor;
+package org.antfarmer.ejce.test.db.encryptor.bean;
 
-import org.antfarmer.ejce.test.db.encryptor.bean.DoubleBean;
+import org.antfarmer.ejce.test.db.AbstractBean;
 
 /**
  * @author Ameer Antar
  */
-public class DoubleBeanTest extends AbstractEncDbTest<DoubleBean> {
+public abstract class AbstractEncryptedValueBean<T> extends AbstractBean {
 
-	@Override
-	protected DoubleBean createBean() {
-		return new DoubleBean(3.3);
-	}
-
-	@Override
-	protected DoubleBean createEmptyBean() {
-		return new DoubleBean(null);
-	}
-
+	public abstract T getValue();
 }

@@ -16,67 +16,39 @@
 package org.antfarmer.ejce.test.db.encryptor;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
-import java.sql.ResultSet;
+import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import org.antfarmer.common.hibernate.HibernateManager.HibernateCallback;
-import org.antfarmer.ejce.test.db.AbstractDbTest;
 import org.antfarmer.ejce.test.db.encryptor.bean.CalendarBean;
-import org.hibernate.Session;
-import org.junit.Test;
 
 /**
  * @author Ameer Antar
  */
-public class CalendarBeanTest extends AbstractDbTest {
+public class CalendarBeanTest extends AbstractEncDbTest<CalendarBean> {
 
-	private static final Class<?> BEAN_CLASS = CalendarBean.class;
+	private final TimeZone tz = TimeZone.getTimeZone("GMT");
+	private final Calendar value = Calendar.getInstance(tz);
 
-	@Test
-	public void test() {
+	@Override
+	protected CalendarBean createBean() {
+		return new CalendarBean(value);
+	}
 
-		final long id = 1;
-		final TimeZone tz = TimeZone.getTimeZone("GMT");
-		final Calendar value = Calendar.getInstance(tz);
+	@Override
+	protected CalendarBean createEmptyBean() {
+		return new CalendarBean(null);
+	}
 
-		execute(new HibernateCallback() {
-			@Override
-			public void doInHibernate(final Session session) {
-				CalendarBean sb = (CalendarBean) session.get(BEAN_CLASS, id);
-				assertNull(sb);
-				sb = new CalendarBean(value);
-				saveOrUpdate(sb);
-			}
-		});
-
-		execute(new StatementCallback() {
-			@Override
-			protected void doStatment(final Statement stmt) throws SQLException {
-				final ResultSet rs = stmt.executeQuery("SELECT value FROM " + BEAN_CLASS.getSimpleName() + " WHERE id = " + id);
-				rs.next();
-				final String encValue = rs.getString(1);
-				logger.info(encValue);
-				assertNotEquals(value, encValue);
-			}
-		});
-
-		execute(new HibernateCallback() {
-			@Override
-			public void doInHibernate(final Session session) {
-				final CalendarBean sb = (CalendarBean) session.get(BEAN_CLASS, id);
-				assertNotNull(sb);
-				logger.info("{}", sb.getValue());
-				assertEquals(tz, sb.getValue().getTimeZone());
-				assertEquals(value, sb.getValue());
-			}
-		});
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void assertDecryptedEqual(final Object value, final CalendarBean bean) throws SQLException, IOException {
+		super.assertDecryptedEqual(value, bean);
+		assertEquals(tz, bean.getValue().getTimeZone());
 	}
 
 }

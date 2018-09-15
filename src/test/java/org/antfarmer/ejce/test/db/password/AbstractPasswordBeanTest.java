@@ -56,6 +56,11 @@ public abstract class AbstractPasswordBeanTest<T extends AbstractPasswordBean> e
 				assertNull(sb);
 				sb = createBean(password);
 				saveOrUpdate(sb);
+
+				sb = (T) session.get(beanClass, id + 1);
+				assertNull(sb);
+				sb = createBean(null);
+				saveOrUpdate(sb);
 			}
 		});
 
@@ -75,12 +80,17 @@ public abstract class AbstractPasswordBeanTest<T extends AbstractPasswordBean> e
 			@SuppressWarnings("unchecked")
 			@Override
 			public void doInHibernate(final Session session) {
-				final T sb = (T) session.get(beanClass, id);
+				T sb = (T) session.get(beanClass, id);
 				assertNotNull(sb);
 				final ConfigurablePasswordEncoder encoder = PasswordEncoderStore.get(sb.getStoreExportKey());
 				logger.info(sb.getPassword());
 				assertNotEquals(password, sb.getPassword());
 				assertTrue(encoder.matches(password, sb.getPassword()));
+
+				sb = (T) session.get(beanClass, id + 1);
+				assertNotNull(sb);
+				logger.info(sb.getPassword());
+				assertNull(password, sb.getPassword());
 			}
 		});
 	}

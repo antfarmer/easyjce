@@ -19,7 +19,6 @@ import java.sql.Blob;
 
 import javax.persistence.Entity;
 
-import org.antfarmer.ejce.test.db.AbstractBean;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
@@ -27,7 +26,7 @@ import org.hibernate.annotations.Type;
  * @author Ameer Antar
  */
 @Entity
-public class BlobBean extends AbstractBean {
+public class BlobBean extends AbstractEncryptedValueBean<Blob> {
 
 	private Blob value;
 
@@ -47,6 +46,7 @@ public class BlobBean extends AbstractBean {
 	 * Returns the value.
 	 * @return the value
 	 */
+	@Override
 	@Type(type = "org.antfarmer.ejce.hibernate.EncryptedBlobType", parameters = {
 			@Parameter(name = "paramClass", value = "org.antfarmer.ejce.parameter.AesParameters"),
 			@Parameter(name = "paramEncoder", value = "org.antfarmer.ejce.encoder.Base64Encoder"),

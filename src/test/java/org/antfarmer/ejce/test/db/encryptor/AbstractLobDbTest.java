@@ -33,12 +33,12 @@ import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.Arrays;
 
-import org.antfarmer.ejce.test.db.AbstractDbTest;
+import org.antfarmer.ejce.test.db.encryptor.bean.AbstractEncryptedValueBean;
 
 /**
  * @author Ameer Antar
  */
-public abstract class AbstractLobDbTest extends AbstractDbTest {
+public abstract class AbstractLobDbTest<T extends AbstractEncryptedValueBean<?>> extends AbstractEncDbTest<T> {
 
 	private static final int BUFF_SIZE = 4096;
 
