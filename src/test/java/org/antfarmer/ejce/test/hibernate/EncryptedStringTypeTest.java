@@ -61,6 +61,8 @@ public class EncryptedStringTypeTest extends EncryptedStringType {
 		final String enc = encrypt(o);
 		final Object dec = decrypt(enc);
 		assertEquals(o, dec);
+
+		assertSame(String.class, returnedClass());
 	}
 
 	@Test

@@ -16,6 +16,7 @@
 package org.antfarmer.ejce.test.hibernate;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import java.security.GeneralSecurityException;
 
@@ -52,6 +53,8 @@ public class EncryptedShortTypeTest extends EncryptedShortType {
 		final String enc = encrypt(o);
 		final Object dec = decrypt(enc);
 		assertEquals(o, dec);
+
+		assertSame(Short.class, returnedClass());
 	}
 
 	@Test

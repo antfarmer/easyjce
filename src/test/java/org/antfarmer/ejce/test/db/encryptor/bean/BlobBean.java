@@ -52,7 +52,10 @@ public class BlobBean extends AbstractEncryptedValueBean<Blob> {
 			@Parameter(name = "paramEncoder", value = "org.antfarmer.ejce.encoder.Base64Encoder"),
 			@Parameter(name = "key", value = "6P6H73dFdZSLoDZp7QPUsjusobxkptvaQ5v7ztzV8Q8"),
 			@Parameter(name = "encoder", value = "org.antfarmer.ejce.encoder.Base64Encoder"),
-			@Parameter(name = "streamLobs", value = "true")
+			@Parameter(name = "blockMode", value = "ECB"),
+			@Parameter(name = "streamLobs", value = "true"),
+			@Parameter(name = "streamBuffSize", value = "0"),	// ignored values
+			@Parameter(name = "maxInMemBuffSize", value = "0")	// ignored values
 	})
 	public Blob getValue() {
 		return value;

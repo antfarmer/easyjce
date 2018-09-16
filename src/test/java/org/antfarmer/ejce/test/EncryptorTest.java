@@ -140,6 +140,12 @@ public class EncryptorTest {
 
 		assertNull(encryptor.encryptAndEncode(null));
 		assertNull(encryptor.decryptAndDecode(null));
+
+		assertNull(encryptor.encrypt((byte[]) null));
+		assertNull(encryptor.decrypt((byte[]) null));
+
+		assertNull(encryptor.encrypt((String) null));
+		assertNull(encryptor.decrypt((String) null));
 	}
 
 	/**

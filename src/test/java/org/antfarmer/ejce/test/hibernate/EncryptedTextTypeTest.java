@@ -17,6 +17,7 @@ package org.antfarmer.ejce.test.hibernate;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -73,6 +74,8 @@ public class EncryptedTextTypeTest extends EncryptedTextType {
 		final InputStream enc = encryptStream(new ByteArrayInputStream(TEST_VALUE.getBytes(CHARSET)));
 		final InputStream dec = decryptStream(enc);
 		assertEquals(TEST_VALUE, new String(StreamUtil.streamToBytes(dec), CHARSET));
+
+		assertSame(String.class, returnedClass());
 	}
 
 	@Test

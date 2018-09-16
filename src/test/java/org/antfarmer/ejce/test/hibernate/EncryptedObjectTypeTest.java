@@ -16,6 +16,7 @@
 package org.antfarmer.ejce.test.hibernate;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -55,6 +56,8 @@ public class EncryptedObjectTypeTest extends EncryptedObjectType {
 		final String enc = encrypt(o);
 		final Object dec = decrypt(enc);
 		assertEquals(o, dec);
+
+		assertSame(Object.class, returnedClass());
 	}
 
 	@Test

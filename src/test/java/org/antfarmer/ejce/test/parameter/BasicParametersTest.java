@@ -26,7 +26,8 @@ import java.util.Random;
 
 import org.antfarmer.ejce.exception.EncryptorConfigurationException;
 import org.antfarmer.ejce.parameter.BlowfishParameters;
-import org.antfarmer.ejce.parameter.key_loader.KeyLoader;
+import org.antfarmer.ejce.parameter.key_loader.AbstractSymmetricKeyLoader;
+import org.antfarmer.ejce.test.AbstractTest;
 import org.antfarmer.ejce.util.CryptoUtil;
 import org.bouncycastle.util.Arrays;
 import org.junit.Test;
@@ -34,7 +35,7 @@ import org.junit.Test;
 /**
  * @author Ameer Antar
  */
-public class BasicParametersTest {
+public class BasicParametersTest extends AbstractTest {
 
 	private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 	private static final Random random = new Random();
@@ -49,6 +50,48 @@ public class BasicParametersTest {
 		params.setKey(keyBytes);
 		assertArrayEquals(copy, params.getKey().getEncoded());
 		assertArrayEquals(new byte[keyBytes.length], keyBytes);
+	}
+
+	@Test
+	public void testSetKeyLoader() throws GeneralSecurityException {
+		final BlowfishParameters params = new BlowfishParameters();
+		params.setKeyLoader(new MyKeyLoader());
+		params.getKey();
+		assertArrayEquals(MyKeyLoader.key.getEncoded(), params.getKey().getEncoded());
+	}
+
+	@Test
+	public void testSetBadKeyLoader() throws GeneralSecurityException {
+		final Class<? extends Throwable> exc = EncryptorConfigurationException.class;
+
+		assertException(exc, "instantiating", new Operation() {
+			@Override
+			public void run() throws Throwable {
+				new BlowfishParameters().setKeyLoader("o");
+			}
+		});
+
+		assertException(exc, "instantiating", new Operation() {
+			@Override
+			public void run() throws Throwable {
+				new BlowfishParameters().setKeyLoader(String.class.getName());
+			}
+		});
+
+		assertException(exc, "instantiating", new Operation() {
+			@Override
+			public void run() throws Throwable {
+				new BlowfishParameters().setKeyLoader(Integer.class.getName());
+			}
+		});
+
+		assertException(exc, "must either be a KeyLoader", new Operation() {
+			@Override
+			public void run() throws Throwable {
+				new BlowfishParameters().setKeyLoader(new Integer(4));
+			}
+		});
+
 	}
 
 	@Test
@@ -99,16 +142,65 @@ public class BasicParametersTest {
 		assertArrayEquals(MacKeyLoader.key.getEncoded(), params.getMacKey().getEncoded());
 	}
 
-	private static class MacKeyLoader implements KeyLoader {
+	@Test
+	public void testSetBadMacKeyLoader() throws GeneralSecurityException {
+		final Class<? extends Throwable> exc = EncryptorConfigurationException.class;
+
+		assertException(exc, "instantiating", new Operation() {
+			@Override
+			public void run() throws Throwable {
+				new BlowfishParameters().setMacKeyLoader("o").getMacKey();
+			}
+		});
+
+		assertException(exc, "instantiating", new Operation() {
+			@Override
+			public void run() throws Throwable {
+				new BlowfishParameters().setMacKeyLoader(String.class.getName()).getMacKey();
+			}
+		});
+
+		assertException(exc, "instantiating", new Operation() {
+			@Override
+			public void run() throws Throwable {
+				new BlowfishParameters().setMacKeyLoader(Integer.class.getName()).getMacKey();
+			}
+		});
+
+		assertException(exc, "must either be a KeyLoader", new Operation() {
+			@Override
+			public void run() throws Throwable {
+				new BlowfishParameters().setMacKeyLoader(new Integer(5)).getMacKey();
+			}
+		});
+
+	}
+
+	private static class MyKeyLoader extends AbstractSymmetricKeyLoader {
 		private static Key key;
 		@Override
-		public Key loadKey(final String algorithm) {
+		protected byte[] loadRawKey() {
 			try {
-				return key = CryptoUtil.generateSecretKey(BlowfishParameters.MAC_KEY_SIZE_128, BlowfishParameters.MAC_ALGORITHM_HMAC_SHA1);
+				key = CryptoUtil.generateSecretKey(BlowfishParameters.KEY_SIZE_128, BlowfishParameters.ALGORITHM_BLOWFISH);
 			}
 			catch (final NoSuchAlgorithmException e) {
 				throw new EncryptorConfigurationException(e);
 			}
+			return key.getEncoded();
+		}
+
+	}
+	private static class MacKeyLoader extends AbstractSymmetricKeyLoader {
+		private static Key key;
+		@Override
+		protected byte[] loadRawKey() {
+			try {
+				key = CryptoUtil.generateSecretKey(BlowfishParameters.MAC_KEY_SIZE_128, BlowfishParameters.MAC_ALGORITHM_HMAC_SHA1);
+			}
+			catch (final NoSuchAlgorithmException e) {
+				throw new EncryptorConfigurationException(e);
+			}
+			return key.getEncoded();
 		}
 
 	}

@@ -16,6 +16,7 @@
 package org.antfarmer.ejce.test.hibernate;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -71,6 +72,8 @@ public class EncryptedClobTypeTest extends EncryptedClobType {
 		final InputStream enc = encryptStream(new ByteArrayInputStream(TEST_VALUE.getBytes(CHARSET)));
 		final InputStream dec = decryptStream(enc);
 		assertEquals(TEST_VALUE, new String(StreamUtil.streamToBytes(dec), CHARSET));
+
+		assertSame(Clob.class, returnedClass());
 	}
 
 	/**

@@ -13,26 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.antfarmer.ejce.util;
+package org.antfarmer.ejce.test.util;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.antfarmer.ejce.util.ObjectUtil;
+import org.junit.Test;
 
 /**
- * Object-related utilities.
  * @author Ameer Antar
  */
-public class ObjectUtil {
+public class ObjectUtilTest {
 
-	private ObjectUtil() {
-		// static only
+	@Test
+	public void testEquals() {
+		final String a = "same";
+		final String b = "same";
+		final String c = "not";
+
+		assertTrue(ObjectUtil.equals(null, null));
+		assertFalse(ObjectUtil.equals(a, null));
+		assertFalse(ObjectUtil.equals(null, a));
+		assertTrue(ObjectUtil.equals(a, b));
+		assertTrue(ObjectUtil.equals(b, a));
+		assertFalse(ObjectUtil.equals(a, c));
+		assertFalse(ObjectUtil.equals(c, a));
 	}
-
-    /**
-     * Return true if the two given objects are equal.
-     * @param a object a
-     * @param b object b
-     * @return true if the two given objects are equal; false otherwise
-     */
-    public static boolean equals(final Object a, final Object b) {
-        return (a == b) || (a != null && a.equals(b));
-    }
-
 }

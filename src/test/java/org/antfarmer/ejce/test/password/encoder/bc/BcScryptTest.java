@@ -108,6 +108,7 @@ public class BcScryptTest extends AbstractPasswordTest<BcScryptEncoder> {
 	public void testNegMatch() {
 		assertFalse(encoder.matches(PASSWORD, null));
 		assertFalse(encoder.matches(PASSWORD, ""));
+		assertFalse(encoder.matches(PASSWORD, "t"));
 		assertFalse(encoder.matches(PASSWORD, encoder.encode(PASSWORD).substring(2)));
 	}
 

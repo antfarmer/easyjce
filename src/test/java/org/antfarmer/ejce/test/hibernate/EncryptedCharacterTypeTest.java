@@ -16,6 +16,7 @@
 package org.antfarmer.ejce.test.hibernate;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
@@ -53,6 +54,8 @@ public class EncryptedCharacterTypeTest extends EncryptedCharacterType {
 		final String enc = encrypt(o);
 		final Object dec = decrypt(enc);
 		assertEquals(o, dec);
+
+		assertSame(Character.class, returnedClass());
 	}
 
 	@Test

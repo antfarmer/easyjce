@@ -17,7 +17,10 @@ package org.antfarmer.ejce.test.hibernate;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -28,6 +31,7 @@ import java.security.GeneralSecurityException;
 import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Random;
 
 import org.antfarmer.ejce.hibernate.EncryptedBlobType;
@@ -35,6 +39,7 @@ import org.antfarmer.ejce.test.hibernate.util.TypeUtil;
 import org.antfarmer.ejce.util.StreamUtil;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
+import org.hibernate.HibernateException;
 import org.hibernate.engine.jdbc.LobCreator;
 import org.hibernate.engine.jdbc.spi.JdbcServices;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
@@ -71,13 +76,15 @@ public class EncryptedBlobTypeTest extends EncryptedBlobType {
 		final InputStream enc = encryptStream(new ByteArrayInputStream(TEST_VALUE));
 		final InputStream dec = decryptStream(enc);
 		assertArrayEquals(TEST_VALUE, StreamUtil.streamToBytes(dec));
+
+		assertSame(Blob.class, returnedClass());
 	}
 
 	/**
 	 * @throws Exception Exception
 	 */
 	@Test
-	public void testGetSet() throws Exception {
+	public void testGetSet() throws SQLException {
 		final String[] columnNames = {"column1"};
 
 		final SessionImplementor session = EasyMock.strictMock(SessionImplementor.class);
@@ -110,11 +117,37 @@ public class EncryptedBlobTypeTest extends EncryptedBlobType {
 		EasyMock.verify(bOut, lobCreator, services, factory, session, rs);
 	}
 
+	@Test
+	public void testGetUnencrypted() throws SQLException {
+		final String[] columnNames = {"column1"};
+
+		final SessionImplementor session = EasyMock.strictMock(SessionImplementor.class);
+
+		final Blob bOut = EasyMock.strictMock(Blob.class);
+		final ResultSet rs = EasyMock.strictMock(ResultSet.class);
+
+		final byte[] bytes = {' '};
+		EasyMock.expect(rs.getBinaryStream(columnNames[0])).andReturn(new ByteArrayInputStream(bytes));
+		EasyMock.expect(rs.wasNull()).andReturn(false);
+		EasyMock.replay(bOut, session, rs);
+		HibernateException ex = null;
+		try {
+			nullSafeGet(rs, columnNames, session, null);
+		}
+		catch (final HibernateException e) {
+			ex = e;
+		}
+		assertNotNull(ex);
+		assertSame(GeneralSecurityException.class, ex.getCause().getClass());
+		assertTrue(ex.getCause().getMessage().contains("parameter spec data"));
+		EasyMock.verify(bOut, session, rs);
+	}
+
 	/**
 	 * @throws Exception Exception
 	 */
 	@Test
-	public void testGetSetBuffered() throws Exception {
+	public void testGetSetBuffered() throws SQLException {
 		final String[] columnNames = {"column1"};
 
 		final byte[] buff = new byte[getMaxInMemoryBuffSize() << 1];

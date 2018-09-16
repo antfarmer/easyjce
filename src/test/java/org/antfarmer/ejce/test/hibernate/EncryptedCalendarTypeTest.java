@@ -16,6 +16,7 @@
 package org.antfarmer.ejce.test.hibernate;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import java.security.GeneralSecurityException;
 import java.util.Calendar;
@@ -53,6 +54,8 @@ public class EncryptedCalendarTypeTest extends EncryptedCalendarType {
 		final String enc = encrypt(o);
 		final Object dec = decrypt(enc);
 		assertEquals(o, dec);
+
+		assertSame(Calendar.class, returnedClass());
 	}
 
 	@Test

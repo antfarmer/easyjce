@@ -16,8 +16,6 @@
 package org.antfarmer.ejce.test.password;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.charset.Charset;
@@ -28,12 +26,13 @@ import java.util.Properties;
 
 import org.antfarmer.ejce.exception.EncryptorConfigurationException;
 import org.antfarmer.ejce.password.ConfigurablePasswordEncoder;
+import org.antfarmer.ejce.test.AbstractTest;
 import org.junit.Test;
 
 /**
  * @author Ameer Antar
  */
-public abstract class AbstractPasswordTest<P extends ConfigurablePasswordEncoder> {
+public abstract class AbstractPasswordTest<P extends ConfigurablePasswordEncoder> extends AbstractTest {
 
 	protected static final Charset CHARSET_UTF_8 = Charset.forName("UTF-8");
 	protected static final String PASSWORD = "PaSSw0rd";
@@ -72,7 +71,7 @@ public abstract class AbstractPasswordTest<P extends ConfigurablePasswordEncoder
 		assertException(props, EncryptorConfigurationException.class, null);
 	}
 
-	protected void assertException(final Properties props, final Class<? extends Exception> exc) {
+	protected void assertException(final Properties props, final Class<? extends Throwable> exc) {
 		assertException(props, exc, null);
 	}
 
@@ -80,19 +79,13 @@ public abstract class AbstractPasswordTest<P extends ConfigurablePasswordEncoder
 		assertException(props, EncryptorConfigurationException.class, messagePhrase);
 	}
 
-	protected void assertException(final Properties props, final Class<? extends Exception> exc, final String messagePhrase) {
-		Exception ex = null;
-		try {
-			createEncoder(props);
-		}
-		catch (final Exception e) {
-			ex = e;
-		}
-		assertNotNull(ex);
-		assertSame(exc, ex.getClass());
-		if (messagePhrase != null) {
-			assertTrue(ex.getMessage(), ex.getMessage().contains(messagePhrase));
-		}
+	protected void assertException(final Properties props, final Class<? extends Throwable> exc, final String messagePhrase) {
+		assertException(exc, messagePhrase, new Operation() {
+			@Override
+			public void run() throws Throwable {
+				createEncoder(props);
+			}
+		});
 	}
 
 	/**
