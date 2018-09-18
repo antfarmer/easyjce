@@ -31,7 +31,9 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.zip.GZIPInputStream;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterInputStream;
+import java.util.zip.InflaterInputStream;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -39,7 +41,6 @@ import javax.crypto.CipherInputStream;
 import org.antfarmer.ejce.exception.EncryptorConfigurationException;
 import org.antfarmer.ejce.parameter.AlgorithmParameters;
 import org.antfarmer.ejce.stream.EncryptInputStream;
-import org.antfarmer.ejce.stream.GZIPCompressionStream;
 import org.antfarmer.ejce.util.ByteUtil;
 import org.antfarmer.ejce.util.ConfigurerUtil;
 import org.antfarmer.ejce.util.TextUtil;
@@ -193,7 +194,8 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 		final byte[] paramData = parameters.generateParameterSpecData();
 		final AlgorithmParameterSpec paramSpec = parameters.createParameterSpec(paramData);
 		encCipher.init(Cipher.ENCRYPT_MODE, parameters.getEncryptionKey(), paramSpec);
-		return useCompression ? new EncryptInputStream(new GZIPCompressionStream(is), encCipher)
+		return useCompression
+			? new EncryptInputStream(new DeflaterInputStream(is, new Deflater(Deflater.BEST_COMPRESSION)), encCipher)
 			: new EncryptInputStream(is, encCipher);
 	}
 
@@ -215,7 +217,7 @@ public abstract class AbstractLobType extends AbstractHibernateType {
 			algorithmSpec = parameters.getParameterSpec(buff);
 		}
 		decCipher.init(Cipher.DECRYPT_MODE, parameters.getEncryptionKey(), algorithmSpec);
-		return useCompression ? new GZIPInputStream(new CipherInputStream(is, decCipher)) : new CipherInputStream(is, decCipher);
+		return useCompression ? new InflaterInputStream(new CipherInputStream(is, decCipher)) : new CipherInputStream(is, decCipher);
 	}
 
 	/**
