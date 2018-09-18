@@ -7,6 +7,14 @@
 
 **EasyJCE** provides an easy to use interface for encrypting, decrypting, and hashing data for transmission or storage using the Java Cryptographic Extension (JCE). EasyJCE supports most algorithms implemented for the JCE, including those provided by third-party encryption service providers. Integrated MAC (Message Authentication Code) support can optionally be used to ensure data integrity and indicate possible data tampering. A set of Hibernate user types is also included to transparently integrate encryption into the data layer, ensuring data is persisted in its encrypted form while obscuring encryption and decryption logic from application code. EasyJCE also provides basic encoding and decoding facilities for transmitting encrypted binary data through mediums which are limited to printable ASCII characters, such as email messages or URL's.
 
+## For the Impatient
+-[Here's](#programmatic-encryption) how to encrypt programmatically
+-[Here's](#declarative-encryption-via-hibernate-usertype-annotations) how to encrypt POJO fields using annotations
+-[Here's](#encryption-via-hibernate-usertype-using-xml-configuration) how to encrypt POJO fields using XML
+-[Here's](#programmatic-password-encoding) how to hash passwords programmatically
+-[Here's](#declarative-password-encoding-via-hibernate-usertype-annotations) how to hash password POJO fields using annotations
+-[Here's](#password-encoding-via-hibernate-usertype-using-xml-configuration) how to hash password POJO fields using XML
+
 ## Contents
 - [Installation](#installation)
   - [Maven](#maven)
@@ -32,16 +40,16 @@ Add this to `pom.xml` within the `dependencies` tag:
 <dependency>
 	<groupId>org.antfarmer</groupId>
 	<artifactId>easyjce</artifactId>
-	<version>1.0.0</version>
+	<version>1.1.0</version>
 </dependency>
 ```
 ### Gradle
 Add this to `build.gradle` in the `dependencies` block:
 ```groovy
-	compile 'org.antfarmer:easyjce:1.0.0'
+	compile 'org.antfarmer:easyjce:1.1.0'
 ```
 ### Required Libraries
-While the compile-time and testing dependencies are documented in the provided pom file, technically, there are no runtime dependencies for encryption. Here is a summary of the runtime requirements depending on the features needed:
+While the compile-time and testing dependencies are documented in the provided pom file, technically, there are no runtime dependencies for encryption. Here is a summary of the optional runtime requirements depending on the features needed:
 
 - Hibernate: integration with Hibernate's UserType interface for applying encryption/hashing to POJO fields
 - Bouncy Castle: password encoding and as a custom JCE provider
