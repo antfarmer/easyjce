@@ -4,6 +4,7 @@
 -add more block mode and key length constants
 -use Deflater streams to compress Hibernate LOB types
 -fix loading mac keys using mac KeyLoader interface
+-make dependencies compile only
 
 # [1.0.0] - 2018-09-13
 - add password encoding functionality including a Hibernate UserType for the following algorithms: Argon2, BCrypt, PBKDF2, and SCrypt
