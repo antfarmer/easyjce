@@ -29,6 +29,21 @@ public class RsaParameters extends AbstractAsymmetricAlgorithmParameters<RsaPara
 	public static final int KEY_SIZE_1024 = 1024;
 
 	/**
+	 * 2048-bit key size.
+	 */
+	public static final int KEY_SIZE_2048 = 2048;
+
+	/**
+	 * 3072-bit key size.
+	 */
+	public static final int KEY_SIZE_3072 = 3072;
+
+	/**
+	 * 4096-bit key size.
+	 */
+	public static final int KEY_SIZE_4096 = 4096;
+
+	/**
 	 * No padding.
 	 */
 	public static final String PADDING_NONE = "NoPadding";

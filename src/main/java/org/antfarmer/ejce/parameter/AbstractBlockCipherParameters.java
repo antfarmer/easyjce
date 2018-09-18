@@ -50,9 +50,24 @@ public abstract class AbstractBlockCipherParameters<T extends AbstractBlockCiphe
 	public static final String BLOCK_MODE_CBC = "CBC";
 
 	/**
+	 * Counter/CBC Mode, as defined in NIST Special Publication SP 800-38C.
+	 */
+	public static final String BLOCK_MODE_CCM = "CCM";
+
+	/**
 	 * Cipher Feedback Block Mode, as defined in FIPS PUB 81.
 	 */
 	public static final String BLOCK_MODE_CFB = "CFB";
+
+	/**
+	 * A simplification of OFB, Counter mode updates the input block as a counter.
+	 */
+	public static final String BLOCK_MODE_CTR = "CTR";
+
+	/**
+	 * Cipher Text Stealing, as described in Bruce Schneier's book Applied Cryptography-Second Edition, John Wiley and Sons, 1996.
+	 */
+	public static final String BLOCK_MODE_CTS = "CTS";
 
 	/**
 	 * Electronic Codebook Block Mode, as defined in: The National Institute of Standards and
