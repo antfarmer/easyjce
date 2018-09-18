@@ -13,16 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.antfarmer.ejce.test.db.encryptor.bean;
+package org.antfarmer.ejce.test.hibernate;
 
-import org.antfarmer.ejce.test.db.AbstractBean;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+
+import java.security.GeneralSecurityException;
+
+import org.antfarmer.ejce.hibernate.EncryptedTextType;
+import org.junit.Test;
 
 /**
- * Abstract bean for encryptor testing.
  * @author Ameer Antar
  */
-public abstract class AbstractEncryptedValueBean<T> extends AbstractBean {
+public class TextHibernateTypeTest extends EncryptedTextType {
 
-	public abstract T getValue();
+	@Test
+	public void testTypeMethods() throws GeneralSecurityException {
+
+		// enc/decrypt
+		final String o = new String();
+		assertNull(encrypt(o));
+		assertNull(decrypt(o));
+
+		// default: no compression
+		assertFalse(isUseCompression());
+	}
 
 }

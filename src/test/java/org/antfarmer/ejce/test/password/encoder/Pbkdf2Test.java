@@ -21,7 +21,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.security.Provider;
 import java.security.SecureRandom;
 import java.util.Properties;
 
@@ -30,7 +29,6 @@ import javax.crypto.SecretKeyFactory;
 import org.antfarmer.ejce.password.encoder.Pbkdf2Encoder;
 import org.antfarmer.ejce.test.password.AbstractPasswordTest;
 import org.antfarmer.ejce.util.ReflectionUtil;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Test;
 
 /**
@@ -45,7 +43,6 @@ public class Pbkdf2Test extends AbstractPasswordTest<Pbkdf2Encoder> {
 		final int saltLen = 32;
 		final int iterations = 100;
 		final Class<? extends SecureRandom> rc = MyRandom.class;
-		final Provider provider = new BouncyCastleProvider();
 
 		final String[] algos = {
 				Pbkdf2Encoder.ALGORITHM_PBKDF2_HMAC_SHA1,
@@ -67,7 +64,7 @@ public class Pbkdf2Test extends AbstractPasswordTest<Pbkdf2Encoder> {
 			props.setProperty(Pbkdf2Encoder.KEY_SALT_LENGTH, String.valueOf(saltLen));
 			props.setProperty(Pbkdf2Encoder.KEY_ITERATIONS, String.valueOf(iterations));
 			props.setProperty(Pbkdf2Encoder.KEY_ALGORITHM, algo);
-			props.setProperty(Pbkdf2Encoder.KEY_PROVIDER_CLASS, provider.getClass().getName());
+			props.setProperty(Pbkdf2Encoder.KEY_PROVIDER_CLASS, BC_PROVIDER.getClass().getName());
 			props.setProperty(Pbkdf2Encoder.KEY_RANDOM, rc.getName());
 			props.setProperty(Pbkdf2Encoder.KEY_PREFIX, "{pbkdf2}");
 			final Pbkdf2Encoder encoder = createEncoder(props);
@@ -77,7 +74,7 @@ public class Pbkdf2Test extends AbstractPasswordTest<Pbkdf2Encoder> {
 			assertEquals(Integer.valueOf(saltLen / 8), ReflectionUtil.getFieldValue(encoder, "saltLengthBytes"));
 			assertEquals(Integer.valueOf(iterations), ReflectionUtil.getFieldValue(encoder, "iterations"));
 			assertEquals(algo, ReflectionUtil.getFieldValue(encoder, "algorithm"));
-			assertSame(provider.getClass(), ((SecretKeyFactory) ReflectionUtil.getFieldValue(encoder, "skf")).getProvider().getClass());
+			assertSame(BC_PROVIDER.getClass(), ((SecretKeyFactory) ReflectionUtil.getFieldValue(encoder, "skf")).getProvider().getClass());
 			assertSame(rc, ReflectionUtil.getFieldValue(encoder, "random").getClass());
 
 			final String encoded = encoder.encode(PASSWORD);

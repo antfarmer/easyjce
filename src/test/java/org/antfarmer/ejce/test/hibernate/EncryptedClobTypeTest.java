@@ -15,28 +15,19 @@
  */
 package org.antfarmer.ejce.test.hibernate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.security.GeneralSecurityException;
 import java.sql.Clob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import org.antfarmer.ejce.hibernate.AbstractHibernateType;
 import org.antfarmer.ejce.hibernate.EncryptedClobType;
-import org.antfarmer.ejce.test.hibernate.util.TypeUtil;
-import org.antfarmer.ejce.util.StreamUtil;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.hibernate.engine.jdbc.LobCreator;
 import org.hibernate.engine.jdbc.spi.JdbcServices;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -44,39 +35,36 @@ import org.junit.Test;
  * @author Ameer Antar
  * @version 1.0
  */
-public class EncryptedClobTypeTest extends EncryptedClobType {
+public class EncryptedClobTypeTest extends AbstractEncryptedLobTypeTest<Clob> {
 
-	private static final Charset CHARSET = Charset.forName("UTF-8");
-	private static String TEST_VALUE;
+	private static final byte[] TEST_VALUE;
+	private static final String TEXT_VALUE;
 
 	static {
-		final byte[] content = new byte[1000];
-		random.nextBytes(content);
-		TEST_VALUE = new String(content, CHARSET);
+		TEST_VALUE = new byte[1000];
+		nextAsciiBytes(TEST_VALUE);
+		TEXT_VALUE = new String(TEST_VALUE, UTF8);
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 *
-	 */
-	@Before
-	public void init() throws GeneralSecurityException {
-		setParameterValues(TypeUtil.prepareTestEncryptorParameters(CHARSET));
+	public EncryptedClobTypeTest() {
+		super(UTF8);
 	}
 
-	@Test
-	public void test() throws GeneralSecurityException, IOException {
-
-		final InputStream enc = encryptStream(new ByteArrayInputStream(TEST_VALUE.getBytes(CHARSET)));
-		final InputStream dec = decryptStream(enc);
-		assertEquals(TEST_VALUE, new String(StreamUtil.streamToBytes(dec), CHARSET));
-
-		assertSame(Clob.class, returnedClass());
+	@Override
+	protected Object getTestValue() {
+		return TEST_VALUE;
 	}
 
-	/**
-	 * @throws Exception Exception
-	 */
+	@Override
+	protected AbstractHibernateType createHibernateType() {
+		return new EncryptedClobType();
+	}
+
+	@Override
+	protected EncryptThread createEncryptThread() {
+		return new ClobEncryptThread();
+	}
+
 	@Test
 	public void testGetSet() throws Exception {
 		final String[] columnNames = {"column1"};
@@ -91,12 +79,12 @@ public class EncryptedClobTypeTest extends EncryptedClobType {
 		final PreparedStatement ps = EasyMock.strictMock(PreparedStatement.class);
 		final ResultSet rs = EasyMock.strictMock(ResultSet.class);
 
-		EasyMock.expect(bIn.getAsciiStream()).andReturn(new ByteArrayInputStream(TEST_VALUE.getBytes(CHARSET)));
+		EasyMock.expect(bIn.getAsciiStream()).andReturn(new ByteArrayInputStream(TEST_VALUE));
 		final Capture<byte[]> encBytesCapt = EasyMock.newCapture();
 		ps.setBytes(EasyMock.eq(1), EasyMock.capture(encBytesCapt));
 		EasyMock.expectLastCall();
 		EasyMock.replay(bIn, ps);
-		nullSafeSet(ps, bIn, 1, null);
+		type.nullSafeSet(ps, bIn, 1, null);
 		EasyMock.verify(bIn, ps);
 		final byte[] enc = encBytesCapt.getValue();
 
@@ -105,30 +93,13 @@ public class EncryptedClobTypeTest extends EncryptedClobType {
 		EasyMock.expect(session.getFactory()).andReturn(factory);
 		EasyMock.expect(factory.getJdbcServices()).andReturn(services);
 		EasyMock.expect(services.getLobCreator(session)).andReturn(lobCreator);
-		EasyMock.expect(lobCreator.createClob(TEST_VALUE)).andReturn(bOut);
+		EasyMock.expect(lobCreator.createClob(TEXT_VALUE)).andReturn(bOut);
 		EasyMock.replay(bOut, lobCreator, services, factory, session, rs);
-		nullSafeGet(rs, columnNames, session, null);
+		type.nullSafeGet(rs, columnNames, session, null);
 		EasyMock.verify(bOut, lobCreator, services, factory, session, rs);
 	}
 
-	@Test
-	public void testThreadSafety() throws Throwable {
-		final int num = 25;
-		final EncryptThread[] threads = new EncryptThread[num];
-		for (int i=0; i<num; i++) {
-			threads[i] = new EncryptThread();
-			threads[i].start();
-		}
-		for (int i=0; i<num; i++) {
-			threads[i].join();
-			if (threads[i].exception != null) {
-				throw threads[i].exception;
-			}
-		}
-	}
-
-	private class EncryptThread extends Thread {
-		private Throwable exception;
+	private class ClobEncryptThread extends EncryptThread {
 
 		final String[] columnNames = {"column1"};
 
@@ -144,38 +115,29 @@ public class EncryptedClobTypeTest extends EncryptedClobType {
 
 		/**
 		 * {@inheritDoc}
-		 * @see java.lang.Thread#run()
 		 */
 		@Override
-		public void run() {
-			try {
-				for (int i=0; i<50; i++) {
-					EasyMock.expect(bIn.getAsciiStream()).andReturn(new ByteArrayInputStream(TEST_VALUE.getBytes(CHARSET)));
-					final Capture<byte[]> encBytesCapt = EasyMock.newCapture();
-					ps.setBytes(EasyMock.eq(1), EasyMock.capture(encBytesCapt));
-					EasyMock.expectLastCall();
-					EasyMock.replay(bIn, ps);
-					nullSafeSet(ps, bIn, 1, null);
-					EasyMock.verify(bIn, ps);
-					final byte[] enc = encBytesCapt.getValue();
+		protected void doIteration() throws Throwable {
+			EasyMock.expect(bIn.getAsciiStream()).andReturn(new ByteArrayInputStream(TEST_VALUE));
+			final Capture<byte[]> encBytesCapt = EasyMock.newCapture();
+			ps.setBytes(EasyMock.eq(1), EasyMock.capture(encBytesCapt));
+			EasyMock.expectLastCall();
+			EasyMock.replay(bIn, ps);
+			type.nullSafeSet(ps, bIn, 1, null);
+			EasyMock.verify(bIn, ps);
+			final byte[] enc = encBytesCapt.getValue();
 
-					EasyMock.expect(rs.getBinaryStream(columnNames[0])).andReturn(new ByteArrayInputStream(enc));
-					EasyMock.expect(rs.wasNull()).andReturn(false);
-					EasyMock.expect(session.getFactory()).andReturn(factory);
-					EasyMock.expect(factory.getJdbcServices()).andReturn(services);
-					EasyMock.expect(services.getLobCreator(session)).andReturn(lobCreator);
-					EasyMock.expect(lobCreator.createClob(TEST_VALUE)).andReturn(bOut);
-					EasyMock.replay(bOut, lobCreator, services, factory, session, rs);
-					nullSafeGet(rs, columnNames, session, null);
-					EasyMock.verify(bOut, lobCreator, services, factory, session, rs);
+			EasyMock.expect(rs.getBinaryStream(columnNames[0])).andReturn(new ByteArrayInputStream(enc));
+			EasyMock.expect(rs.wasNull()).andReturn(false);
+			EasyMock.expect(session.getFactory()).andReturn(factory);
+			EasyMock.expect(factory.getJdbcServices()).andReturn(services);
+			EasyMock.expect(services.getLobCreator(session)).andReturn(lobCreator);
+			EasyMock.expect(lobCreator.createClob(TEXT_VALUE)).andReturn(bOut);
+			EasyMock.replay(bOut, lobCreator, services, factory, session, rs);
+			type.nullSafeGet(rs, columnNames, session, null);
+			EasyMock.verify(bOut, lobCreator, services, factory, session, rs);
 
-					EasyMock.reset(bIn, ps, bOut, lobCreator, services, factory, session, rs);
-				}
-			}
-			catch (final Throwable e) {
-				exception = e;
-				e.printStackTrace();
-			}
+			EasyMock.reset(bIn, ps, bOut, lobCreator, services, factory, session, rs);
 		}
 
 	}

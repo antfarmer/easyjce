@@ -21,6 +21,7 @@ import javax.persistence.Transient;
 import org.antfarmer.ejce.test.db.AbstractBean;
 
 /**
+ * Abstract bean for password hashing tests.
  * @author Ameer Antar
  */
 @MappedSuperclass

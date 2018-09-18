@@ -15,87 +15,34 @@
  */
 package org.antfarmer.ejce.test.hibernate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-
-import java.awt.Color;
 import java.awt.Point;
-import java.security.GeneralSecurityException;
 
+import org.antfarmer.ejce.hibernate.AbstractHibernateType;
 import org.antfarmer.ejce.hibernate.EncryptedObjectType;
-import org.antfarmer.ejce.test.hibernate.util.TypeUtil;
-import org.junit.Before;
-import org.junit.Test;
-
 
 /**
  *
  * @author Ameer Antar
  * @version 1.0
  */
-public class EncryptedObjectTypeTest extends EncryptedObjectType {
+public class EncryptedObjectTypeTest extends AbstractEncryptedTypeTest<Object> {
 
-	private static final Point TEST_VALUE = new Point(99, 66);
-
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 *
-	 */
-	@Before
-	public void init() throws GeneralSecurityException {
-		setParameterValues(TypeUtil.prepareTestEncryptor());
-	}
+	private static final Point TEST_VALUE = new Point(RANDOM.nextInt(), RANDOM.nextInt());
 
 	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
+	 * {@inheritDoc}
 	 */
-	@Test
-	public void test() throws GeneralSecurityException {
-		final Color o = new Color(random.nextInt());
-		final String enc = encrypt(o);
-		final Object dec = decrypt(enc);
-		assertEquals(o, dec);
-
-		assertSame(Object.class, returnedClass());
+	@Override
+	protected AbstractHibernateType createHibernateType() {
+		return new EncryptedObjectType();
 	}
 
-	@Test
-	public void testThreadSafety() throws Throwable {
-		final int num = 25;
-		final EncryptThread[] threads = new EncryptThread[num];
-		for (int i=0; i<num; i++) {
-			threads[i] = new EncryptThread();
-			threads[i].start();
-		}
-		for (int i=0; i<num; i++) {
-			threads[i].join();
-			if (threads[i].exception != null) {
-				throw threads[i].exception;
-			}
-		}
-	}
-
-	private class EncryptThread extends Thread {
-		private Throwable exception;
-
-		/**
-		 * {@inheritDoc}
-		 * @see java.lang.Thread#run()
-		 */
-		@Override
-		public void run() {
-			try {
-				for (int i=0; i<50; i++) {
-					final String enc = encrypt(TEST_VALUE);
-					assertEquals(TEST_VALUE, decrypt(enc));
-				}
-			}
-			catch (final Throwable e) {
-				exception = e;
-				e.printStackTrace();
-			}
-		}
-
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected Object getTestValue() {
+		return TEST_VALUE;
 	}
 
 }

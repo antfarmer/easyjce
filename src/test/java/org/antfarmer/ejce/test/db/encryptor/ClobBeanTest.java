@@ -132,13 +132,11 @@ public class ClobBeanTest extends AbstractLobDbTest<ClobBean> {
 			writeThreads[i] = new LobWriteThread();
 			writeThreads[i].start();
 		}
-		// wait
+		// wait and check for errors
 		for (int i = 0; i < writeThreads.length; i++) {
 			writeThreads[i].join();
 			value = writeThreads[i].value;
-		}
-		// check for errors
-		for (int i = 0; i < writeThreads.length; i++) {
+
 			if (writeThreads[i].throwable != null) {
 				throw writeThreads[i].throwable;
 			}
@@ -150,12 +148,10 @@ public class ClobBeanTest extends AbstractLobDbTest<ClobBean> {
 			readThreads[i] = new LobReadThread(i, value);
 			readThreads[i].start();
 		}
-		// wait
+		// wait and check for errors
 		for (int i = 0; i < readThreads.length; i++) {
 			readThreads[i].join();
-		}
-		// check for errors
-		for (int i = 0; i < readThreads.length; i++) {
+
 			if (readThreads[i].throwable != null) {
 				throw readThreads[i].throwable;
 			}

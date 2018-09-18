@@ -24,6 +24,7 @@ import java.util.Random;
 import java.util.concurrent.Callable;
 
 import org.antfarmer.common.Loggable;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
  * @author Ameer Antar
@@ -34,10 +35,12 @@ public abstract class AbstractTest extends Loggable {
 
 	protected static final Random RANDOM = new Random();
 
+	protected static final BouncyCastleProvider BC_PROVIDER = new BouncyCastleProvider();
+
 	/**
 	 * @return a random ASCII letter
 	 */
-	protected byte nextAscii() {
+	protected static byte nextAscii() {
 		return (byte) (33 + RANDOM.nextInt(94));
 	}
 
@@ -46,7 +49,7 @@ public abstract class AbstractTest extends Loggable {
 	 * @param bytes the byte array
 	 * @return the byte array
 	 */
-	protected byte[] nextAsciiBytes(final byte[] bytes) {
+	protected static byte[] nextAsciiBytes(final byte[] bytes) {
 		for (int i = 0; i < bytes.length; i++) {
 			bytes[i] = nextAscii();
 		}
@@ -54,11 +57,20 @@ public abstract class AbstractTest extends Loggable {
 	}
 
 	/**
+	 * Converts the given text to a byte array using the UTF-8 charset.
+	 * @param text the text
+	 * @return the byte representation of the given text
+	 */
+	protected static byte[] toBytes(final String text) {
+		return text.getBytes(UTF8);
+	}
+
+	/**
 	 * Asserts that the given operation triggers the expected exception.
 	 * @param exc the expected {@link Throwable}
 	 * @param operation the {@link Callable} operation
 	 */
-	protected void assertException(final Class<? extends Throwable> exc, final Operation operation) {
+	protected static void assertException(final Class<? extends Throwable> exc, final Operation operation) {
 		assertException(exc, null, operation);
 	}
 
@@ -68,7 +80,7 @@ public abstract class AbstractTest extends Loggable {
 	 * @param messagePhrase the phrase that should be contained in the exception message (if any)
 	 * @param operation the {@link Callable} operation
 	 */
-	protected void assertException(final Class<? extends Throwable> exc, final String messagePhrase, final Operation operation) {
+	protected static void assertException(final Class<? extends Throwable> exc, final String messagePhrase, final Operation operation) {
 		Throwable ex = null;
 		try {
 			operation.run();

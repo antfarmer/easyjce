@@ -53,9 +53,6 @@ public abstract class AbstractEncoderTest extends AbstractTest {
 	 */
 	protected abstract String getEncodedCharsetPattern();
 
-	/**
-	 *
-	 */
 	@Test
 	public void test() {
 		assertNull(encoder.encode(null));
@@ -67,9 +64,6 @@ public abstract class AbstractEncoderTest extends AbstractTest {
 		assertArrayEquals(TEST_TEXT.getBytes(), encoder.decode(encoded));
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void testRandomData() {
 		for (int i=0; i<RANDOM_ITERATIONS; i++) {

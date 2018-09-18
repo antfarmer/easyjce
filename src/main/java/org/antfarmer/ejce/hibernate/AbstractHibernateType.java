@@ -47,7 +47,7 @@ import org.hibernate.usertype.UserType;
  */
 public abstract class AbstractHibernateType implements UserType, ParameterizedType {
 
-	private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+	protected static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
 	private static final int[] sqlTypes = new int[] {Types.VARCHAR};
 

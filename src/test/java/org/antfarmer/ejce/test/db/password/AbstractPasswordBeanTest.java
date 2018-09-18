@@ -20,8 +20,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -31,6 +29,7 @@ import org.antfarmer.ejce.password.ConfigurablePasswordEncoder;
 import org.antfarmer.ejce.password.PasswordEncoderStore;
 import org.antfarmer.ejce.test.db.AbstractDbTest;
 import org.antfarmer.ejce.test.db.password.bean.AbstractPasswordBean;
+import org.antfarmer.ejce.test.utils.TestUtil;
 import org.hibernate.Session;
 import org.junit.After;
 import org.junit.Test;
@@ -40,7 +39,7 @@ import org.junit.Test;
  */
 public abstract class AbstractPasswordBeanTest<T extends AbstractPasswordBean> extends AbstractDbTest {
 
-	private final Class<T> beanClass = loadEntityClass();
+	private final Class<T> beanClass = TestUtil.getGenericType(getClass(), AbstractPasswordBean.class);
 
 	@Test
 	public void test() {
@@ -96,35 +95,6 @@ public abstract class AbstractPasswordBeanTest<T extends AbstractPasswordBean> e
 	}
 
 	protected abstract T createBean(String password);
-
-	/**
-	 * Finds the type of the generic parameter T.
-	 */
-	@SuppressWarnings("unchecked")
-	private Class<T> loadEntityClass() {
-		Class<?> clazz = getClass();
-		Type type = clazz.getGenericSuperclass();
-		while (true) {
-			if (type instanceof ParameterizedType) {
-				final Type[] arguments = ((ParameterizedType)type).getActualTypeArguments();
-				for (final Type argument : arguments) {
-					if (argument instanceof Class
-							&& AbstractPasswordBean.class.isAssignableFrom((Class<?>)argument)) {
-						return (Class<T>)argument;
-					}
-				}
-				clazz = clazz.getSuperclass();
-				type = clazz.getGenericSuperclass();
-			}
-			else {
-				type = ((Class<?>)type).getGenericSuperclass();
-			}
-			if (type == Object.class) {
-				throw new RuntimeException(
-						"Could not find a Bean subclass parameterized type");
-			}
-		}
-	}
 
 	@After
 	public void after() {

@@ -35,7 +35,6 @@ import org.antfarmer.ejce.parameter.PbeParameters;
 import org.antfarmer.ejce.parameter.RsaParameters;
 import org.antfarmer.ejce.test.AbstractTest;
 import org.antfarmer.ejce.util.CryptoUtil;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Test;
 
 
@@ -45,9 +44,6 @@ import org.junit.Test;
  * @version 1.0
  */
 public class CryptoUtilTest extends AbstractTest {
-
-	private static final BouncyCastleProvider BC_PROVIDER = new BouncyCastleProvider();
-
 
 	@Test
 	public void testKeySize() throws NoSuchAlgorithmException {

@@ -52,6 +52,7 @@ import org.antfarmer.ejce.parameter.salt.SaltMatcher;
 import org.antfarmer.ejce.password.ConfigurablePasswordEncoder;
 import org.antfarmer.ejce.password.PasswordEncoderStore;
 import org.antfarmer.ejce.password.encoder.spring.SpringBcryptEncoder;
+import org.antfarmer.ejce.test.AbstractTest;
 import org.antfarmer.ejce.util.ConfigurerUtil;
 import org.antfarmer.ejce.util.CryptoUtil;
 import org.antfarmer.ejce.util.ReflectionUtil;
@@ -64,7 +65,7 @@ import org.junit.Test;
  * @author Ameer Antar
  * @version 1.0
  */
-public class ConfigurerUtilTest {
+public class ConfigurerUtilTest extends AbstractTest {
 
 	@After
 	public void after() {
@@ -134,7 +135,7 @@ public class ConfigurerUtilTest {
 
 		assertEquals(HexEncoder.class, ReflectionUtil.getFieldValue(encryptor, "textEncoder").getClass());
 		assertEquals(Base32Encoder.class, ReflectionUtil.getFieldValue(parameters, "textEncoder").getClass());
-		assertEquals(Charset.forName("UTF-8"), encryptor.getCharset());
+		assertEquals(UTF8, encryptor.getCharset());
 		assertEquals(key, Base32Encoder.getInstance().encode(parameters.getKey().getEncoded()));
 		assertEquals(PbeParameters.ALGORITHM_PBE_MD5_DES, parameters.getAlgorithm());
 		assertEquals(sun.security.provider.Sun.class, parameters.getProvider().getClass());
@@ -176,7 +177,7 @@ public class ConfigurerUtilTest {
 
 		assertEquals(HexEncoder.class, ReflectionUtil.getFieldValue(encryptor, "textEncoder").getClass());
 		assertEquals(Base32Encoder.class, ReflectionUtil.getFieldValue(parameters, "textEncoder").getClass());
-		assertEquals(Charset.forName("UTF-8"), encryptor.getCharset());
+		assertEquals(UTF8, encryptor.getCharset());
 		assertEquals(key, Base32Encoder.getInstance().encode(parameters.getKey().getEncoded()));
 		assertEquals(PbeParameters.ALGORITHM_PBE_MD5_DES, parameters.getAlgorithm());
 		assertEquals(sun.security.provider.Sun.class, parameters.getProvider().getClass());
@@ -355,7 +356,7 @@ public class ConfigurerUtilTest {
 	 */
 	@Test
 	public void testSetParameterValuesViaSysProps1() throws Exception {
-		final Charset cs = Charset.forName("UTF-8");
+		final Charset cs = UTF8;
 		final String key = Base32Encoder.getInstance().encode("SMOKESOMEOFMYTIE".getBytes());
 		final String macKey = Base32Encoder.getInstance().encode("SMOKEAJAYINTHEGOODOLUSA".getBytes());
 		final String gcmSize = String.valueOf(CamelliaParameters.GCM_AUTH_TAG_LEN_128);
@@ -816,7 +817,7 @@ public class ConfigurerUtilTest {
 		cipher = ConfigurerUtil.getCipherInstance(params);
 		assertEquals(AesParameters.ALGORITHM_AES + '/' + AesParameters.BLOCK_MODE_CFB + '/' + AesParameters.PADDING_PKCS5, cipher.getAlgorithm());
 
-		params.setBlockMode(AesParameters.BLOCK_MODE_OFB).setPadding(AesParameters.PADDING_NONE).setProvider(new BouncyCastleProvider());
+		params.setBlockMode(AesParameters.BLOCK_MODE_OFB).setPadding(AesParameters.PADDING_NONE).setProvider(BC_PROVIDER);
 		cipher = ConfigurerUtil.getCipherInstance(params);
 		assertEquals(AesParameters.ALGORITHM_AES + '/' + AesParameters.BLOCK_MODE_OFB + '/' + AesParameters.PADDING_NONE, cipher.getAlgorithm());
 		assertEquals(BouncyCastleProvider.class, cipher.getProvider().getClass());

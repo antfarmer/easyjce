@@ -22,6 +22,7 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 /**
+ * Abstract bean class for testing.
  * @author Ameer Antar
  */
 @MappedSuperclass

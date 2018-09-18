@@ -18,7 +18,6 @@ package org.antfarmer.ejce.test.parameter;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNull;
 
-import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
@@ -35,8 +34,6 @@ import org.junit.Test;
  * @author Ameer Antar
  */
 public class BasicParametersTest extends AbstractTest {
-
-	private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
 	@Test
 	public void testSetEncKey() throws GeneralSecurityException {
@@ -127,7 +124,7 @@ public class BasicParametersTest extends AbstractTest {
 		assertNull(params.getMacKey());
 		params.setMacKey(key);
 		params.setMacAlgorithm(BlowfishParameters.MAC_ALGORITHM_HMAC_SHA1);
-		assertArrayEquals(key.getBytes(DEFAULT_CHARSET), params.getMacKey().getEncoded());
+		assertArrayEquals(key.getBytes(UTF8), params.getMacKey().getEncoded());
 	}
 
 	@Test

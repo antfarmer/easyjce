@@ -17,7 +17,6 @@ package org.antfarmer.ejce.test.hibernate;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -27,16 +26,16 @@ import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Properties;
 
+import org.antfarmer.common.util.ReflectionUtil;
+import org.antfarmer.ejce.hibernate.AbstractHibernateType;
 import org.antfarmer.ejce.hibernate.EncryptedTextType;
-import org.antfarmer.ejce.test.hibernate.util.TypeUtil;
 import org.antfarmer.ejce.util.ConfigurerUtil;
 import org.antfarmer.ejce.util.StreamUtil;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
-import org.junit.Before;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.junit.Test;
 
 /**
@@ -44,36 +43,56 @@ import org.junit.Test;
  * @author Ameer Antar
  * @version 1.0
  */
-public class EncryptedTextTypeTest extends EncryptedTextType {
+public class EncryptedTextTypeTest extends AbstractEncryptedLobTypeTest<String> {
 
-	private static final Charset CHARSET = Charset.forName("UTF-8");
-	private static String TEST_VALUE;
+	private static final byte[] TEST_VALUE;
+	private static final String TEXT_VALUE;
 
 	static {
-		final byte[] content = new byte[10000];
-		random.nextBytes(content);
-		TEST_VALUE = new String(content, CHARSET);
+		TEST_VALUE = new byte[10000];
+		nextAsciiBytes(TEST_VALUE);
+		TEXT_VALUE = new String(TEST_VALUE, UTF8);
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 *
-	 */
-	@Before
-	public void init() throws GeneralSecurityException {
+	public EncryptedTextTypeTest() {
+		super(UTF8, createProps());
+	}
+
+	private static Properties createProps() {
 		final Properties props = new Properties();
 		props.put(ConfigurerUtil.KEY_COMPRESS_LOB, true);
-		setParameterValues(TypeUtil.prepareTestEncryptorParameters(CHARSET, props));
+		return props;
 	}
 
-	@Test
-	public void test() throws GeneralSecurityException, IOException {
+	@Override
+	protected Object getTestValue() {
+		return TEST_VALUE;
+	}
 
-		final InputStream enc = encryptStream(new ByteArrayInputStream(TEST_VALUE.getBytes(CHARSET)));
-		final InputStream dec = decryptStream(enc);
-		assertEquals(TEST_VALUE, new String(StreamUtil.streamToBytes(dec), CHARSET));
+	@Override
+	protected AbstractHibernateType createHibernateType() {
+		return new EncryptedTextType();
+	}
 
-		assertSame(String.class, returnedClass());
+	@Override
+	protected EncryptThread createEncryptThread() {
+		return new TextEncryptThread();
+	}
+
+	protected int getStreamBuffSize() throws Exception {
+		return ReflectionUtil.invokeMethod(type, "getStreamBuffSize");
+	}
+
+	protected int getMaxInMemoryBuffSize() throws Exception {
+		return ReflectionUtil.invokeMethod(type, "getMaxInMemoryBuffSize");
+	}
+
+	protected Object streamToLob(final InputStream is, final SessionImplementor session) throws Exception {
+		return ReflectionUtil.invokeMethod(type, "streamToLob", InputStream.class, SessionImplementor.class, is, session);
+	}
+
+	protected void setStream(final PreparedStatement st, final int index, final InputStream is) throws Exception {
+		ReflectionUtil.invokeMethod(type, "setStream", PreparedStatement.class, int.class, InputStream.class, st, index, is);
 	}
 
 	@Test
@@ -84,56 +103,53 @@ public class EncryptedTextTypeTest extends EncryptedTextType {
 		System.out.println(Charset.defaultCharset());
 		System.out.println(o);
 
-		final InputStream enc = encryptStream(new ByteArrayInputStream(o.getBytes(CHARSET)));
+		final InputStream enc = encryptStream(new ByteArrayInputStream(o.getBytes(UTF8)));
 		final InputStream dec = decryptStream(enc);
-		final String decString = new String(StreamUtil.streamToBytes(dec), CHARSET);
+		final String decString = new String(StreamUtil.streamToBytes(dec), UTF8);
 		System.out.println(decString);
 		assertEquals(o, decString);
 	}
 
 	@Test
-	public void testLobToStream() throws IOException, SQLException {
-		final InputStream is = lobToStream(TEST_VALUE);
-		assertEquals(TEST_VALUE, new String(StreamUtil.streamToBytes(is), CHARSET));
+	public void testLobToStream() throws Exception {
+		final InputStream is = ReflectionUtil.invokeMethod(type, "lobToStream", Object.class, new String(TEST_VALUE, UTF8));
+		assertEquals(TEXT_VALUE, new String(StreamUtil.streamToBytes(is), UTF8));
 	}
 
 	@Test
-	public void testCreateLob() throws IOException {
-		String lob = (String) createLob(TEST_VALUE.getBytes(CHARSET), null);
-		assertEquals(TEST_VALUE, lob);
+	public void testCreateLob() throws Exception {
+		String lob = (String) ReflectionUtil.invokeMethod(type, "createLob",
+				byte[].class, SessionImplementor.class, TEST_VALUE, null);
+		assertEquals(TEXT_VALUE, lob);
 
-		final byte[] buff = TEST_VALUE.getBytes(CHARSET);
-		final ByteArrayInputStream bais = new ByteArrayInputStream(buff);
-		lob = (String) createLob(bais, buff.length, null);
-		assertEquals(TEST_VALUE, lob);
+		final ByteArrayInputStream bais = new ByteArrayInputStream(TEST_VALUE);
+		lob = (String) ReflectionUtil.invokeMethod(type, "createLob",
+				InputStream.class, long.class, SessionImplementor.class, bais, TEST_VALUE.length, null);
+		assertEquals(TEXT_VALUE, lob);
 	}
 
 	@Test
-	public void testStreamToLob() throws IOException, SQLException {
-		byte[] buff = TEST_VALUE.getBytes(CHARSET);
+	public void testStreamToLob() throws Exception {
+		byte[] buff = TEST_VALUE;
 		ByteArrayInputStream bais = new ByteArrayInputStream(buff);
-		assertEquals(TEST_VALUE, streamToLob(bais, null));
+		assertEquals(TEXT_VALUE, streamToLob(bais, null));
 
 		// test < buffer size
 		buff = new byte[getStreamBuffSize() >> 1];
-		random.nextBytes(buff);
+		RANDOM.nextBytes(buff);
 		bais = new ByteArrayInputStream(buff);
-		assertEquals(new String(buff, CHARSET), streamToLob(bais, null));
+		assertEquals(new String(buff, UTF8), streamToLob(bais, null));
 
 		// test file buffering
 		buff = new byte[getMaxInMemoryBuffSize() << 1];
-		random.nextBytes(buff);
+		RANDOM.nextBytes(buff);
 		bais = new ByteArrayInputStream(buff);
-		assertEquals(new String(buff, CHARSET), streamToLob(bais, null));
+		assertEquals(new String(buff, UTF8), streamToLob(bais, null));
 	}
 
-	/**
-	 * @throws IOException IOException
-	 * @throws SQLException SQLException
-	 */
 	@Test
-	public void testSetStream() throws IOException, SQLException {
-		byte[] buff = TEST_VALUE.getBytes(CHARSET);
+	public void testSetStream() throws Exception {
+		byte[] buff = TEST_VALUE;
 		ByteArrayInputStream bais = new ByteArrayInputStream(buff);
 		final PreparedStatement ps = EasyMock.strictMock(PreparedStatement.class);
 		ps.setBytes(1, buff);
@@ -146,7 +162,7 @@ public class EncryptedTextTypeTest extends EncryptedTextType {
 
 		// test < buffer size
 		buff = new byte[getStreamBuffSize() >> 1];
-		random.nextBytes(buff);
+		RANDOM.nextBytes(buff);
 		bais = new ByteArrayInputStream(buff);
 		ps.setBytes(1, buff);
 		EasyMock.expectLastCall();
@@ -158,7 +174,7 @@ public class EncryptedTextTypeTest extends EncryptedTextType {
 
 		// test file buffering
 		buff = new byte[getMaxInMemoryBuffSize() << 1];
-		random.nextBytes(buff);
+		RANDOM.nextBytes(buff);
 		bais = new ByteArrayInputStream(buff);
 		final Capture<BufferedInputStream> capture = EasyMock.newCapture();
 		ps.setBinaryStream(EasyMock.eq(1), EasyMock.capture(capture), EasyMock.eq((long) buff.length));
@@ -171,9 +187,6 @@ public class EncryptedTextTypeTest extends EncryptedTextType {
 		assertArrayEquals(buff, StreamUtil.streamToBytes(is));
 	}
 
-	/**
-	 * @throws Exception Exception
-	 */
 	@Test
 	public void testGetSet() throws Exception {
 		final String[] columnNames = {"column1"};
@@ -185,73 +198,44 @@ public class EncryptedTextTypeTest extends EncryptedTextType {
 		ps.setBytes(EasyMock.eq(1), EasyMock.capture(encBytesCapt));
 		EasyMock.expectLastCall();
 		EasyMock.replay(ps);
-		nullSafeSet(ps, TEST_VALUE, 1, null);
+		type.nullSafeSet(ps, TEXT_VALUE, 1, null);
 		EasyMock.verify(ps);
 		final byte[] enc = encBytesCapt.getValue();
 
 		EasyMock.expect(rs.getBinaryStream(columnNames[0])).andReturn(new ByteArrayInputStream(enc));
 		EasyMock.expect(rs.wasNull()).andReturn(false);
 		EasyMock.replay(rs);
-		final String dec = (String) nullSafeGet(rs, columnNames, null, null);
+		final String dec = (String) type.nullSafeGet(rs, columnNames, null, null);
 		EasyMock.verify(rs);
 
-		assertEquals(TEST_VALUE, dec);
+		assertEquals(TEXT_VALUE, dec);
 	}
 
-	@Test
-	public void testThreadSafety() throws Throwable {
-		final int num = 25;
-		final EncryptThread[] threads = new EncryptThread[num];
-		for (int i=0; i<num; i++) {
-			threads[i] = new EncryptThread();
-			threads[i].start();
-		}
-		for (int i=0; i<num; i++) {
-			threads[i].join();
-			if (threads[i].exception != null) {
-				throw threads[i].exception;
-			}
-		}
-	}
 
-	private class EncryptThread extends Thread {
+	private class TextEncryptThread extends EncryptThread {
 		private final String[] columnNames = {"column1"};
-		private Throwable exception;
 
-		/**
-		 * {@inheritDoc}
-		 * @see java.lang.Thread#run()
-		 */
+		final PreparedStatement ps = EasyMock.strictMock(PreparedStatement.class);
+		final ResultSet rs = EasyMock.strictMock(ResultSet.class);
+
 		@Override
-		public void run() {
-			try {
-				final PreparedStatement ps = EasyMock.strictMock(PreparedStatement.class);
-				final ResultSet rs = EasyMock.strictMock(ResultSet.class);
+		protected void doIteration() throws Throwable {
+			final Capture<byte[]> encBytesCapt = EasyMock.newCapture();
+			ps.setBytes(EasyMock.eq(1), EasyMock.capture(encBytesCapt));
+			EasyMock.expectLastCall();
+			EasyMock.replay(ps);
+			type.nullSafeSet(ps, TEXT_VALUE, 1, null);
+			EasyMock.verify(ps);
+			final byte[] enc = encBytesCapt.getValue();
 
-				for (int i=0; i<50; i++) {
+			EasyMock.expect(rs.getBinaryStream(columnNames[0])).andReturn(new ByteArrayInputStream(enc));
+			EasyMock.expect(rs.wasNull()).andReturn(false);
+			EasyMock.replay(rs);
+			final String dec = (String) type.nullSafeGet(rs, columnNames, null, null);
+			EasyMock.verify(rs);
+			assertEquals(TEXT_VALUE, dec);
 
-					final Capture<byte[]> encBytesCapt = EasyMock.newCapture();
-					ps.setBytes(EasyMock.eq(1), EasyMock.capture(encBytesCapt));
-					EasyMock.expectLastCall();
-					EasyMock.replay(ps);
-					nullSafeSet(ps, TEST_VALUE, 1, null);
-					EasyMock.verify(ps);
-					final byte[] enc = encBytesCapt.getValue();
-
-					EasyMock.expect(rs.getBinaryStream(columnNames[0])).andReturn(new ByteArrayInputStream(enc));
-					EasyMock.expect(rs.wasNull()).andReturn(false);
-					EasyMock.replay(rs);
-					final String dec = (String) nullSafeGet(rs, columnNames, null, null);
-					EasyMock.verify(rs);
-					assertEquals(TEST_VALUE, dec);
-
-					EasyMock.resetToStrict(ps, rs);
-				}
-			}
-			catch (final Throwable e) {
-				exception = e;
-				e.printStackTrace();
-			}
+			EasyMock.resetToStrict(ps, rs);
 		}
 
 	}

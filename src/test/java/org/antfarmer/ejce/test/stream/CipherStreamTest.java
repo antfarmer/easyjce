@@ -21,7 +21,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 
@@ -33,26 +32,26 @@ import org.antfarmer.ejce.parameter.AesParameters;
 import org.antfarmer.ejce.parameter.AlgorithmParameters;
 import org.antfarmer.ejce.parameter.salt.SaltGenerator;
 import org.antfarmer.ejce.stream.EncryptInputStream;
+import org.antfarmer.ejce.test.AbstractTest;
 import org.junit.Test;
 
 /**
  * @author Ameer Antar
  */
-public class CipherStreamTest {
+public class CipherStreamTest extends AbstractTest {
 
 	private static final String TEXT = "TEST";
-	private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
 	@Test
 	public void testEnc() throws GeneralSecurityException, IOException {
 		final AesParameters params = new AesParameters().setBlockMode(AesParameters.BLOCK_MODE_ECB);
-		final ByteArrayInputStream bais = new ByteArrayInputStream(TEXT.getBytes(DEFAULT_CHARSET));
+		final ByteArrayInputStream bais = new ByteArrayInputStream(TEXT.getBytes(UTF8));
 		final EncryptInputStream cs = createCipherStream(bais, params);
 		final byte[] streamBytes = IoUtil.readBytes(cs);
 
 		final Cipher cipher = Cipher.getInstance(params.getTransformation());
 		cipher.init(Cipher.ENCRYPT_MODE, params.getKey());
-		final byte[] cipherBytes = cipher.doFinal(TEXT.getBytes(DEFAULT_CHARSET));
+		final byte[] cipherBytes = cipher.doFinal(TEXT.getBytes(UTF8));
 
 		assertArrayEquals(streamBytes, cipherBytes);
 	}
@@ -68,7 +67,7 @@ public class CipherStreamTest {
 		final int size = params.getParameterSpecSize();
 		final byte[] buff = new byte[size >> 1];
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		final ByteArrayInputStream bais = new ByteArrayInputStream(TEXT.getBytes(DEFAULT_CHARSET));
+		final ByteArrayInputStream bais = new ByteArrayInputStream(TEXT.getBytes(UTF8));
 		final EncryptInputStream cs = createCipherStream(bais, params);
 
 		int read;
@@ -80,7 +79,7 @@ public class CipherStreamTest {
 		enc.initialize();
 
 		final byte[] streamResult = baos.toByteArray();
-		final byte[] encResult = enc.encrypt(TEXT.getBytes(DEFAULT_CHARSET));
+		final byte[] encResult = enc.encrypt(TEXT.getBytes(UTF8));
 
 //		System.out.println(Arrays.toString(Arrays.copyOfRange(streamResult, 0, size)));
 //		System.out.println(Arrays.toString(Arrays.copyOfRange(encResult, encResult.length - size, encResult.length)));
@@ -97,7 +96,7 @@ public class CipherStreamTest {
 		final int size = params.getParameterSpecSize();
 		final byte[] buff1 = new byte[size];
 		final byte[] buff2 = new byte[size];
-		final ByteArrayInputStream bais = new ByteArrayInputStream(TEXT.getBytes(DEFAULT_CHARSET));
+		final ByteArrayInputStream bais = new ByteArrayInputStream(TEXT.getBytes(UTF8));
 		final EncryptInputStream cs = createCipherStream(bais, params);
 		cs.read(buff1);
 		cs.reset();
@@ -107,7 +106,7 @@ public class CipherStreamTest {
 
 	@Test(expected = UnsupportedOperationException.class)
 	public void testReadByte() throws GeneralSecurityException, IOException {
-		final ByteArrayInputStream bais = new ByteArrayInputStream(TEXT.getBytes(DEFAULT_CHARSET));
+		final ByteArrayInputStream bais = new ByteArrayInputStream(TEXT.getBytes(UTF8));
 		final EncryptInputStream cs = createCipherStream(bais, new AesParameters());
 		cs.read();
 	}

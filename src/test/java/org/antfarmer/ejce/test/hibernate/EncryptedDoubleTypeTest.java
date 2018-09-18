@@ -15,85 +15,32 @@
  */
 package org.antfarmer.ejce.test.hibernate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-
-import java.security.GeneralSecurityException;
-
+import org.antfarmer.ejce.hibernate.AbstractHibernateType;
 import org.antfarmer.ejce.hibernate.EncryptedDoubleType;
-import org.antfarmer.ejce.test.hibernate.util.TypeUtil;
-import org.junit.Before;
-import org.junit.Test;
-
 
 /**
  *
  * @author Ameer Antar
  * @version 1.0
  */
-public class EncryptedDoubleTypeTest extends EncryptedDoubleType {
+public class EncryptedDoubleTypeTest extends AbstractEncryptedTypeTest<Double> {
 
 	private static final Double TEST_VALUE = 6.66666666;
 
 	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 *
+	 * {@inheritDoc}
 	 */
-	@Before
-	public void init() throws GeneralSecurityException {
-		setParameterValues(TypeUtil.prepareTestEncryptor());
+	@Override
+	protected AbstractHibernateType createHibernateType() {
+		return new EncryptedDoubleType();
 	}
 
 	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
+	 * {@inheritDoc}
 	 */
-	@Test
-	public void test() throws GeneralSecurityException {
-		final Double o = 22.99999999;
-		final String enc = encrypt(o);
-		final Object dec = decrypt(enc);
-		assertEquals(o, dec);
-
-		assertSame(Double.class, returnedClass());
-	}
-
-	@Test
-	public void testThreadSafety() throws Throwable {
-		final int num = 25;
-		final EncryptThread[] threads = new EncryptThread[num];
-		for (int i=0; i<num; i++) {
-			threads[i] = new EncryptThread();
-			threads[i].start();
-		}
-		for (int i=0; i<num; i++) {
-			threads[i].join();
-			if (threads[i].exception != null) {
-				throw threads[i].exception;
-			}
-		}
-	}
-
-	private class EncryptThread extends Thread {
-		private Throwable exception;
-
-		/**
-		 * {@inheritDoc}
-		 * @see java.lang.Thread#run()
-		 */
-		@Override
-		public void run() {
-			try {
-				for (int i=0; i<50; i++) {
-					final String enc = encrypt(TEST_VALUE);
-					assertEquals(TEST_VALUE, decrypt(enc));
-				}
-			}
-			catch (final Throwable e) {
-				exception = e;
-				e.printStackTrace();
-			}
-		}
-
+	@Override
+	protected Object getTestValue() {
+		return TEST_VALUE;
 	}
 
 }

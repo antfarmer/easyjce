@@ -19,7 +19,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
 
-import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,6 @@ import org.junit.Test;
  */
 public abstract class AbstractPasswordTest<P extends ConfigurablePasswordEncoder> extends AbstractTest {
 
-	protected static final Charset CHARSET_UTF_8 = Charset.forName("UTF-8");
 	protected static final String PASSWORD = "PaSSw0rd";
 	private static final int THREAD_COUNT = 25;
 	private static final int THREAD_ITERATIONS = 50;
@@ -60,15 +58,6 @@ public abstract class AbstractPasswordTest<P extends ConfigurablePasswordEncoder
 	 */
 	protected abstract P createEncoder(Properties defaults);
 
-	/**
-	 * Converts the given text to a byte array using the UTF-8 charset.
-	 * @param text the text
-	 * @return the byte representation of the given text
-	 */
-	protected byte[] toBytes(final String text) {
-		return text.getBytes(CHARSET_UTF_8);
-	}
-
 	protected void assertException(final Properties props) {
 		assertException(props, EncryptorConfigurationException.class, null);
 	}
@@ -90,9 +79,6 @@ public abstract class AbstractPasswordTest<P extends ConfigurablePasswordEncoder
 		});
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void testEncode() {
 		assumeFalse(SKIP_PASSWORD_TESTS);
@@ -147,10 +133,6 @@ public abstract class AbstractPasswordTest<P extends ConfigurablePasswordEncoder
 			this.encoder = encoder;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 * @see java.lang.Thread#run()
-		 */
 		@Override
 		public void run() {
 			try {

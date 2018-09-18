@@ -19,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 
-import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -32,7 +31,6 @@ import java.util.Map.Entry;
 import org.antfarmer.ejce.encoder.Base64Encoder;
 import org.antfarmer.ejce.test.AbstractTest;
 import org.antfarmer.ejce.util.MessageDigestUtil;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Test;
 
 /**
@@ -42,8 +40,6 @@ public class MessageDigestUtilTest extends AbstractTest {
 
 	private static final int HASH_COUNT = 5;
 	private static final int MAX_INPUT_SIZE = 4096;
-	private static final Charset charset = Charset.forName("UTF-8");
-	private static final BouncyCastleProvider BC_PROVIDER = new BouncyCastleProvider();
 
 	@Test
 	public void testHashBytesNoProvider() throws NoSuchAlgorithmException, NoSuchProviderException {
@@ -147,7 +143,7 @@ public class MessageDigestUtilTest extends AbstractTest {
 				new StringHasher() {
 					@Override
 					public String hash(final String text, final String algorithm) throws GeneralSecurityException {
-						return MessageDigestUtil.hashString(text, charset, algorithm);
+						return MessageDigestUtil.hashString(text, UTF8, algorithm);
 					}
 				},
 				new StringHasher() {
@@ -159,7 +155,7 @@ public class MessageDigestUtilTest extends AbstractTest {
 				new StringHasher() {
 					@Override
 					public String hash(final String text, final String algorithm) throws GeneralSecurityException {
-						return MessageDigestUtil.hashString(text, charset, algorithm, Base64Encoder.getInstance());
+						return MessageDigestUtil.hashString(text, UTF8, algorithm, Base64Encoder.getInstance());
 					}
 				},
 				new StringHasher() {
@@ -171,7 +167,7 @@ public class MessageDigestUtilTest extends AbstractTest {
 				new StringHasher() {
 					@Override
 					public String hash(final String text, final String algorithm) throws GeneralSecurityException {
-						return MessageDigestUtil.hashString(text, charset, algorithm, provider, null);
+						return MessageDigestUtil.hashString(text, UTF8, algorithm, provider, null);
 					}
 				},
 				new StringHasher() {
@@ -183,7 +179,7 @@ public class MessageDigestUtilTest extends AbstractTest {
 				new StringHasher() {
 					@Override
 					public String hash(final String text, final String algorithm) throws GeneralSecurityException {
-						return MessageDigestUtil.hashString(text, charset, algorithm, provider, null, Base64Encoder.getInstance());
+						return MessageDigestUtil.hashString(text, UTF8, algorithm, provider, null, Base64Encoder.getInstance());
 					}
 				}
 		};
@@ -193,12 +189,12 @@ public class MessageDigestUtilTest extends AbstractTest {
 				for (int i = 0; i < HASH_COUNT; i++) {
 					input = new byte[RANDOM.nextInt(MAX_INPUT_SIZE) + 1];
 					RANDOM.nextBytes(input);
-					final String text = new String(input, charset);
+					final String text = new String(input, UTF8);
 
 					output = hasher.hash(text, algo.getKey());
 
 					assertNotEquals(input, output);
-					assertNotEquals(text.getBytes(charset), Base64Encoder.getInstance().decode(output));
+					assertNotEquals(text.getBytes(UTF8), Base64Encoder.getInstance().decode(output));
 					System.out.print(output.length() + " ");
 					System.out.println(output);
 				}

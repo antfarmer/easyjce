@@ -55,7 +55,6 @@ import org.antfarmer.ejce.parameter.salt.SaltGenerator;
 import org.antfarmer.ejce.parameter.salt.SaltMatcher;
 import org.antfarmer.ejce.util.ByteUtil;
 import org.antfarmer.ejce.util.CryptoUtil;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Test;
 
 
@@ -64,34 +63,12 @@ import org.junit.Test;
  * @author Ameer Antar
  * @version 1.0
  */
-public class EncryptorTest {
+public class EncryptorTest extends AbstractTest {
+
 	private static ValueEncryptorInterface<Encryptor> encryptor;
 	private static final String PBE_KEY = "password";
 	private static final String TEST_TEXT = "abcdefghijklmnopqrstuvwxyz";
 
-	private static final BouncyCastleProvider BC_PROVIDER = new BouncyCastleProvider();
-
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
-	@Test
-	public void testStream() throws GeneralSecurityException {
-		final AesParameters parameters = new AesParameters()
-				.setKeySize(AesParameters.KEY_SIZE_128)
-//				.setBlockMode(AesParameters.BLOCK_MODE_ECB)
-//				.setMacAlgorithm(AesParameters.MAC_ALGORITHM_HMAC_SHA1)
-//				.setMacKeySize(AesParameters.MAC_KEY_SIZE_128)
-				;
-		encryptor = new Encryptor().setAlgorithmParameters(parameters);
-		encryptor.initialize();
-
-		final byte[] enc = encryptor.encrypt("a".getBytes());
-		System.out.println(enc.length);
-	}
-
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void threadSafetyTest() throws Throwable {
 
@@ -118,9 +95,6 @@ public class EncryptorTest {
 		}
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testEncryption() throws GeneralSecurityException {
 
@@ -148,9 +122,6 @@ public class EncryptorTest {
 		assertNull(encryptor.decrypt((String) null));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testBooleanEncryption() throws GeneralSecurityException {
 
@@ -172,9 +143,6 @@ public class EncryptorTest {
 		assertNull(encryptor.decryptBoolean(null));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testCharacterEncryption() throws GeneralSecurityException {
 
@@ -196,9 +164,6 @@ public class EncryptorTest {
 		assertNull(encryptor.decryptCharacter(null));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testDoubleEncryption() throws GeneralSecurityException {
 
@@ -220,9 +185,6 @@ public class EncryptorTest {
 		assertNull(encryptor.decryptDouble(null));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testFloatEncryption() throws GeneralSecurityException {
 
@@ -244,9 +206,6 @@ public class EncryptorTest {
 		assertNull(encryptor.decryptFloat(null));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testIntegerEncryption() throws GeneralSecurityException {
 
@@ -268,9 +227,6 @@ public class EncryptorTest {
 		assertNull(encryptor.decryptInteger(null));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testLongEncryption() throws GeneralSecurityException {
 
@@ -292,11 +248,6 @@ public class EncryptorTest {
 		assertNull(encryptor.decryptLong(null));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 * @throws IOException IOException
-	 * @throws ClassNotFoundException ClassNotFoundException
-	 */
 	@Test
 	public void testObjectEncryption() throws GeneralSecurityException, IOException, ClassNotFoundException {
 
@@ -318,9 +269,6 @@ public class EncryptorTest {
 		assertNull(encryptor.decryptObject(null));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testShortEncryption() throws GeneralSecurityException {
 
@@ -342,9 +290,6 @@ public class EncryptorTest {
 		assertNull(encryptor.decryptShort(null));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testEncryptionWithSpecKey() throws GeneralSecurityException {
 
@@ -363,9 +308,6 @@ public class EncryptorTest {
 		assertEquals(l, ByteUtil.toLong(encryptor.decryptAndDecode(enc, key)));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test(expected = GeneralSecurityException.class)
 	public void testEncryptionWithSpecKeyNotUsingInstanceKey() throws GeneralSecurityException {
 
@@ -384,9 +326,6 @@ public class EncryptorTest {
 		assertFalse(l.equals(ByteUtil.toLong(encryptor.decryptAndDecode(enc))));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testBooleanEncryptionWithSpecKey() throws GeneralSecurityException {
 
@@ -405,9 +344,6 @@ public class EncryptorTest {
 		assertEquals(o, encryptor.decryptBoolean(enc, key));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testCharacterEncryptionWithSpecKey() throws GeneralSecurityException {
 
@@ -426,9 +362,6 @@ public class EncryptorTest {
 		assertEquals(o, encryptor.decryptCharacter(enc, key));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testDoubleEncryptionWithSpecKey() throws GeneralSecurityException {
 
@@ -447,9 +380,6 @@ public class EncryptorTest {
 		assertEquals(o, encryptor.decryptDouble(enc, key));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testFloatEncryptionWithSpecKey() throws GeneralSecurityException {
 
@@ -468,9 +398,6 @@ public class EncryptorTest {
 		assertEquals(o, encryptor.decryptFloat(enc, key));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testIntegerEncryptionWithSpecKey() throws GeneralSecurityException {
 
@@ -489,9 +416,6 @@ public class EncryptorTest {
 		assertEquals(o, encryptor.decryptInteger(enc, key));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testLongEncryptionWithSpecKey() throws GeneralSecurityException {
 
@@ -510,11 +434,6 @@ public class EncryptorTest {
 		assertEquals(o, encryptor.decryptLong(enc, key));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 * @throws IOException IOException
-	 * @throws ClassNotFoundException ClassNotFoundException
-	 */
 	@Test
 	public void testObjectEncryptionWithSpecKey() throws GeneralSecurityException, IOException, ClassNotFoundException {
 
@@ -533,9 +452,6 @@ public class EncryptorTest {
 		assertEquals(o, encryptor.decryptObject(enc, key));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testShortEncryptionWithSpecKey() throws GeneralSecurityException {
 
@@ -554,9 +470,6 @@ public class EncryptorTest {
 		assertEquals(o, encryptor.decryptShort(enc, key));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test(expected=MacDisagreementException.class)
 	public void testMacDisagreement() throws GeneralSecurityException {
 
@@ -574,9 +487,6 @@ public class EncryptorTest {
 		encryptor.decrypt(enc);
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testAes() throws GeneralSecurityException {
 		final AesParameters parameters = new AesParameters()
@@ -594,9 +504,6 @@ public class EncryptorTest {
 		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testAesBlank() throws GeneralSecurityException {
 		final AesParameters parameters = new AesParameters()
@@ -617,9 +524,6 @@ public class EncryptorTest {
 		assertEquals(null, encryptor.decrypt(enc));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testAesEcb() throws GeneralSecurityException {
 		final AesParameters parameters = new AesParameters()
@@ -637,9 +541,21 @@ public class EncryptorTest {
 		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
+	@Test
+	public void testAesCtrHmacMd5() throws GeneralSecurityException {
+		final AesParameters parameters = new AesParameters()
+				.setKeySize(AesParameters.KEY_SIZE_128)
+				.setBlockMode(AesParameters.BLOCK_MODE_CTR)
+				.setMacAlgorithm(AesParameters.MAC_ALGORITHM_HMAC_MD5)
+				.setMacKeySize(AesParameters.MAC_KEY_SIZE_128)
+				;
+		encryptor = new Encryptor().setAlgorithmParameters(parameters);
+		encryptor.initialize();
+
+		final byte[] enc = encryptor.encrypt("a".getBytes());
+		System.out.println(enc.length);
+	}
+
 	@Test
 	public void testAesGcm() throws GeneralSecurityException {
 		final AesParameters parameters = new AesParameters()
@@ -655,9 +571,6 @@ public class EncryptorTest {
 		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testAesGcmTagLengths() throws GeneralSecurityException {
 		final int[] lengths = {
@@ -684,9 +597,6 @@ public class EncryptorTest {
 		}
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testAesMacs() throws GeneralSecurityException {
 		final String[] macs = {
@@ -703,7 +613,6 @@ public class EncryptorTest {
 				AesParameters.MAC_ALGORITHM_HMAC_SHA3_384,
 				AesParameters.MAC_ALGORITHM_HMAC_SHA3_512
 		};
-
 
 		for (final String mac : macs) {
 			final AesParameters parameters = new AesParameters()
@@ -723,9 +632,6 @@ public class EncryptorTest {
 		}
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testAesWithCustomSalts() throws GeneralSecurityException {
 		final byte[] salt = new byte[AesParameters.DEFAULT_BLOCK_SIZE];
@@ -759,9 +665,6 @@ public class EncryptorTest {
 		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testBlowfish() throws GeneralSecurityException {
 		final BlowfishParameters parameters = new BlowfishParameters()
@@ -833,9 +736,6 @@ public class EncryptorTest {
 		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testDesEde() throws GeneralSecurityException {
 		final DesEdeParameters parameters = new DesEdeParameters()
@@ -853,9 +753,6 @@ public class EncryptorTest {
 		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testDesEdeEcb() throws GeneralSecurityException {
 		final DesEdeParameters parameters = new DesEdeParameters()
@@ -891,9 +788,6 @@ public class EncryptorTest {
 		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testDes() throws GeneralSecurityException {
 		final DesParameters parameters = new DesParameters()
@@ -911,9 +805,6 @@ public class EncryptorTest {
 		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testPbe() throws GeneralSecurityException {
 		final PbeParameters parameters = new PbeParameters()
@@ -931,9 +822,6 @@ public class EncryptorTest {
 		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testPbeWithGeneratedPassword() throws GeneralSecurityException {
 		final PbeParameters parameters = new PbeParameters()
@@ -950,9 +838,6 @@ public class EncryptorTest {
 		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testPbeKey() throws GeneralSecurityException {
 
@@ -973,9 +858,6 @@ public class EncryptorTest {
 		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test(expected=InvalidAlgorithmParameterException.class)
 	public void testPbeNoSalt() throws GeneralSecurityException {
 		final PbeParameters parameters = new PbeParameters()
@@ -1265,9 +1147,6 @@ public class EncryptorTest {
 		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testRsa() throws GeneralSecurityException {
 		final KeyPair keyPair = CryptoUtil.generateAsymmetricKeyPair(RsaParameters.KEY_SIZE_512,
@@ -1290,9 +1169,6 @@ public class EncryptorTest {
 		assertNull(parameters.getPadding());
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testRsaWithPadding() throws GeneralSecurityException {
 		final KeyPair keyPair = CryptoUtil.generateAsymmetricKeyPair(RsaParameters.KEY_SIZE_1024,
@@ -1314,9 +1190,6 @@ public class EncryptorTest {
 		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testRsaGenKey() throws GeneralSecurityException {
 		final RsaParameters parameters = new RsaParameters(Base64Encoder.getInstance())
@@ -1332,9 +1205,6 @@ public class EncryptorTest {
 		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testRsaKeyLoader() throws GeneralSecurityException {
 		final KeyPair keyPair = CryptoUtil.generateAsymmetricKeyPair(RsaParameters.KEY_SIZE_512,
@@ -1364,9 +1234,6 @@ public class EncryptorTest {
 		assertEquals(TEST_TEXT, encryptor.decrypt(enc));
 	}
 
-	/**
-	 * @throws GeneralSecurityException GeneralSecurityException
-	 */
 	@Test
 	public void testElGamal() throws GeneralSecurityException {
 		final KeyPair keyPair = CryptoUtil.generateAsymmetricKeyPair(ElGamalParameters.KEY_SIZE_256,
