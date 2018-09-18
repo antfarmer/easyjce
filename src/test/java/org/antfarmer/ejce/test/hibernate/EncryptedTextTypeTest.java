@@ -29,7 +29,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
-import java.util.Random;
 
 import org.antfarmer.ejce.hibernate.EncryptedTextType;
 import org.antfarmer.ejce.test.hibernate.util.TypeUtil;
@@ -49,7 +48,6 @@ public class EncryptedTextTypeTest extends EncryptedTextType {
 
 	private static final Charset CHARSET = Charset.forName("UTF-8");
 	private static String TEST_VALUE;
-	private static final Random random = new Random();
 
 	static {
 		final byte[] content = new byte[10000];

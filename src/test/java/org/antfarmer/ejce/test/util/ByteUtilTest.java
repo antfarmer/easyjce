@@ -22,17 +22,15 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
-import java.util.Random;
 
+import org.antfarmer.ejce.test.AbstractTest;
 import org.antfarmer.ejce.util.ByteUtil;
 import org.junit.Test;
 
 /**
  * @author Ameer Antar
  */
-public class ByteUtilTest {
-
-	private final Random random = new Random();
+public class ByteUtilTest extends AbstractTest {
 
 	@Test
 	public void testByteConversion() {
@@ -77,7 +75,7 @@ public class ByteUtilTest {
 		assertEquals(b.length, copy.length);
 
 		b = new byte[100];
-		random.nextBytes(b);
+		RANDOM.nextBytes(b);
 		copy = ByteUtil.copy(b);
 		assertNotNull(copy);
 		assertNotSame(copy, b);
@@ -96,7 +94,7 @@ public class ByteUtilTest {
 		assertEquals(b.length, copy.length);
 
 		b = new byte[100];
-		random.nextBytes(b);
+		RANDOM.nextBytes(b);
 		copy = ByteUtil.copy(b, off, len);
 		assertNotNull(copy);
 		assertNotSame(copy, b);

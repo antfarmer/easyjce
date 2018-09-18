@@ -18,13 +18,12 @@ package org.antfarmer.ejce.test.db;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Random;
 
 import org.antfarmer.common.ApplicationSettings;
-import org.antfarmer.common.Loggable;
 import org.antfarmer.common.hibernate.HibernateManager;
 import org.antfarmer.common.hibernate.HibernateManager.HibernateCallback;
 import org.antfarmer.common.hibernate.HibernateUtil;
+import org.antfarmer.ejce.test.AbstractTest;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.internal.SessionImpl;
@@ -36,13 +35,11 @@ import org.junit.BeforeClass;
  * Abstract function database test class.
  * @author Ameer Antar
  */
-public abstract class AbstractDbTest extends Loggable {
+public abstract class AbstractDbTest extends AbstractTest {
 
 	private static final String TEST_HIBERNATE_PROP_PATH = "hibernate.test.properties";
 
 	private static final boolean EXPORT_SCRIPT = false;
-
-	protected static final Random RANDOM = new Random();
 
 	@BeforeClass
 	public static void loadProps() {

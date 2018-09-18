@@ -21,7 +21,6 @@ import static org.junit.Assert.assertSame;
 import java.awt.Color;
 import java.awt.Point;
 import java.security.GeneralSecurityException;
-import java.util.Random;
 
 import org.antfarmer.ejce.hibernate.EncryptedObjectType;
 import org.antfarmer.ejce.test.hibernate.util.TypeUtil;
@@ -52,7 +51,7 @@ public class EncryptedObjectTypeTest extends EncryptedObjectType {
 	 */
 	@Test
 	public void test() throws GeneralSecurityException {
-		final Color o = new Color(new Random().nextInt());
+		final Color o = new Color(random.nextInt());
 		final String enc = encrypt(o);
 		final Object dec = decrypt(enc);
 		assertEquals(o, dec);

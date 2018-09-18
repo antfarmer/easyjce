@@ -24,14 +24,13 @@ import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Provider;
-import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 
 import org.antfarmer.ejce.encoder.Base64Encoder;
+import org.antfarmer.ejce.test.AbstractTest;
 import org.antfarmer.ejce.util.MessageDigestUtil;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Test;
@@ -39,11 +38,10 @@ import org.junit.Test;
 /**
  * @author Ameer Antar
  */
-public class MessageDigestUtilTest {
+public class MessageDigestUtilTest extends AbstractTest {
 
 	private static final int HASH_COUNT = 5;
 	private static final int MAX_INPUT_SIZE = 4096;
-	private static final Random random = new SecureRandom();
 	private static final Charset charset = Charset.forName("UTF-8");
 	private static final BouncyCastleProvider BC_PROVIDER = new BouncyCastleProvider();
 
@@ -51,8 +49,8 @@ public class MessageDigestUtilTest {
 	public void testHashBytesNoProvider() throws NoSuchAlgorithmException, NoSuchProviderException {
 		byte[] input;
 		byte[] output;
-		input = new byte[random.nextInt(MAX_INPUT_SIZE) + 1];
-		random.nextBytes(input);
+		input = new byte[RANDOM.nextInt(MAX_INPUT_SIZE) + 1];
+		RANDOM.nextBytes(input);
 
 		output = MessageDigestUtil.hashBytes(input, MessageDigestUtil.ALGORITHM_SHA1, null, null);
 
@@ -79,8 +77,8 @@ public class MessageDigestUtilTest {
 
 		for (final Entry<String, Integer> algo : algoMap.entrySet()) {
 			for (int i = 0; i < HASH_COUNT; i++) {
-				input = new byte[random.nextInt(MAX_INPUT_SIZE) + 1];
-				random.nextBytes(input);
+				input = new byte[RANDOM.nextInt(MAX_INPUT_SIZE) + 1];
+				RANDOM.nextBytes(input);
 
 				output = MessageDigestUtil.hashBytes(input, algo.getKey());
 
@@ -110,8 +108,8 @@ public class MessageDigestUtilTest {
 		final Provider provider = BC_PROVIDER;
 		for (final Entry<String, Integer> algo : extAlgoMap.entrySet()) {
 			for (int i = 0; i < HASH_COUNT; i++) {
-				input = new byte[random.nextInt(MAX_INPUT_SIZE) + 1];
-				random.nextBytes(input);
+				input = new byte[RANDOM.nextInt(MAX_INPUT_SIZE) + 1];
+				RANDOM.nextBytes(input);
 
 				output = MessageDigestUtil.hashBytes(input, algo.getKey(), provider, null);
 
@@ -193,8 +191,8 @@ public class MessageDigestUtilTest {
 		for (final StringHasher hasher : hashers) {
 			for (final Entry<String, Integer> algo : algoMap.entrySet()) {
 				for (int i = 0; i < HASH_COUNT; i++) {
-					input = new byte[random.nextInt(MAX_INPUT_SIZE) + 1];
-					random.nextBytes(input);
+					input = new byte[RANDOM.nextInt(MAX_INPUT_SIZE) + 1];
+					RANDOM.nextBytes(input);
 					final String text = new String(input, charset);
 
 					output = hasher.hash(text, algo.getKey());

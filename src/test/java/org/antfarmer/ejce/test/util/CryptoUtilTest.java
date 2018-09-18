@@ -27,13 +27,13 @@ import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
-import java.util.Random;
 
 import org.antfarmer.ejce.encoder.Base64Encoder;
 import org.antfarmer.ejce.parameter.AbstractAlgorithmParameters;
 import org.antfarmer.ejce.parameter.AesParameters;
 import org.antfarmer.ejce.parameter.PbeParameters;
 import org.antfarmer.ejce.parameter.RsaParameters;
+import org.antfarmer.ejce.test.AbstractTest;
 import org.antfarmer.ejce.util.CryptoUtil;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Test;
@@ -44,9 +44,8 @@ import org.junit.Test;
  * @author Ameer Antar
  * @version 1.0
  */
-public class CryptoUtilTest {
+public class CryptoUtilTest extends AbstractTest {
 
-	private static final Random random = new Random();
 	private static final BouncyCastleProvider BC_PROVIDER = new BouncyCastleProvider();
 
 
@@ -115,15 +114,15 @@ public class CryptoUtilTest {
 	@Test
 	public void testKeySpec() throws InvalidKeySpecException, NoSuchAlgorithmException {
 		final RSAPublicKeySpec pub = new RSAPublicKeySpec(
-				new BigInteger(1024, 1, random),
-				new BigInteger(512, 1, random)
+				new BigInteger(1024, 1, RANDOM),
+				new BigInteger(512, 1, RANDOM)
 		);
 		final PublicKey pubKey = CryptoUtil.createPublicKey(RsaParameters.ALGORITHM_RSA, pub);
 		assertEquals(1792, pubKey.getEncoded().length * Byte.SIZE);
 
 		final RSAPrivateKeySpec prv = new RSAPrivateKeySpec(
-				new BigInteger(512, 1, random),
-				new BigInteger(768, 1, random)
+				new BigInteger(512, 1, RANDOM),
+				new BigInteger(768, 1, RANDOM)
 		);
 		final PrivateKey prvKey = CryptoUtil.createPrivateKey(RsaParameters.ALGORITHM_RSA, prv);
 		assertEquals(1712, prvKey.getEncoded().length * Byte.SIZE);

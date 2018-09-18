@@ -19,12 +19,39 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.nio.charset.Charset;
+import java.util.Random;
 import java.util.concurrent.Callable;
+
+import org.antfarmer.common.Loggable;
 
 /**
  * @author Ameer Antar
  */
-public abstract class AbstractTest {
+public abstract class AbstractTest extends Loggable {
+
+	protected static final Charset UTF8 = Charset.forName("UTF-8");
+
+	protected static final Random RANDOM = new Random();
+
+	/**
+	 * @return a random ASCII letter
+	 */
+	protected byte nextAscii() {
+		return (byte) (33 + RANDOM.nextInt(94));
+	}
+
+	/**
+	 * Fills the given array with random ASCII bytes.
+	 * @param bytes the byte array
+	 * @return the byte array
+	 */
+	protected byte[] nextAsciiBytes(final byte[] bytes) {
+		for (int i = 0; i < bytes.length; i++) {
+			bytes[i] = nextAscii();
+		}
+		return bytes;
+	}
 
 	/**
 	 * Asserts that the given operation triggers the expected exception.

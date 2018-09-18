@@ -32,7 +32,6 @@ import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Random;
 
 import org.antfarmer.ejce.hibernate.EncryptedBlobType;
 import org.antfarmer.ejce.test.hibernate.util.TypeUtil;
@@ -56,7 +55,6 @@ public class EncryptedBlobTypeTest extends EncryptedBlobType {
 
 	private static final Charset CHARSET = Charset.forName("UTF-16");
 	private static final byte[] TEST_VALUE = new byte[1000];
-	private static final Random random = new Random();
 
 	static {
 		random.nextBytes(TEST_VALUE);

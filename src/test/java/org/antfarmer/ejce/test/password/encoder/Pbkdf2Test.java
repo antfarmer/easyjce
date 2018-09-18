@@ -43,7 +43,7 @@ public class Pbkdf2Test extends AbstractPasswordTest<Pbkdf2Encoder> {
 		final String secret = "SeCr3t";
 		final int hashLen = 128;
 		final int saltLen = 32;
-		final int iterations = 2000;
+		final int iterations = 100;
 		final Class<? extends SecureRandom> rc = MyRandom.class;
 		final Provider provider = new BouncyCastleProvider();
 

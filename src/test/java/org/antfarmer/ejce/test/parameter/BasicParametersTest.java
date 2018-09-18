@@ -22,7 +22,6 @@ import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
-import java.util.Random;
 
 import org.antfarmer.ejce.exception.EncryptorConfigurationException;
 import org.antfarmer.ejce.parameter.BlowfishParameters;
@@ -38,12 +37,11 @@ import org.junit.Test;
 public class BasicParametersTest extends AbstractTest {
 
 	private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
-	private static final Random random = new Random();
 
 	@Test
 	public void testSetEncKey() throws GeneralSecurityException {
 		final byte[] keyBytes = new byte[8];
-		random.nextBytes(keyBytes);
+		RANDOM.nextBytes(keyBytes);
 		final byte[] copy = Arrays.clone(keyBytes);
 
 		final BlowfishParameters params = new BlowfishParameters();
@@ -97,7 +95,7 @@ public class BasicParametersTest extends AbstractTest {
 	@Test
 	public void testSetMacKey() throws GeneralSecurityException {
 		final byte[] keyBytes = new byte[8];
-		random.nextBytes(keyBytes);
+		RANDOM.nextBytes(keyBytes);
 
 		final BlowfishParameters params = new BlowfishParameters();
 		assertNull(params.getMacKey());
@@ -110,7 +108,7 @@ public class BasicParametersTest extends AbstractTest {
 	@Test
 	public void testSetMacKeyBytes() throws GeneralSecurityException {
 		final byte[] keyBytes = new byte[8];
-		random.nextBytes(keyBytes);
+		RANDOM.nextBytes(keyBytes);
 		final byte[] copy = Arrays.clone(keyBytes);
 
 		final BlowfishParameters params = new BlowfishParameters();

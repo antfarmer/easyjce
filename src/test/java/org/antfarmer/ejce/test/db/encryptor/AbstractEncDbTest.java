@@ -40,7 +40,7 @@ import org.junit.Test;
  */
 public abstract class AbstractEncDbTest<T extends AbstractEncryptedValueBean<?>> extends AbstractDbTest {
 
-	private final Class<T> beanClass = loadEntityClass();
+	final Class<T> beanClass = loadEntityClass();
 
 	@Test
 	public void test() throws IOException {

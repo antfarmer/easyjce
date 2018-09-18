@@ -20,10 +20,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.security.SecureRandom;
 import java.util.regex.Pattern;
 
 import org.antfarmer.ejce.encoder.TextEncoder;
+import org.antfarmer.ejce.test.AbstractTest;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -31,15 +31,13 @@ import org.junit.Test;
  * @author Ameer Antar
  */
 @Ignore
-public abstract class AbstractEncoderTest {
+public abstract class AbstractEncoderTest extends AbstractTest {
 
 	private static final String TEST_TEXT = "abcdefghijklmnopqrstuvwxyz";
 	private static final int RANDOM_ITERATIONS = 100;
 	private static final int RANDOM_MAX_LENGTH = 100;
 	private static final int THREAD_COUNT = 25;
 	private static final int THREAD_ITERATIONS = 50;
-
-	private static final SecureRandom rand = new SecureRandom();
 
 	protected final TextEncoder encoder = getEncoder();
 
@@ -75,8 +73,8 @@ public abstract class AbstractEncoderTest {
 	@Test
 	public void testRandomData() {
 		for (int i=0; i<RANDOM_ITERATIONS; i++) {
-			final byte[] bytes = new byte[rand.nextInt(RANDOM_MAX_LENGTH) + 1];
-			rand.nextBytes(bytes);
+			final byte[] bytes = new byte[RANDOM.nextInt(RANDOM_MAX_LENGTH) + 1];
+			RANDOM.nextBytes(bytes);
 			final String encoded = encoder.encode(bytes);
 			assertTrue(encodedCharPattern.matcher(encoded).matches());
 			assertArrayEquals(bytes, encoder.decode(encoded));

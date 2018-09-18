@@ -55,7 +55,7 @@ public abstract class AbstractHibernateType implements UserType, ParameterizedTy
 
 	private Charset charset;
 
-	static final SecureRandom random = new SecureRandom();
+	protected static final SecureRandom random = new SecureRandom();
 
 	private final ReentrantLock lock = new ReentrantLock();
 

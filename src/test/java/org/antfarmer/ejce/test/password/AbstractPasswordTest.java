@@ -17,6 +17,7 @@ package org.antfarmer.ejce.test.password;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
 
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
@@ -39,6 +40,7 @@ public abstract class AbstractPasswordTest<P extends ConfigurablePasswordEncoder
 	private static final int THREAD_COUNT = 25;
 	private static final int THREAD_ITERATIONS = 50;
 
+	public static final boolean SKIP_PASSWORD_TESTS = false;
 	public static final boolean SKIP_THREAD_TESTS = false;
 
 	protected final P encoder = createEncoder();
@@ -93,6 +95,8 @@ public abstract class AbstractPasswordTest<P extends ConfigurablePasswordEncoder
 	 */
 	@Test
 	public void testEncode() {
+		assumeFalse(SKIP_PASSWORD_TESTS);
+
 		long start;
 		start = System.currentTimeMillis();
 		final String encoded1 = encoder.encode(PASSWORD);
@@ -110,7 +114,9 @@ public abstract class AbstractPasswordTest<P extends ConfigurablePasswordEncoder
 
 	@Test
 	public void threadSafetyTest() throws Throwable {
-		if (SKIP_THREAD_TESTS) return;
+		assumeFalse(SKIP_PASSWORD_TESTS);
+		assumeFalse(SKIP_THREAD_TESTS);
+
 		final int num = THREAD_COUNT;
 		EncodeThread thread;
 		final P encoder = createFastEncoder();
