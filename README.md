@@ -1,6 +1,6 @@
 # EasyJCE
 
-[![Build Status](https://travis-ci.org/antfarmer/easyjce.svg?branch=master)](https://travis-ci.org/antfarmer/easyjce)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/antfarmer/easyjce/gradle.yml)
 [![codecov](https://codecov.io/gh/antfarmer/easyjce/branch/master/graph/badge.svg)](https://codecov.io/gh/antfarmer/easyjce)
 [![Maven Central](https://img.shields.io/maven-central/v/org.antfarmer/easyjce.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22org.antfarmer%22%20AND%20a:%22easyjce%22)
 [![License](https://img.shields.io/badge/License-Apache%202.0-purple.svg)](/LICENSE)
