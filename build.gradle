@@ -58,7 +58,7 @@ dependencies {
 	compileOnly group: 'org.hibernate', name: 'hibernate-core', version: '4.3.11.Final'
 	
 	// bouncycastle >= 1.58
-	compileOnly group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.60'
+	compileOnly group: 'org.bouncycastle', name: 'bcprov-jdk18on', version: '[1.78, 2)'
 	
 	// Spring >= 4.2.6
 	compileOnly group: 'org.springframework.security', name: 'spring-security-crypto', version: '[5.0.7.RELEASE, 5.1)'
