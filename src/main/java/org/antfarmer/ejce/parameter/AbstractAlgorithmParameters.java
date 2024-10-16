@@ -640,7 +640,7 @@ public abstract class AbstractAlgorithmParameters<T extends AbstractAlgorithmPar
 	private KeyLoader loadKeyLoader(final Object keyLoader) {
 		if (keyLoader instanceof String) {
 			try {
-				return (KeyLoader) Class.forName((String) keyLoader).newInstance();
+				return (KeyLoader) Class.forName((String) keyLoader).getConstructor().newInstance();
 			}
 			catch (final Exception e) {
 				throw new EncryptorConfigurationException("Error instantiating KeyLoader class: "

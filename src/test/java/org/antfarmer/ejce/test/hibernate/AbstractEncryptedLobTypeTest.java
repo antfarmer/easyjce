@@ -19,7 +19,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertSame;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
@@ -46,7 +45,7 @@ public abstract class AbstractEncryptedLobTypeTest<T> extends AbstractEncryptedT
 		super(encryptorCharset, encryptorProps == null ? new Properties() : encryptorProps);
 	}
 
-	protected InputStream encryptStream(final InputStream is) throws GeneralSecurityException, IOException {
+	protected InputStream encryptStream(final InputStream is) throws GeneralSecurityException {
 		try {
 			return ReflectionUtil.invokeMethod(type, "encryptStream", InputStream.class, is);
 		}
@@ -55,7 +54,7 @@ public abstract class AbstractEncryptedLobTypeTest<T> extends AbstractEncryptedT
 		}
 	}
 
-	protected InputStream decryptStream(final InputStream is) throws GeneralSecurityException, IOException {
+	protected InputStream decryptStream(final InputStream is) throws GeneralSecurityException {
 		try {
 			return ReflectionUtil.invokeMethod(type, "decryptStream", InputStream.class, is);
 		}

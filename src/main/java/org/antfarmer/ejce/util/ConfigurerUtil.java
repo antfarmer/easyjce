@@ -316,7 +316,7 @@ public final class ConfigurerUtil {
 			throw new EncryptorConfigurationException("Asymmetric ciphers are not supported using property configuration.");
 		}
 		try {
-			algorithmParameters = (AlgorithmParameters<?>) algParamClass.newInstance();
+			algorithmParameters = (AlgorithmParameters<?>) algParamClass.getConstructor().newInstance();
 		}
 		catch (final Exception e) {
 			throw new EncryptorConfigurationException("Error instantiating: " + property, e);
@@ -370,7 +370,7 @@ public final class ConfigurerUtil {
 		property = parameters.getProperty(getPropertyName(prefix, KEY_PROVIDER_CLASS));
 		if (TextUtil.hasLength(property)) {
 			try {
-				algorithmParameters.setProvider((Provider) Class.forName(property).newInstance());
+				algorithmParameters.setProvider((Provider) Class.forName(property).getConstructor().newInstance());
 			}
 			catch (final Exception e) {
 				throw new EncryptorConfigurationException("Error instantiating: " + property, e);
@@ -399,7 +399,7 @@ public final class ConfigurerUtil {
 		property = parameters.getProperty(getPropertyName(prefix, KEY_SALT_GENERATOR));
 		if (TextUtil.hasLength(property)) {
 			try {
-				algorithmParameters.setSaltGenerator((SaltGenerator) Class.forName(property).newInstance());
+				algorithmParameters.setSaltGenerator((SaltGenerator) Class.forName(property).getConstructor().newInstance());
 			}
 			catch (final Exception e) {
 				throw new EncryptorConfigurationException("Error instantiating: " + property, e);
@@ -410,7 +410,7 @@ public final class ConfigurerUtil {
 		property = parameters.getProperty(getPropertyName(prefix, KEY_SALT_MATCHER));
 		if (TextUtil.hasLength(property)) {
 			try {
-				algorithmParameters.setSaltMatcher((SaltMatcher) Class.forName(property).newInstance());
+				algorithmParameters.setSaltMatcher((SaltMatcher) Class.forName(property).getConstructor().newInstance());
 			}
 			catch (final Exception e) {
 				throw new EncryptorConfigurationException("Error instantiating: " + property, e);
@@ -528,7 +528,7 @@ public final class ConfigurerUtil {
 			if (!ConfigurablePasswordEncoder.class.isAssignableFrom(pswdEncoderClass)) {
 				throw new EncryptorConfigurationException(property + " must implement " + ConfigurablePasswordEncoder.class.getName());
 			}
-			pswdEnc = (ConfigurablePasswordEncoder) pswdEncoderClass.newInstance();
+			pswdEnc = (ConfigurablePasswordEncoder) pswdEncoderClass.getConstructor().newInstance();
 		}
 		catch (final Exception e) {
 			throw new EncryptorConfigurationException("Error instantiating: " + property, e);

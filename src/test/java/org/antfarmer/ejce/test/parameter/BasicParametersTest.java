@@ -56,7 +56,7 @@ public class BasicParametersTest extends AbstractTest {
 	}
 
 	@Test
-	public void testSetBadKeyLoader() throws GeneralSecurityException {
+	public void testSetBadKeyLoader() {
 		final Class<? extends Throwable> exc = EncryptorConfigurationException.class;
 
 		assertException(exc, "instantiating", new Operation() {
@@ -83,7 +83,7 @@ public class BasicParametersTest extends AbstractTest {
 		assertException(exc, "must either be a KeyLoader", new Operation() {
 			@Override
 			public void run() throws Throwable {
-				new BlowfishParameters().setKeyLoader(new Integer(4));
+				new BlowfishParameters().setKeyLoader(Integer.valueOf(4));
 			}
 		});
 
@@ -138,7 +138,7 @@ public class BasicParametersTest extends AbstractTest {
 	}
 
 	@Test
-	public void testSetBadMacKeyLoader() throws GeneralSecurityException {
+	public void testSetBadMacKeyLoader() {
 		final Class<? extends Throwable> exc = EncryptorConfigurationException.class;
 
 		assertException(exc, "instantiating", new Operation() {
@@ -165,7 +165,7 @@ public class BasicParametersTest extends AbstractTest {
 		assertException(exc, "must either be a KeyLoader", new Operation() {
 			@Override
 			public void run() throws Throwable {
-				new BlowfishParameters().setMacKeyLoader(new Integer(5)).getMacKey();
+				new BlowfishParameters().setMacKeyLoader(Integer.valueOf(5)).getMacKey();
 			}
 		});
 

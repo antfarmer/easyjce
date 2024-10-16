@@ -156,7 +156,7 @@ public class Pbkdf2Encoder extends AbstractPbkdf2PasswordEncoder {
 		final String providerClass = parseString(parameters, prefix, KEY_PROVIDER_CLASS, null);
 		if (TextUtil.hasLength(providerClass)) {
 			try {
-				provider = (Provider) Class.forName(providerClass).newInstance();
+				provider = (Provider) Class.forName(providerClass).getConstructor().newInstance();
 			}
 			catch (final Exception e) {
 				throw new EncryptorConfigurationException("Error instantiating: " + providerClass, e);

@@ -116,7 +116,7 @@ public abstract class AbstractConfigurablePasswordEncoder implements Configurabl
 		}
 		try {
 			final Class<?> clazz = Class.forName(value.trim());
-			return (T) clazz.newInstance();
+			return (T) clazz.getConstructor().newInstance();
 		}
 		catch (final Exception e) {
 			throw new EncryptorConfigurationException("Error creating instance for: " + value, e);

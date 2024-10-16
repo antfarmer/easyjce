@@ -41,6 +41,9 @@ public abstract class AbstractEncDbTest<T extends AbstractEncryptedValueBean<?>>
 
 	final Class<T> beanClass = TestUtil.getGenericType(getClass(), AbstractEncryptedValueBean.class);
 
+	/**
+	 * @throws IOException
+	 */
 	@Test
 	public void test() throws IOException {
 

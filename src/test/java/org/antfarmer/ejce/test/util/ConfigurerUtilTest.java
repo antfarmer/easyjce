@@ -825,10 +825,10 @@ public class ConfigurerUtilTest extends AbstractTest {
 
 	@Test
 	public void testParseInt() {
-		assertEquals(new Integer(1), ConfigurerUtil.parseInt("1"));
-		assertEquals(new Integer(1), ConfigurerUtil.parseInt("01"));
-		assertEquals(new Integer(10), ConfigurerUtil.parseInt("10"));
-		assertEquals(new Integer(-10), ConfigurerUtil.parseInt("-10"));
+		assertEquals(Integer.valueOf(1), ConfigurerUtil.parseInt("1"));
+		assertEquals(Integer.valueOf(1), ConfigurerUtil.parseInt("01"));
+		assertEquals(Integer.valueOf(10), ConfigurerUtil.parseInt("10"));
+		assertEquals(Integer.valueOf(-10), ConfigurerUtil.parseInt("-10"));
 		assertNull(ConfigurerUtil.parseInt("ddd"));
 		assertNull(ConfigurerUtil.parseInt("d6d"));
 		assertNull(ConfigurerUtil.parseInt(""));

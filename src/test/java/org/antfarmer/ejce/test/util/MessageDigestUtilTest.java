@@ -57,7 +57,7 @@ public class MessageDigestUtilTest extends AbstractTest {
 	}
 
 	@Test
-	public void testHashBytes() throws NoSuchAlgorithmException, NoSuchProviderException {
+	public void testHashBytes() throws NoSuchAlgorithmException {
 
 		byte[] input;
 		byte[] output;

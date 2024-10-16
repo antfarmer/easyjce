@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.security.GeneralSecurityException;
 import java.sql.Types;
 
 import org.antfarmer.ejce.hibernate.EncryptedStringType;
@@ -33,7 +32,7 @@ import org.junit.Test;
 public class StringHibernateTypeTest extends EncryptedStringType {
 
 	@Test
-	public void testTypeMethods() throws GeneralSecurityException {
+	public void testTypeMethods() {
 
 		// assemble
 		String o = null;
