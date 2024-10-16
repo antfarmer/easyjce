@@ -120,7 +120,7 @@ public class ConfigurerUtilTest extends AbstractTest {
 		properties.setProperty(ConfigurerUtil.KEY_PARAM_ENCODER_CLASS, Base32Encoder.class.getName());
 		properties.setProperty(ConfigurerUtil.KEY_CIPHER_KEY, key);
 		properties.setProperty(ConfigurerUtil.KEY_ALGORITHM, PbeParameters.ALGORITHM_PBE_MD5_DES);
-		properties.setProperty(ConfigurerUtil.KEY_PROVIDER_CLASS, sun.security.provider.Sun.class.getName());
+		properties.setProperty(ConfigurerUtil.KEY_PROVIDER_CLASS, BouncyCastleProvider.class.getName());
 		properties.setProperty(ConfigurerUtil.KEY_MAC_ALGORITHM, PbeParameters.MAC_ALGORITHM_HMAC_MD5);
 		properties.setProperty(ConfigurerUtil.KEY_MAC_KEY, macKey);
 		properties.setProperty(ConfigurerUtil.KEY_BLOCK_MODE, PbeParameters.BLOCK_MODE_OFB);
@@ -138,7 +138,7 @@ public class ConfigurerUtilTest extends AbstractTest {
 		assertEquals(UTF8, encryptor.getCharset());
 		assertEquals(key, Base32Encoder.getInstance().encode(parameters.getKey().getEncoded()));
 		assertEquals(PbeParameters.ALGORITHM_PBE_MD5_DES, parameters.getAlgorithm());
-		assertEquals(sun.security.provider.Sun.class, parameters.getProvider().getClass());
+		assertEquals(BouncyCastleProvider.class, parameters.getProvider().getClass());
 		assertEquals(PbeParameters.MAC_ALGORITHM_HMAC_MD5, parameters.getMacAlgorithm());
 		assertEquals(macKey, Base32Encoder.getInstance().encode(parameters.getMacKey().getEncoded()));
 		assertEquals(PbeParameters.BLOCK_MODE_OFB, parameters.getBlockMode());
@@ -164,7 +164,7 @@ public class ConfigurerUtilTest extends AbstractTest {
 		properties.setProperty(ConfigurerUtil.KEY_PARAM_ENCODER_CLASS, Base32Encoder.class.getName());
 		properties.setProperty(ConfigurerUtil.KEY_CIPHER_KEY, key);
 		properties.setProperty(ConfigurerUtil.KEY_ALGORITHM, PbeParameters.ALGORITHM_PBE_MD5_DES);
-		properties.setProperty(ConfigurerUtil.KEY_PROVIDER_CLASS, sun.security.provider.Sun.class.getName());
+		properties.setProperty(ConfigurerUtil.KEY_PROVIDER_CLASS, BouncyCastleProvider.class.getName());
 		properties.setProperty(ConfigurerUtil.KEY_MAC_ALGORITHM, PbeParameters.MAC_ALGORITHM_HMAC_MD5);
 		properties.setProperty(ConfigurerUtil.KEY_MAC_KEY, macKey);
 		properties.setProperty(ConfigurerUtil.KEY_BLOCK_MODE, PbeParameters.BLOCK_MODE_OFB);
@@ -180,7 +180,7 @@ public class ConfigurerUtilTest extends AbstractTest {
 		assertEquals(UTF8, encryptor.getCharset());
 		assertEquals(key, Base32Encoder.getInstance().encode(parameters.getKey().getEncoded()));
 		assertEquals(PbeParameters.ALGORITHM_PBE_MD5_DES, parameters.getAlgorithm());
-		assertEquals(sun.security.provider.Sun.class, parameters.getProvider().getClass());
+		assertEquals(BouncyCastleProvider.class, parameters.getProvider().getClass());
 		assertEquals(PbeParameters.MAC_ALGORITHM_HMAC_MD5, parameters.getMacAlgorithm());
 		assertEquals(macKey, Base32Encoder.getInstance().encode(parameters.getMacKey().getEncoded()));
 		assertEquals(PbeParameters.BLOCK_MODE_OFB, parameters.getBlockMode());
@@ -368,7 +368,7 @@ public class ConfigurerUtilTest extends AbstractTest {
 		sysProps.setProperty(getPropertyName(propPrefix, ConfigurerUtil.KEY_PARAM_ENCODER_CLASS), Base32Encoder.class.getName());
 		sysProps.setProperty(getPropertyName(propPrefix, ConfigurerUtil.KEY_CIPHER_KEY), key);
 		sysProps.setProperty(getPropertyName(propPrefix, ConfigurerUtil.KEY_ALGORITHM), CamelliaParameters.ALGORITHM_CAMELLIA);
-		sysProps.setProperty(getPropertyName(propPrefix, ConfigurerUtil.KEY_PROVIDER_CLASS), sun.security.provider.Sun.class.getName());
+		sysProps.setProperty(getPropertyName(propPrefix, ConfigurerUtil.KEY_PROVIDER_CLASS), BouncyCastleProvider.class.getName());
 		sysProps.setProperty(getPropertyName(propPrefix, ConfigurerUtil.KEY_MAC_ALGORITHM), CamelliaParameters.MAC_ALGORITHM_HMAC_MD5);
 		sysProps.setProperty(getPropertyName(propPrefix, ConfigurerUtil.KEY_MAC_KEY), macKey);
 		sysProps.setProperty(getPropertyName(propPrefix, ConfigurerUtil.KEY_BLOCK_MODE), CamelliaParameters.BLOCK_MODE_GCM);
@@ -385,7 +385,7 @@ public class ConfigurerUtilTest extends AbstractTest {
 		assertEquals(cs, encryptor.getCharset());
 		assertEquals(key, Base32Encoder.getInstance().encode(parameters.getKey().getEncoded()));
 		assertEquals(CamelliaParameters.ALGORITHM_CAMELLIA, parameters.getAlgorithm());
-		assertEquals(sun.security.provider.Sun.class, parameters.getProvider().getClass());
+		assertEquals(BouncyCastleProvider.class, parameters.getProvider().getClass());
 		assertEquals(CamelliaParameters.MAC_ALGORITHM_HMAC_MD5, parameters.getMacAlgorithm());
 		assertEquals(macKey, Base32Encoder.getInstance().encode(parameters.getMacKey().getEncoded()));
 		assertEquals(CamelliaParameters.BLOCK_MODE_GCM, parameters.getBlockMode());
@@ -414,7 +414,7 @@ public class ConfigurerUtilTest extends AbstractTest {
 		properties.setProperty(getPropertyName(propPrefix, ConfigurerUtil.KEY_PARAM_ENCODER_CLASS), Base32Encoder.class.getName());
 		properties.setProperty(getPropertyName(propPrefix, ConfigurerUtil.KEY_CIPHER_KEY), key);
 		properties.setProperty(getPropertyName(propPrefix, ConfigurerUtil.KEY_ALGORITHM), PbeParameters.ALGORITHM_PBE_MD5_DES);
-		properties.setProperty(getPropertyName(propPrefix, ConfigurerUtil.KEY_PROVIDER_CLASS), sun.security.provider.Sun.class.getName());
+		properties.setProperty(getPropertyName(propPrefix, ConfigurerUtil.KEY_PROVIDER_CLASS), BouncyCastleProvider.class.getName());
 		properties.setProperty(getPropertyName(propPrefix, ConfigurerUtil.KEY_MAC_ALGORITHM), PbeParameters.MAC_ALGORITHM_HMAC_MD5);
 		properties.setProperty(getPropertyName(propPrefix, ConfigurerUtil.KEY_MAC_KEY), macKey);
 		properties.setProperty(getPropertyName(propPrefix, ConfigurerUtil.KEY_BLOCK_MODE), PbeParameters.BLOCK_MODE_OFB);
@@ -430,7 +430,7 @@ public class ConfigurerUtilTest extends AbstractTest {
 		assertEquals(cs, encryptor.getCharset());
 		assertEquals(key, Base32Encoder.getInstance().encode(parameters.getKey().getEncoded()));
 		assertEquals(PbeParameters.ALGORITHM_PBE_MD5_DES, parameters.getAlgorithm());
-		assertEquals(sun.security.provider.Sun.class, parameters.getProvider().getClass());
+		assertEquals(BouncyCastleProvider.class, parameters.getProvider().getClass());
 		assertEquals(PbeParameters.MAC_ALGORITHM_HMAC_MD5, parameters.getMacAlgorithm());
 		assertEquals(macKey, Base32Encoder.getInstance().encode(parameters.getMacKey().getEncoded()));
 		assertEquals(PbeParameters.BLOCK_MODE_OFB, parameters.getBlockMode());

@@ -5,6 +5,8 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.antfarmer/easyjce.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22org.antfarmer%22%20AND%20a:%22easyjce%22)
 [![License](https://img.shields.io/badge/License-Apache%202.0-purple.svg)](/LICENSE)
 
+![GitHub Downloads (all)](https://img.shields.io/github/downloads/antfarmer/easyjce/total)
+
 **EasyJCE** provides an easy to use interface for encrypting, decrypting, and hashing data for transmission or storage using the Java Cryptographic Extension (JCE). A set of Hibernate user types is included to transparently integrate encryption into the data layer in a JPA/Hibernate environment, ensuring data is persisted in its encrypted form while obscuring encryption and decryption logic from application code. EasyJCE supports most algorithms implemented for the JCE, including those provided by third-party encryption service providers. Integrated MAC (Message Authentication Code) support can optionally be used to ensure data integrity and indicate possible data tampering. EasyJCE also provides basic encoding and decoding facilities for transmitting encrypted binary data through mediums which are limited to printable ASCII characters, such as email messages or URL's.
 
 ## For the Impatient
