@@ -51,7 +51,7 @@ jobs:
 
     #- uses: actions/checkout@main
     - name: Upload coverage to Codecov
-    - uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v4
       with:
         fail_ci_if_error: true # optional (default = false)
         file: ./build/reports/jacoco/test/jacocoTestReport.xml # optional
