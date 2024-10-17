@@ -106,8 +106,9 @@ clean.doLast {
 // Codecov requirements //////////////////////////////////////////////////////////////
 jacocoTestReport {
 	reports {
-		xml.required = ! isContBuild
-		html.required =  isContBuild
+		xml.required = true
+		//xml.required = isContBuild
+		//html.required = ! isContBuild
 	}
 }
 
