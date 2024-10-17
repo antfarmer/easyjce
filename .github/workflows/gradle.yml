@@ -49,14 +49,10 @@ jobs:
     # - name: Build with Gradle 8.9
     #   run: gradle build
 
-    #- uses: actions/checkout@main
     - name: Upload coverage to Codecov
-    - uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v4
       with:
         fail_ci_if_error: true # optional (default = false)
-        file: ./build/reports/jacoco/test/jacocoTestReport.xml # optional
-        flags: unittests # optional
-        name: codecov-umbrella # optional
         token: ${{ secrets.CODECOV_TKN }} # required
         verbose: true # optional (default = false)
 
