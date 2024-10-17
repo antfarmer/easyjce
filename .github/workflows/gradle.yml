@@ -79,5 +79,5 @@ jobs:
         files: ./coverage1.xml,./coverage2.xml # optional
         flags: unittests # optional
         name: codecov-umbrella # optional
-        token: ${{ secrets.CODECOV_TOKEN }} # required
+        token: ${{ secrets.CODECOV_TKN }} # required
         verbose: true # optional (default = false)
