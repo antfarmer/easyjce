@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    env:
+      IS_CI_BUILD: true
 
     steps:
     - uses: actions/checkout@v4
@@ -47,6 +49,16 @@ jobs:
     # - name: Build with Gradle 8.9
     #   run: gradle build
 
+    - uses: actions/checkout@main
+    - uses: codecov/codecov-action@v4
+      with:
+        fail_ci_if_error: true # optional (default = false)
+        file: ./build/reports/jacoco/test/jacocoTestReport.xml # optional
+        flags: unittests # optional
+        name: codecov-umbrella # optional
+        token: ${{ secrets.CODECOV_TKN }} # required
+        verbose: true # optional (default = false)
+
   dependency-submission:
 
     runs-on: ubuntu-latest
@@ -65,19 +77,3 @@ jobs:
     # See: https://github.com/gradle/actions/blob/main/dependency-submission/README.md
     - name: Generate and submit dependency graph
       uses: gradle/actions/dependency-submission@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
-
-  codecov:
-    runs-on: ubuntu-latest
-    env:
-      OS: ubuntu-latest
-      PYTHON: '3.10'
-    steps:
-    - uses: actions/checkout@main
-    - uses: codecov/codecov-action@v4
-      with:
-        fail_ci_if_error: true # optional (default = false)
-        files: ./coverage1.xml,./coverage2.xml # optional
-        flags: unittests # optional
-        name: codecov-umbrella # optional
-        token: ${{ secrets.CODECOV_TKN }} # required
-        verbose: true # optional (default = false)

@@ -10,6 +10,7 @@
 plugins {
 	id 'java'
 	id 'eclipse'
+	id 'jacoco'
 }
 
 def projectName = 'easyjce'
@@ -17,6 +18,8 @@ def projectDesc = 'interface for encrypting, decrypting, and hashing data for tr
 group = "org.antfarmer"
 archivesBaseName = "easyjce"
 version = '1.1.1'
+
+def isContBuild = System.getenv("IS_CI_BUILD") == "true"
 
 eclipse {
 	project {
@@ -99,3 +102,14 @@ javadoc {
 clean.doLast {
 	file("${projectDir}/docs").deleteDir()
 }
+
+// Codecov requirements //////////////////////////////////////////////////////////////
+jacocoTestReport {
+	reports {
+		xml.required = ! isContBuild
+		html.required =  isContBuild
+	}
+}
+
+check.dependsOn jacocoTestReport
+
